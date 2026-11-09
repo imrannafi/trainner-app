@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix ApexPulse - Trainer \u0026 Member Management Platform",
+  "description": "Premium personal trainer and client management system with workout \u0026 diet planning, meal photo accountability, payment tracking, and dual portals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,1038 @@
+# PROJECT: Premium Personal Trainer & Client Management Web Application
+
+## 1. PROJECT OVERVIEW
+
+Act as a senior full-stack software engineer, UI/UX designer, SaaS architect, database engineer, and fitness management system specialist.
+
+Build a complete, premium-quality, responsive web application for a professional personal gym trainer who manages multiple clients.
+
+The trainer needs a centralized platform to manage every client, including their profile, photographs, membership duration, payments, outstanding dues, workout routines, diet plans, daily meal records, workout completion, progress tracking, and communication.
+
+The application must have two separate portals:
+
+1. **Trainer Portal** — Complete management and monitoring dashboard.
+2. **Member Portal** — A personalized dashboard for each gym member.
+
+The two portals must be connected to the same database. Whenever the trainer adds or updates a member's workout plan, diet plan, payment status, membership period, or notices, the changes must automatically appear in the corresponding member's portal.
+
+This must be a functional web application, not just a static UI prototype.
+
+---
+
+# 2. DESIGN AND USER EXPERIENCE
+
+Create an exceptionally polished, premium fitness management platform.
+
+### Visual Design
+- Modern, professional, premium fitness SaaS interface.
+- Clean light theme with white and soft-gray surfaces.
+- Dark navy or black typography with carefully selected fitness-inspired accent colors.
+- Beautiful cards, subtle shadows, refined borders, and consistent spacing.
+- Modern typography and professional icons.
+- Smooth page transitions and scroll animations.
+- Premium charts and interactive data visualizations.
+- Subtle 3D effects and micro-interactions where appropriate.
+- Floating navigation elements where they improve usability.
+- Professional loading skeletons and animated progress indicators.
+- Beautiful empty states and helpful error messages.
+
+Avoid an overly dark interface, excessive gradients, unnecessary animations, or a generic admin dashboard appearance.
+
+### Responsive Design
+The application must work perfectly on:
+- Desktop computers.
+- Laptops.
+- Tablets.
+- Android phones.
+- iPhones.
+
+The mobile experience must be designed carefully because trainers and members will frequently use the application from their phones.
+
+Use a mobile-friendly navigation system, responsive tables, optimized forms, and touch-friendly buttons.
+
+---
+
+# 3. AUTHENTICATION AND ROLE-BASED ACCESS
+
+Implement secure authentication with two roles.
+
+### Trainer Account
+The trainer can:
+- Sign in securely.
+- Manage their profile.
+- Add and manage members.
+- Access member information.
+- Create workout and diet plans.
+- Monitor daily member activities.
+- Manage payments and membership renewals.
+- Send notices and reminders.
+- Review member progress and compliance.
+
+### Member Account
+Each member must have a separate, secure login.
+
+When the trainer adds a new member, the trainer should enter the member's email address and basic information.
+
+The system should allow the trainer to:
+- Create an invitation for the member.
+- Send an account activation link.
+- Assign the member a temporary password if the authentication provider supports it securely.
+- Activate the member's portal after the member completes registration.
+
+When the member logs in, the application must automatically display the profile associated with that authenticated account.
+
+IMPORTANT:
+- Never allow a member to access another member's private information.
+- Members must not be able to edit payment status, membership dates, assigned plans, or trainer-only records.
+- Implement proper backend authorization and database access policies.
+- Do not rely only on hiding frontend buttons for security.
+
+---
+
+# 4. TRAINER DASHBOARD
+
+Create a comprehensive dashboard that gives the trainer an overview of their entire business.
+
+### Dashboard Statistics
+
+Display:
+- Total active members.
+- Total inactive members.
+- Members whose memberships are expiring soon.
+- Members with expired memberships.
+- Total payments received this month.
+- Total outstanding dues.
+- Members who have not paid.
+- Today's workout completion rate.
+- Today's diet compliance rate.
+- Members who have not submitted their daily reports.
+- Upcoming payment deadlines.
+- Recently added members.
+
+### Dashboard Widgets
+
+Include:
+- Membership expiration calendar.
+- Upcoming payment reminders.
+- Recent payment activity.
+- Daily workout completion chart.
+- Weekly diet compliance chart.
+- Member activity feed.
+- Recent notices.
+- Members requiring trainer attention.
+
+All dashboard statistics must be calculated using actual database records rather than hardcoded sample numbers.
+
+Provide filters for today, this week, this month, and custom date ranges where appropriate.
+
+---
+
+# 5. COMPLETE MEMBER MANAGEMENT SYSTEM
+
+Create a dedicated Members section.
+
+The trainer should be able to add, edit, view, search, filter, deactivate, and archive members.
+
+### New Member Form
+
+Include the following fields:
+
+Personal Information:
+- Full name.
+- Profile photograph.
+- Email address.
+- Phone number.
+- Age or date of birth.
+- Gender, if relevant and voluntarily provided.
+- Height.
+- Current weight.
+- Emergency contact, if required.
+
+Fitness Information:
+- Fitness goal.
+- Current fitness level.
+- Training preferences.
+- Medical considerations voluntarily disclosed by the member.
+- Relevant injuries or exercise restrictions.
+- Trainer's private notes.
+
+Membership Information:
+- Membership start date.
+- Membership end date.
+- Membership duration.
+- Assigned trainer.
+- Training frequency.
+- Number of sessions included.
+- Package price.
+- Amount paid.
+- Outstanding balance.
+- Next payment deadline.
+- Payment status.
+
+Support configurable membership durations, including:
+- 1 month.
+- 3 months.
+- 6 months.
+- 12 months.
+- Custom duration.
+
+Allow the trainer to upload a member's profile photograph and view it throughout the management interface.
+
+### Member Profile Page
+
+Every member must have a detailed profile page with separate tabs:
+
+1. Overview.
+2. Personal Information.
+3. Membership.
+4. Payment History.
+5. Workout Plans.
+6. Diet Plans.
+7. Daily Meal Logs.
+8. Workout Logs.
+9. Progress Reports.
+10. Attendance and Training Sessions.
+11. Notices and Messages.
+12. Trainer Notes.
+
+Display important information prominently, including membership status, remaining days, next payment date, outstanding dues, assigned workout plan, and diet compliance.
+
+Include a chronological activity timeline showing important changes and submitted reports.
+
+---
+
+# 6. MEMBERSHIP AND PAYMENT MANAGEMENT
+
+Build a complete payment tracking system.
+
+The trainer must always know:
+- Who has paid.
+- Who has not paid.
+- How much each member has paid.
+- How much each member still owes.
+- When each member last paid.
+- When the next payment is due.
+- Which memberships are about to expire.
+- Which memberships have already expired.
+
+### Payment Records
+
+Each payment record should contain:
+- Member.
+- Payment amount.
+- Payment date.
+- Payment method.
+- Transaction reference, if applicable.
+- Package or billing period.
+- Recorded by.
+- Payment notes.
+- Payment status.
+
+Support payment methods commonly used in Bangladesh:
+- Cash.
+- bKash.
+- Nagad.
+- Rocket.
+- Bank transfer.
+- Other.
+
+The trainer should be able to record full and partial payments.
+
+Calculate outstanding dues automatically:
+
+Outstanding Balance = Total Amount Due - Total Valid Payments
+
+Do not mark a member as fully paid if they have made only a partial payment.
+
+### Payment Statuses
+
+Use clear status indicators:
+- Paid.
+- Partially Paid.
+- Unpaid.
+- Overdue.
+
+### Automated Reminders
+
+Create notifications for:
+- Payments due soon.
+- Payments due today.
+- Overdue payments.
+- Memberships expiring soon.
+- Expired memberships.
+
+The trainer should be able to configure reminder timing, such as 7 days, 3 days, and 1 day before a deadline.
+
+The member should see their next payment deadline, amount due, previous payments, and membership expiration date in their portal.
+
+IMPORTANT:
+Recording a payment manually must not be confused with receiving a payment automatically through a payment gateway. Gateway integration should be implemented separately if required.
+
+---
+
+# 7. WORKOUT PLAN BUILDER
+
+Create a powerful workout management module.
+
+The trainer must be able to create customized workout plans for individual members.
+
+### Workout Plan Fields
+- Plan name.
+- Assigned member.
+- Plan start date.
+- Plan end date.
+- Weekly training schedule.
+- Training goal.
+- Difficulty level.
+- Trainer instructions.
+- Rest days.
+
+### Exercise Management
+
+For each exercise, allow the trainer to configure:
+- Exercise name.
+- Exercise image or demonstration video.
+- Target muscle group.
+- Sets.
+- Repetitions.
+- Weight.
+- Rest time.
+- Exercise order.
+- Special instructions.
+- Optional alternative exercise.
+
+Allow exercises to be organized by training day.
+
+Example:
+
+Monday — Chest and Triceps
+- Bench Press: 4 sets × 10 reps.
+- Incline Dumbbell Press: 3 sets × 12 reps.
+- Cable Fly: 3 sets × 15 reps.
+- Triceps Pushdown: 3 sets × 12 reps.
+
+Tuesday — Back and Biceps.
+
+Wednesday — Legs.
+
+The trainer must be able to:
+- Create a new workout plan.
+- Edit an existing plan.
+- Duplicate a plan.
+- Assign a plan to a member.
+- Schedule workout days.
+- Replace exercises.
+- Update instructions.
+- View the member's completion history.
+
+When the trainer publishes a workout plan, it must immediately become available in that member's portal.
+
+Previous workout logs must remain available even if the trainer later changes the assigned plan.
+
+---
+
+# 8. WORKOUT COMPLETION TRACKING
+
+Build a system that helps the trainer verify whether members are actually following their assigned workouts.
+
+### Member Workout Interface
+
+For each scheduled workout, display:
+- Today's workout.
+- Exercise list.
+- Sets and repetitions.
+- Demonstration media.
+- Rest instructions.
+- Completion status.
+
+The member should be able to:
+- Start a workout session.
+- Mark individual exercises as completed.
+- Record actual sets and repetitions.
+- Record the weight used.
+- Record workout duration.
+- Add optional notes.
+- Submit the workout report.
+
+### Workout Verification
+
+To improve accountability, implement:
+- Workout session start and end timestamps.
+- Exercise completion timestamps.
+- Scheduled versus completed workouts.
+- Missed workout records.
+- Optional progress photographs.
+- Optional trainer review and approval.
+
+The trainer dashboard must display:
+- Completed workouts.
+- Missed workouts.
+- Pending workout reports.
+- Weekly workout adherence percentage.
+- Members who repeatedly miss scheduled workouts.
+
+Do not treat a workout as verified merely because a member opens the workout page.
+
+Clearly distinguish between self-reported completion and trainer-verified completion.
+
+Allow the trainer to review a submitted workout and mark it as reviewed, approved, or requiring correction.
+
+---
+
+# 9. DIET PLAN MANAGEMENT
+
+Build a complete personalized diet planning system.
+
+The trainer should be able to create and assign individual diet plans.
+
+### Diet Plan Fields
+- Plan name.
+- Assigned member.
+- Daily calorie target.
+- Protein target.
+- Carbohydrate target.
+- Fat target.
+- Water intake target.
+- Plan start date.
+- Plan end date.
+- Dietary preferences.
+- Food restrictions.
+- Trainer instructions.
+
+### Meal Scheduling
+
+Allow the trainer to add meals for different times of the day.
+
+Example:
+
+Breakfast:
+- 3 eggs.
+- Oats.
+- 1 banana.
+
+Lunch:
+- Rice.
+- Chicken.
+- Vegetables.
+
+Afternoon Snack:
+- Yogurt.
+- Fruit.
+
+Dinner:
+- Fish or chicken.
+- Vegetables.
+- Appropriate carbohydrate portion.
+
+For every meal, allow:
+- Meal name.
+- Scheduled time.
+- Food items.
+- Quantity.
+- Unit.
+- Estimated calories.
+- Protein.
+- Carbohydrates.
+- Fat.
+- Preparation instructions.
+- Alternative foods.
+
+Automatically calculate estimated daily nutritional totals from the configured meal data.
+
+Make it easy to update meal quantities and substitute foods.
+
+The trainer must be able to assign different diet plans to different members.
+
+---
+
+# 10. DAILY MEAL LOGGING AND DIET ACCOUNTABILITY
+
+THIS IS ONE OF THE MOST IMPORTANT FEATURES OF THE APPLICATION.
+
+The trainer needs to know what members actually eat, not only what they are supposed to eat.
+
+Build a detailed daily food tracking system.
+
+### Member Meal Logging
+
+For every scheduled meal, the member should be able to submit:
+
+- Meal name.
+- Date and time.
+- Foods actually consumed.
+- Quantity of each food.
+- Estimated portion size.
+- Whether the meal followed the assigned plan.
+- Optional meal photograph.
+- Optional notes.
+
+Allow members to select foods from their assigned diet plan and record whether they followed the prescribed quantity.
+
+If a member eats something outside the plan, provide an option to record the additional food.
+
+The system should preserve the original assigned meal so the trainer can compare the prescribed meal with the actual meal.
+
+### Meal Photo Evidence
+
+Allow members to upload photographs of their meals.
+
+Display each submitted meal photograph in the trainer's dashboard with:
+- Member name.
+- Member photograph.
+- Meal name.
+- Submission time.
+- Reported foods.
+- Reported quantities.
+- Assigned meal comparison.
+- Trainer review status.
+
+Allow the trainer to:
+- Review meal reports.
+- Approve reports.
+- Request corrections.
+- Add feedback.
+- Flag reports for follow-up.
+
+Do not automatically claim that a photograph proves the exact ingredients, quantities, or calories. Any image-based food recognition should be treated as an estimate that the member or trainer can correct.
+
+### Missed Meal Tracking
+
+If a scheduled meal has not been logged by the configured reporting deadline:
+- Mark the meal as Not Reported.
+- Show it in the trainer's pending activity list.
+- Notify the trainer when appropriate.
+- Allow the trainer to request an update.
+
+Distinguish between:
+- Followed Plan.
+- Partially Followed.
+- Deviated from Plan.
+- Skipped Meal.
+- Not Reported.
+
+A missing report must not automatically be interpreted as proof that the member skipped a meal.
+
+### Daily Diet Compliance
+
+Calculate a transparent daily compliance score based on configured meal requirements and submitted logs.
+
+For example, if four equally weighted meals are scheduled and three are verified as following the plan, the system may display 75% reported meal compliance.
+
+Clearly distinguish reported compliance from independently verified compliance.
+
+Show the trainer:
+- Daily meal compliance.
+- Weekly diet compliance.
+- Meals followed.
+- Meals partially followed.
+- Meals skipped.
+- Meals not reported.
+- Extra foods consumed.
+- Calories and macronutrients reported by the member.
+
+The trainer should be able to see which members are consistently following their diet plans and which members need additional support.
+
+---
+
+# 11. MEMBER PROGRESS TRACKING
+
+Create a visual progress tracking system.
+
+Allow the trainer and member to record:
+
+- Body weight.
+- Body measurements.
+- Waist measurement.
+- Chest measurement.
+- Arm measurement.
+- Progress photographs.
+- Strength improvements.
+- Fitness milestones.
+- Trainer comments.
+
+Allow the trainer to configure which measurements are relevant to a member's goals.
+
+### Progress Dashboard
+
+Display:
+- Weight history chart.
+- Measurement trends.
+- Workout consistency.
+- Diet compliance.
+- Training session attendance.
+- Progress photograph history.
+- Personal best records.
+
+Allow members to submit progress updates through their portal.
+
+The trainer should be able to review and comment on each update.
+
+Keep progress photographs private and accessible only to authorized users.
+
+Do not publicly expose members' body measurements, photographs, or health-related information.
+
+---
+
+# 12. TRAINING SESSION AND ATTENDANCE MANAGEMENT
+
+Create a training calendar and attendance tracking system.
+
+The trainer should be able to:
+- Schedule training sessions.
+- Assign sessions to individual members.
+- Reschedule sessions.
+- Cancel sessions.
+- Mark attendance.
+- Record missed sessions.
+- Record session notes.
+- Track remaining sessions in a package.
+
+Each member should be able to view their upcoming sessions, completed sessions, missed sessions, and remaining sessions.
+
+Prevent accidental duplicate attendance records for the same session.
+
+If the membership package includes a limited number of personal training sessions, automatically update the remaining session count after a valid completed session is recorded.
+
+---
+
+# 13. NOTICE AND ANNOUNCEMENT SYSTEM
+
+Create a complete notification and announcement module.
+
+The trainer must be able to send notices to:
+- All active members.
+- Selected members.
+- Members assigned to a specific plan.
+- Members with overdue payments.
+- Members whose memberships are expiring.
+
+### Notice Fields
+- Notice title.
+- Message.
+- Optional image or attachment.
+- Notice category.
+- Publication date.
+- Expiration date.
+- Target audience.
+- Priority.
+- Read receipt status.
+
+Example notices:
+- Your membership expires in three days.
+- Tomorrow's training session has been rescheduled.
+- Your new workout plan is available.
+- Please submit today's meal report.
+- Your monthly payment is overdue.
+
+### Member Notifications
+
+Members should receive in-app notifications when:
+- A new notice is published.
+- A workout plan is assigned or updated.
+- A diet plan is assigned or updated.
+- A payment deadline is approaching.
+- A payment is overdue.
+- A training session is changed.
+- The trainer provides feedback on a report.
+
+Include unread notification badges and a notification history.
+
+Allow members to mark notifications as read.
+
+The trainer should be able to see whether a notice has been read.
+
+Implement email or push notifications only when the required provider and permissions are configured.
+
+---
+
+# 14. MEMBER PORTAL
+
+Create a beautiful, personalized dashboard for every member.
+
+The member portal should show the most important information immediately after login.
+
+### Member Dashboard
+
+Display:
+- Member's profile photograph.
+- Name and membership status.
+- Membership start date.
+- Membership expiration date.
+- Remaining membership days.
+- Next payment deadline.
+- Outstanding payment balance.
+- Upcoming training sessions.
+- Today's assigned workout.
+- Today's assigned diet plan.
+- Daily workout completion.
+- Daily meal reporting status.
+- Recent notices.
+- Progress overview.
+
+### Member Navigation
+
+Include:
+1. Dashboard.
+2. My Workout.
+3. My Diet.
+4. Daily Meal Log.
+5. Workout History.
+6. Progress Tracking.
+7. Training Schedule.
+8. Membership.
+9. Payments.
+10. Notices.
+11. Notifications.
+12. My Profile.
+
+The member should be able to see exactly what the trainer has assigned to them.
+
+When the trainer updates a plan or publishes a notice, the member should see the latest information without manually copying or re-entering the data.
+
+### Member Restrictions
+
+Members must not be able to:
+- Change their payment status.
+- Change their membership expiration date.
+- Modify the trainer's original workout plan.
+- Modify the trainer's original diet plan.
+- Access another member's information.
+- View private trainer notes.
+
+Members can submit workout logs, meal logs, progress records, and other information explicitly allowed by the system.
+
+---
+
+# 15. AUTOMATED ACCOUNTABILITY AND ALERTS
+
+Build an intelligent system that helps the trainer identify members who may need attention.
+
+Create configurable alerts for:
+
+### Payment Alerts
+- Payment deadline approaching.
+- Overdue balance.
+- Membership expiration approaching.
+- Expired membership.
+
+### Workout Alerts
+- Scheduled workout not reported.
+- Repeated missed workouts.
+- Workout report awaiting review.
+
+### Diet Alerts
+- Meal report missing.
+- Repeated meal plan deviations.
+- Daily diet report incomplete.
+- Meal report awaiting trainer review.
+
+### Membership Alerts
+- Inactive member.
+- Membership renewal required.
+- Training package nearly completed.
+
+Create a dedicated "Needs Attention" panel in the trainer dashboard.
+
+Each alert should include:
+- Member name and photograph.
+- Alert category.
+- Relevant date.
+- Description.
+- Recommended next action.
+- Status.
+
+Allow the trainer to mark alerts as resolved or dismissed.
+
+Avoid sending excessive notifications. Provide configurable reminder schedules and notification preferences.
+
+---
+
+# 16. DATABASE AND BACKEND ARCHITECTURE
+
+Build a proper relational database architecture.
+
+Recommended tables include:
+
+1. users
+2. trainer_profiles
+3. members
+4. memberships
+5. membership_packages
+6. payments
+7. workout_plans
+8. workout_days
+9. exercises
+10. workout_assignments
+11. workout_sessions
+12. workout_exercise_logs
+13. diet_plans
+14. diet_meals
+15. diet_food_items
+16. meal_logs
+17. meal_log_items
+18. progress_records
+19. progress_photos
+20. training_sessions
+21. attendance_records
+22. notices
+23. notice_recipients
+24. notifications
+25. trainer_feedback
+26. audit_logs
+
+Adjust the schema when necessary, but maintain clear relationships and avoid unnecessary duplication.
+
+### Database Requirements
+
+- Use proper primary keys and foreign keys.
+- Add appropriate indexes.
+- Store timestamps consistently.
+- Track creation and update times.
+- Use database transactions for payment-related operations where appropriate.
+- Preserve historical payment records.
+- Preserve workout and diet logs when plans change.
+- Prevent unauthorized access to private data.
+- Use database-level authorization policies.
+- Validate important business rules on the server.
+- Use secure file storage for profile photographs and meal evidence.
+- Keep sensitive information out of public storage.
+
+### Suggested Technology Stack
+
+Use:
+- Next.js with TypeScript.
+- React.
+- Tailwind CSS.
+- A high-quality component library such as shadcn/ui.
+- Supabase Authentication.
+- Supabase PostgreSQL.
+- Supabase Row Level Security.
+- Supabase Storage.
+- Recharts for dashboard visualizations.
+- Framer Motion for smooth UI animations.
+
+Use stable, compatible versions of the selected libraries.
+
+If the project already has an established stack, inspect it first and maintain consistency instead of unnecessarily rebuilding everything.
+
+---
+
+# 17. SECURITY AND DATA PRIVACY
+
+Security is essential because the application stores private member information.
+
+Implement:
+- Secure authentication.
+- Role-based access control.
+- Database-level authorization.
+- Member-specific data access.
+- Input validation.
+- Server-side authorization checks.
+- Secure file upload validation.
+- Protection against unauthorized data modification.
+- Safe session handling.
+- Audit trails for important trainer actions.
+
+A member must only access their own information.
+
+A trainer must only access members assigned to that trainer.
+
+Do not expose Supabase service-role keys or other privileged credentials in frontend code.
+
+Do not store plaintext passwords.
+
+Do not allow members to mark their own payments as received.
+
+Maintain an audit history for important changes to payment records, membership dates, workout assignments, and diet plans.
+
+---
+
+# 18. REPORTS AND ANALYTICS
+
+Create a reporting section for the trainer.
+
+Allow reports to be filtered by date, member, membership status, and payment status.
+
+Include:
+- Member directory report.
+- Membership expiration report.
+- Payment collection report.
+- Outstanding dues report.
+- Monthly revenue report.
+- Workout completion report.
+- Diet compliance report.
+- Training attendance report.
+- Member progress report.
+
+Provide CSV or Excel-compatible exports where appropriate.
+
+Ensure that reports use real database calculations.
+
+Financial reports must distinguish payment collections from outstanding balances. Do not count unpaid invoices as received revenue.
+
+---
+
+# 19. USER EXPERIENCE DETAILS
+
+Implement:
+- Global search.
+- Filters and sorting.
+- Pagination for large member lists.
+- Clear confirmation dialogs for important actions.
+- Form validation.
+- Helpful success and error messages.
+- Loading states.
+- Empty states.
+- Mobile-friendly data tables.
+- Accessible controls.
+- Consistent date and currency formatting.
+
+Use Bangladeshi Taka (৳) as the default currency.
+
+Use the Asia/Dhaka timezone for membership deadlines, payment reminders, workout schedules, and daily meal logs.
+
+Allow the trainer to configure their business information and preferred membership settings.
+
+---
+
+# 20. DEVELOPMENT PHASES
+
+Build the application in organized phases.
+
+### Phase 1: Foundation
+- Project setup.
+- Design system.
+- Authentication.
+- Database schema.
+- Role-based access.
+- Trainer and member account relationships.
+
+### Phase 2: Trainer Portal
+- Dashboard.
+- Member management.
+- Member profiles.
+- Membership management.
+- Payment tracking.
+
+### Phase 3: Fitness Management
+- Workout plan builder.
+- Diet plan builder.
+- Workout completion tracking.
+- Meal logging.
+- Meal photograph uploads.
+- Progress tracking.
+
+### Phase 4: Communication
+- Notice management.
+- In-app notifications.
+- Payment reminders.
+- Workout and diet compliance alerts.
+
+### Phase 5: Member Portal
+- Personalized dashboard.
+- Assigned workout and diet plans.
+- Daily reports.
+- Membership and payment information.
+- Progress history.
+
+### Phase 6: Reports and Testing
+- Financial reports.
+- Fitness analytics.
+- Data exports.
+- Security testing.
+- Responsive design testing.
+- End-to-end workflow testing.
+
+Build a functional foundation before adding advanced animations or optional AI features.
+
+Do not create fake buttons or non-functional dashboard elements.
+
+---
+
+# 21. ACCEPTANCE TESTS
+
+Before declaring the application complete, verify these real-world workflows:
+
+TEST 1:
+The trainer adds a member, uploads their photograph, sets a membership period, and records the package price.
+
+The member receives an invitation and activates their account.
+
+TEST 2:
+The trainer assigns a workout plan.
+
+The member logs in and sees the correct workout plan.
+
+TEST 3:
+The trainer assigns a diet plan containing several scheduled meals.
+
+The member sees the assigned meals and records what they actually ate.
+
+TEST 4:
+The member uploads a meal photograph and submits a meal report.
+
+The trainer can view the photograph, reported foods, quantities, and submission time.
+
+TEST 5:
+The member completes a workout and submits the exercise logs.
+
+The trainer can review the report and see which exercises were completed.
+
+TEST 6:
+The trainer records a partial payment.
+
+The system calculates the remaining balance correctly.
+
+TEST 7:
+A payment deadline passes without a full payment.
+
+The system displays the correct outstanding balance and overdue status.
+
+TEST 8:
+The trainer publishes a notice for one specific member.
+
+Only the intended recipient should receive and view the private notice.
+
+TEST 9:
+The trainer updates a diet plan.
+
+The correct member sees the updated plan, while historical meal logs remain intact.
+
+TEST 10:
+A member attempts to access another member's profile or modify their payment status.
+
+The backend must reject the unauthorized request.
+
+TEST 11:
+A scheduled workout or meal report is not submitted.
+
+The system flags it as missing without incorrectly claiming that the member definitely skipped the activity.
+
+TEST 12:
+The trainer opens the dashboard on a phone, tablet, and desktop.
+
+The layout remains functional, responsive, and visually polished.
+
+---
+
+# FINAL INSTRUCTIONS
+
+Build this as a production-minded personal trainer management platform, not merely a gym website or a collection of static dashboard screens.
+
+Prioritize these five core capabilities:
+
+1. Complete member management with photographs and membership information.
+2. Accurate payment tracking and membership expiration alerts.
+3. Personalized workout and diet plan management.
+4. Daily meal and workout accountability with member-submitted evidence.
+5. A connected member portal where every member sees their own assigned plans, notices, payment information, and progress.
+
+Every important feature must be connected to the backend and database.
+
+Use realistic seed data only for development and demonstrations. Clearly separate demo data from real member records.
+
+Start by inspecting the existing project structure, identifying the implementation plan, and establishing the database schema and access-control rules.
+
+Then build the application module by module, test the actual workflows, and fix errors before moving forward.
+
+The final result should feel like a premium, reliable fitness management SaaS product that a professional personal trainer can use every day to manage their entire client base.
