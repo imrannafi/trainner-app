@@ -17,53 +17,55 @@ import {
   Camera,
   Dumbbell,
   Scale,
-  RefreshCw,
   UserPlus,
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { UserRole, Member } from '../../types';
-import { Avatar, useBodyScrollLock, showToast } from './CommonUI';
+import { Avatar, useBodyScrollLock } from './CommonUI';
+
+export interface AccountSummary {
+  name: string;
+  subtitle: string;
+  avatarUrl?: string;
+}
 
 interface FloatingBottomNavProps {
   currentRole: UserRole;
   currentMember?: Member;
-  allMembers: Member[];
+  account: AccountSummary;
   activeTab: string;
   onSelectTab: (tab: string, meta?: any) => void;
-  onSwitchRole: (role: UserRole, memberId?: string) => void;
+  onOpenSettings: () => void;
   pendingMealCount: number;
   unreadNoticesCount: number;
   pendingRequestsCount?: number;
   onOpenAddMember: () => void;
   onOpenDirectEnroll?: () => void;
   onOpenRecordPayment: () => void;
-  onResetData: () => void;
   onLogout?: () => void;
 }
 
 export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
   currentRole,
   currentMember,
-  allMembers,
+  account,
   activeTab,
   onSelectTab,
-  onSwitchRole,
+  onOpenSettings,
   pendingMealCount,
   unreadNoticesCount,
   pendingRequestsCount = 0,
   onOpenAddMember,
   onOpenDirectEnroll,
   onOpenRecordPayment,
-  onResetData,
   onLogout
 }) => {
   const [showMoreDrawer, setShowMoreDrawer] = useState(false);
-  const [showRoleModal, setShowRoleModal] = useState(false);
   const [showQuickLogModal, setShowQuickLogModal] = useState(false);
-  const [confirmReset, setConfirmReset] = useState(false);
 
-  useBodyScrollLock(showMoreDrawer || showRoleModal || showQuickLogModal);
+  useBodyScrollLock(showMoreDrawer || showQuickLogModal);
 
   const handleCenterAction = () => {
     if (currentRole === 'trainer') {
@@ -514,27 +516,13 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                 </button>
               </div>
 
-              {/* Profile Card with Switch User Option */}
+              {/* Signed-in account */}
               <div className="p-4 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Avatar
-                    src={
-                      currentRole === 'trainer'
-                        ? '/src/assets/images/oliul_azim_coach_1794068467381.jpg'
-                        : currentMember?.avatarUrl
-                    }
-                    name={currentRole === 'trainer' ? 'Coach Oliul' : currentMember?.fullName || 'Athlete'}
-                    size="md"
-                  />
+                  <Avatar src={account.avatarUrl} name={account.name} size="md" />
                   <div className="min-w-0">
-                    <span className="font-bold text-sm text-[#171717] block truncate">
-                      {currentRole === 'trainer' ? 'Coach Oliul Azim' : currentMember?.fullName}
-                    </span>
-                    <span className="text-xs text-neutral-500 block truncate">
-                      {currentRole === 'trainer'
-                        ? 'Head Coach & Admin'
-                        : `${currentMember?.fitnessGoal} · ${currentMember?.status}`}
-                    </span>
+                    <span className="font-bold text-sm text-[#171717] block truncate">{account.name}</span>
+                    <span className="text-xs text-neutral-500 block truncate">{account.subtitle}</span>
                   </div>
                 </div>
 
@@ -542,11 +530,12 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                   type="button"
                   onClick={() => {
                     setShowMoreDrawer(false);
-                    setShowRoleModal(true);
+                    onOpenSettings();
                   }}
-                  className="px-3 py-1.5 text-xs font-semibold bg-white border border-neutral-200 text-[#171717] hover:bg-neutral-100 rounded-xl shadow-xs transition-colors whitespace-nowrap shrink-0"
+                  className="px-3 py-1.5 text-xs font-semibold bg-white border border-neutral-200 text-[#171717] hover:bg-neutral-100 rounded-xl shadow-xs transition-colors whitespace-nowrap shrink-0 inline-flex items-center gap-1.5"
                 >
-                  Switch Role
+                  <Settings className="w-3.5 h-3.5" />
+                  Settings
                 </button>
               </div>
 
@@ -787,150 +776,6 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Quick Account Switcher Modal */}
-      <AnimatePresence>
-        {showRoleModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.16 }}
-              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
-              onClick={() => {
-                setShowRoleModal(false);
-                setConfirmReset(false);
-              }}
-              aria-hidden="true"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 8 }}
-              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-neutral-100 space-y-4 z-10 max-h-[85vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-                <span className="font-bold text-base text-[#171717]">Switch Active Account</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowRoleModal(false);
-                    setConfirmReset(false);
-                  }}
-                  className="text-neutral-400 hover:text-neutral-600 p-1 rounded-full hover:bg-neutral-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    onSwitchRole('trainer');
-                    setShowRoleModal(false);
-                  }}
-                  className={`w-full p-3 rounded-2xl border text-left flex items-center gap-3 transition-colors ${
-                    currentRole === 'trainer'
-                      ? 'border-[#7155E8] bg-[#F0EEFC] font-bold text-[#7155E8]'
-                      : 'border-neutral-200 hover:bg-[#F5F5F5]'
-                  }`}
-                >
-                  <Avatar
-                    src="/src/assets/images/oliul_azim_coach_1794068467381.jpg"
-                    name="Coach Oliul"
-                    size="sm"
-                  />
-                  <div className="min-w-0">
-                    <span className="font-bold text-[#171717] block truncate">Coach Oliul Azim</span>
-                    <span className="text-[11px] text-neutral-500 block truncate">
-                      Head Coach & Admin
-                    </span>
-                  </div>
-                </button>
-
-                <span className="text-[11px] font-bold text-neutral-400 block pt-2">
-                  Gym Members
-                </span>
-
-                <div className="space-y-2 max-h-56 overflow-y-auto pr-0.5">
-                  {allMembers.map((m) => {
-                    const isSelected = currentRole === 'member' && currentMember?.id === m.id;
-                    return (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => {
-                          onSwitchRole('member', m.id);
-                          setShowRoleModal(false);
-                        }}
-                        className={`w-full p-3 rounded-2xl border text-left flex items-center justify-between gap-3 transition-colors ${
-                          isSelected
-                            ? 'border-[#7155E8] bg-[#F0EEFC] font-bold text-[#7155E8]'
-                            : 'border-neutral-200 hover:bg-[#F5F5F5]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <Avatar src={m.avatarUrl} name={m.fullName} size="xs" />
-                          <div className="min-w-0">
-                            <span className="font-bold text-[#171717] block truncate">
-                              {m.fullName}
-                            </span>
-                            <span className="text-[11px] text-neutral-500 block truncate">
-                              {m.fitnessGoal}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-[11px] font-mono text-neutral-500 shrink-0 font-medium">
-                          {m.status}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="border-t border-neutral-100 pt-3">
-                {!confirmReset ? (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmReset(true)}
-                    className="w-full text-center py-2 text-xs text-neutral-500 hover:text-neutral-900 transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" /> Reset Demo State
-                  </button>
-                ) : (
-                  <div className="flex items-center justify-between gap-2 bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-xs">
-                    <span className="font-semibold text-rose-800">Reset all demo data?</span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => setConfirmReset(false)}
-                        className="px-2.5 py-1 rounded-xl bg-white border border-neutral-200 text-neutral-600 font-semibold"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onResetData();
-                          setConfirmReset(false);
-                          setShowRoleModal(false);
-                          showToast('Demo state reset successfully.', 'info');
-                        }}
-                        className="px-2.5 py-1 rounded-xl bg-rose-600 text-white font-semibold"
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </>
   );
 };

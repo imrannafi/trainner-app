@@ -1,0 +1,9 @@
+# Edge Function settings used by `supabase functions deploy`.
+
+# Called by the database (pg_net) with a shared secret instead of a user token.
+[functions.send-push]
+verify_jwt = false
+
+# Called by signed-in coaches; the function also checks the role in the database.
+[functions.invite-member]
+verify_jwt = true

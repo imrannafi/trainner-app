@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { todayDhaka } from '../../lib/dates';
 import {
   ArrowLeft,
   CreditCard,
@@ -139,9 +140,10 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
   const assignedWorkout = allWorkoutPlans.find((p) => p.id === member.assignedWorkoutPlanId);
   const assignedDiet = allDietPlans.find((p) => p.id === member.assignedDietPlanId);
 
-  const thisMonthCheckIns = (member.gymCheckInDates || []).filter((d) => d.startsWith('2026-11')).length;
+  const today = todayDhaka();
+  const thisMonthCheckIns = (member.gymCheckInDates || []).filter((d) => d.startsWith(today.slice(0, 7))).length;
 
-  const todayMs = new Date('2026-11-02').getTime();
+  const todayMs = new Date(today).getTime();
   const endMs = new Date(member.membershipEndDate).getTime();
   const remainingDays = Math.ceil((endMs - todayMs) / (1000 * 60 * 60 * 24));
 
@@ -171,7 +173,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
     e.preventDefault();
     onAddProgressRecord({
       memberId: member.id,
-      date: '2026-11-02',
+      date: todayDhaka(),
       weightKg: parseFloat(newWeight) || member.currentWeightKg,
       waistCm: newWaist ? parseFloat(newWaist) : undefined,
       chestCm: newChest ? parseFloat(newChest) : undefined,

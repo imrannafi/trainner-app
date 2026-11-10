@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { todayDhaka } from '../../lib/dates';
 import {
   Plus,
   Users,
@@ -26,7 +27,12 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
   const [targetAudience, setTargetAudience] = useState<'All Members' | 'Specific Member' | 'Overdue Members' | 'Expiring Soon'>('All Members');
   const [targetMemberId, setTargetMemberId] = useState(members[0]?.id || '');
   const [priority, setPriority] = useState<'Normal' | 'High' | 'Urgent'>('Normal');
-  const [expiryDate] = useState('2026-11-15');
+  // Notices stay listed as current for two weeks.
+  const expiryDate = (() => {
+    const d = new Date(`${todayDhaka()}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + 14);
+    return d.toISOString().slice(0, 10);
+  })();
 
   const handlePublish = (e: React.FormEvent) => {
     e.preventDefault();

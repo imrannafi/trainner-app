@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { Upload, User } from 'lucide-react';
+import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
 import { MembershipDuration } from '../../types';
 import { Modal, showToast } from '../common/CommonUI';
 
 interface AddMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddMember: (data: any) => void;
+  onAddMember: (data: any) => Promise<void>;
 }
 
 export const AddMemberModal: React.FC<AddMemberModalProps> = ({
@@ -31,11 +33,32 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
   const [emergencyName] = useState('');
   const [emergencyPhone] = useState('');
   const [emergencyRelation] = useState('Family');
-  const [avatarUrl, setAvatarUrl] = useState('/src/assets/images/member_avatar_male_1793655258127.jpg');
+  const [avatarFile, setAvatarFile] = useState<Blob | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const resized = await resizeImage(file, 512);
+      setAvatarFile(resized);
+      setAvatarPreview((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return URL.createObjectURL(resized);
+      });
+    } catch {
+      showToast(PHOTO_READ_ERROR, 'error');
+    } finally {
+      input.value = '';
+    }
+  };
   const [trainerNotes, setTrainerNotes] = useState('New client assessment completed.');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSaving) return;
     if (!fullName.trim() || !email.trim()) {
       showToast('Client name and email address are required.', 'error');
       return;
@@ -61,12 +84,11 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
     const sessionsNum = parseInt(totalSessions) || 24;
 
-    onAddMember({
-      userId: `usr-${fullName.toLowerCase().replace(/[^a-z]/g, '')}`,
+    const payload = {
       fullName: fullName.trim(),
       email: email.trim(),
       phone,
-      avatarUrl,
+      avatarFile,
       age: parseInt(age) || 25,
       gender,
       heightCm: parseInt(heightCm) || 175,
@@ -90,16 +112,24 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
       remainingSessions: sessionsNum,
       packagePrice: parseFloat(packagePrice) || 20000,
       nextPaymentDeadline: deadline,
-      paymentStatus: 'Unpaid',
-      status: 'Active',
-      activationStatus: 'Active'
-    });
+      status: 'Active' as const
+    };
 
-    const enrolledName = fullName.trim();
-    setFullName('');
-    setEmail('');
-    onClose();
-    showToast(`Client ${enrolledName} enrolled! Temporary activation code generated.`);
+    setIsSaving(true);
+    try {
+      await onAddMember(payload);
+      const enrolledName = fullName.trim();
+      setFullName('');
+      setEmail('');
+      setAvatarFile(null);
+      setAvatarPreview('');
+      onClose();
+      showToast(`Client ${enrolledName} enrolled! Send them an invitation from the Members list.`);
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -186,42 +216,28 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
         {/* Profile Photo selector */}
         <div className="p-3.5 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <img
-              src={avatarUrl}
-              alt="Avatar preview"
-              referrerPolicy="no-referrer"
-              className="w-12 h-12 rounded-2xl object-cover border border-neutral-300 shrink-0"
-            />
+            {avatarPreview ? (
+              <img
+                src={avatarPreview}
+                alt="Selected profile photo preview"
+                className="w-12 h-12 rounded-2xl object-cover border border-neutral-300 shrink-0"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-2xl bg-white border border-neutral-200 flex items-center justify-center text-neutral-400 shrink-0">
+                <User className="w-5 h-5" />
+              </div>
+            )}
             <div>
               <span className="font-semibold text-neutral-900 block">Athlete Profile Photo</span>
-              <span className="text-[11px] text-neutral-500">Pick from studio portraits:</span>
+              <span className="text-[11px] text-neutral-500">Optional. Upload the client's photo.</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setAvatarUrl('/src/assets/images/member_avatar_male_1793655258127.jpg')}
-              className={`px-3 py-1.5 text-[11px] font-bold rounded-xl border transition-colors ${
-                avatarUrl.includes('male')
-                  ? 'bg-[#7155E8] text-white border-[#7155E8]'
-                  : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-100'
-              }`}
-            >
-              Male Avatar
-            </button>
-            <button
-              type="button"
-              onClick={() => setAvatarUrl('/src/assets/images/member_avatar_female_1793655258393.jpg')}
-              className={`px-3 py-1.5 text-[11px] font-bold rounded-xl border transition-colors ${
-                avatarUrl.includes('female')
-                  ? 'bg-[#7155E8] text-white border-[#7155E8]'
-                  : 'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-100'
-              }`}
-            >
-              Female Avatar
-            </button>
-          </div>
+          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-xl bg-[#7155E8] text-white cursor-pointer hover:bg-[#6245DE] focus-within:ring-2 focus-within:ring-[#7155E8] focus-within:ring-offset-2 self-start sm:self-auto">
+            <Upload className="w-3 h-3" />
+            {avatarFile ? 'Change Photo' : 'Upload Photo'}
+            <input type="file" accept="image/*" className="sr-only" onChange={handlePhotoChange} />
+          </label>
         </div>
 
         {/* Fitness Assessment */}
@@ -335,9 +351,10 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
           </button>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95"
+            disabled={isSaving}
+            className="px-6 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95"
           >
-            Enroll Client & Send Invitation
+            {isSaving ? 'Saving…' : 'Enroll Client'}
           </button>
         </div>
       </form>

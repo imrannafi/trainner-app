@@ -17,7 +17,7 @@ interface MemberRequestsModalProps {
   isOpen: boolean;
   onClose: () => void;
   requests: MemberRegistrationRequest[];
-  onApprove: (requestId: string) => Member | null;
+  onApprove: (requestId: string) => Promise<Member | null>;
   onReject: (requestId: string, reason?: string) => void;
 }
 
@@ -57,11 +57,17 @@ export const MemberRequestsModal: React.FC<MemberRequestsModalProps> = ({
 
   const selectedRequest = filtered.find((r) => r.id === selectedReqId) || filtered[0] || null;
 
-  const handleApprove = (id: string) => {
-    const newMember = onApprove(id);
+  const handleApprove = async (id: string) => {
+    let newMember: Member | null = null;
+    try {
+      newMember = await onApprove(id);
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+      return;
+    }
     setDecliningId(null);
     if (newMember) {
-      const msg = `Member profile created for ${newMember.fullName}! Training & Diet splits assigned.`;
+      const msg = `Member profile created for ${newMember.fullName}!`;
       setActionSuccessMessage(msg);
       showToast(msg);
       setTimeout(() => setActionSuccessMessage(null), 3200);

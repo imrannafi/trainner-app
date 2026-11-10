@@ -22,6 +22,31 @@ export interface TrainerProfile {
   currency: string; // '৳'
   timezone: string; // 'Asia/Dhaka'
   bio: string;
+  isMainCoach: boolean;
+  bkashNumber: string;
+}
+
+export type AccountRole = 'super_admin' | 'trainer' | 'member';
+
+export interface StaffProfile {
+  id: string;
+  role: AccountRole;
+  email: string;
+  fullName: string;
+  username?: string;
+  avatarUrl?: string;
+  createdAt: string;
+}
+
+export interface MemberUpdate {
+  id: string;
+  memberId: string;
+  memberName: string;
+  memberAvatar: string;
+  subject: string;
+  message: string;
+  photoUrl?: string;
+  createdAt: string;
 }
 
 export type MembershipDuration = '1 month' | '3 months' | '6 months' | '12 months' | 'custom';
@@ -93,7 +118,7 @@ export interface PaymentVerificationRequest {
   memberPhone: string;
   amount: number;
   method: 'bKash' | 'Cash';
-  targetBkashNumber?: string; // '01717014371'
+  targetBkashNumber?: string;
   senderBkashNumber?: string;
   trxId?: string;
   submittedAt: string;
@@ -325,6 +350,13 @@ export interface InAppNotification {
   isRead: boolean;
   createdAt: string;
   linkTab?: string;
+  actorMemberId?: string;
+  actorName?: string;
+  actorAvatarUrl?: string;
+  entityType?: 'meal_log' | 'progress_record' | 'workout_session' | 'payment_request' | 'registration_request' | 'member_update' | string;
+  entityId?: string;
+  imageBucket?: string;
+  imagePath?: string;
 }
 
 export interface NeedsAttentionAlert {

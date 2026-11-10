@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Flame
 } from 'lucide-react';
+import { todayDhaka } from '../../lib/dates';
 
 interface GymAttendanceCalendarProps {
   memberId: string;
@@ -23,8 +24,11 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
   isEditable = true,
   roleLabel = 'client'
 }) => {
-  const [currentYear, setCurrentYear] = useState<number>(2026);
-  const [currentMonth, setCurrentMonth] = useState<number>(10); // 0-indexed, 10 = November
+  const todayStr = todayDhaka();
+  const todayYear = Number(todayStr.slice(0, 4));
+  const todayMonth = Number(todayStr.slice(5, 7)) - 1;
+  const [currentYear, setCurrentYear] = useState<number>(todayYear);
+  const [currentMonth, setCurrentMonth] = useState<number>(todayMonth); // 0-indexed
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -52,8 +56,8 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
   };
 
   const goToCurrentMonth = () => {
-    setCurrentYear(2026);
-    setCurrentMonth(10);
+    setCurrentYear(todayYear);
+    setCurrentMonth(todayMonth);
   };
 
   const formatDateStr = (year: number, month: number, day: number): string => {
@@ -72,7 +76,6 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
   const thisMonthCheckIns = checkInDates.filter((d) => d.startsWith(monthPrefix));
   const monthlyCount = thisMonthCheckIns.length;
 
-  const todayStr = '2026-11-02';
   const isCheckedInToday = checkInSet.has(todayStr);
 
   return (
@@ -119,7 +122,7 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          {(currentYear !== 2026 || currentMonth !== 10) && (
+          {(currentYear !== todayYear || currentMonth !== todayMonth) && (
             <button
               type="button"
               onClick={goToCurrentMonth}

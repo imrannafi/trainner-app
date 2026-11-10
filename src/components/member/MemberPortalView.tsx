@@ -8,7 +8,8 @@ import {
   Play,
   Check,
   Send,
-  Lock
+  Lock,
+  Utensils
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
@@ -23,13 +24,17 @@ import {
   TrainingSessionEvent,
   Notice,
   MealPlanAdherence,
-  PaymentVerificationRequest
+  PaymentVerificationRequest,
+  TrainerProfile
 } from '../../types';
 import { Avatar, EmptyState, showToast } from '../common/CommonUI';
 import { AreaTrendChart } from '../common/SvgCharts';
 import { GymAttendanceCalendar } from '../common/GymAttendanceCalendar';
 import { PayModal } from './PayModal';
 import { storage } from '../../services/storage';
+import { CoachConnectCard } from './CoachConnectCard';
+import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
+import { nowTimeDhaka, todayDhaka } from '../../lib/dates';
 
 interface MemberPortalViewProps {
   member: Member;
@@ -44,14 +49,16 @@ interface MemberPortalViewProps {
   paymentRequests?: PaymentVerificationRequest[];
   activeTab?: string;
   onSelectTab?: (tab: string) => void;
-  onSubmitWorkout: (session: any) => void;
-  onSubmitMealLog: (mealLog: any) => void;
-  onAddProgressRecord: (progress: any) => void;
+  coach?: TrainerProfile;
+  onSendUpdate: (subject: string, message: string, photo: Blob | null) => Promise<void>;
+  onSubmitWorkout: (session: any) => Promise<void>;
+  onSubmitMealLog: (mealLog: any) => Promise<void>;
+  onAddProgressRecord: (progress: any) => Promise<void>;
   onMarkNoticeRead: (noticeId: string) => void;
   onToggleGymCheckIn: (memberId: string, dateStr: string) => void;
   onSubmitPaymentRequest?: (
     data: Omit<PaymentVerificationRequest, 'id' | 'submittedAt' | 'status'>
-  ) => void;
+  ) => Promise<void>;
 }
 
 type MemberSectionTab =
@@ -77,6 +84,8 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
   paymentRequests,
   activeTab,
   onSelectTab,
+  coach,
+  onSendUpdate,
   onSubmitWorkout,
   onSubmitMealLog,
   onAddProgressRecord,
@@ -86,7 +95,7 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
 }) => {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const accessStatus = storage.isMemberWorkoutDietUnlocked(member.id);
-  const memberPaymentRequests = (paymentRequests || storage.getPaymentRequests()).filter(
+  const memberPaymentRequests = (paymentRequests ?? []).filter(
     (pr) => pr.memberId === member.id
   );
 
@@ -122,14 +131,42 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
 
   // Meal Log Submission Form state
   const [mealName, setMealName] = useState('Lunch');
-  const [mealDate] = useState('2026-11-02');
+  const mealDate = todayDhaka();
   const [mealAdherence, setMealAdherence] = useState<MealPlanAdherence>('Followed Plan');
-  const [foodsInput, setFoodsInput] = useState('180g Skinless Chicken Breast, 200g Brown Rice, 150g Steamed Broccoli');
-  const [mealCalories, setMealCalories] = useState('580');
-  const [mealProtein, setMealProtein] = useState('55');
-  const [mealCarbs, setMealCarbs] = useState('48');
-  const [mealFat, setMealFat] = useState('9');
-  const [mealPhotoPreview, setMealPhotoPreview] = useState<string>('/src/assets/images/meal_evidence_healthy_1793655257146.jpg');
+  const [foodsInput, setFoodsInput] = useState('');
+  const [mealCalories, setMealCalories] = useState('');
+  const [mealProtein, setMealProtein] = useState('');
+  const [mealCarbs, setMealCarbs] = useState('');
+  const [mealFat, setMealFat] = useState('');
+  const [mealPhotoPreview, setMealPhotoPreview] = useState<string>('');
+  const [mealPhotoFile, setMealPhotoFile] = useState<Blob | null>(null);
+  const [isSubmittingMeal, setIsSubmittingMeal] = useState(false);
+  const [isSubmittingWorkout, setIsSubmittingWorkout] = useState(false);
+  const [progressPhotoFile, setProgressPhotoFile] = useState<Blob | null>(null);
+  const [progressPhotoPreview, setProgressPhotoPreview] = useState('');
+  const [isSavingProgress, setIsSavingProgress] = useState(false);
+
+  const pickPhoto = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFile: (b: Blob | null) => void,
+    setPreview: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const resized = await resizeImage(file);
+      setFile(resized);
+      setPreview((old) => {
+        if (old.startsWith('blob:')) URL.revokeObjectURL(old);
+        return URL.createObjectURL(resized);
+      });
+    } catch {
+      showToast(PHOTO_READ_ERROR, 'error');
+    } finally {
+      input.value = '';
+    }
+  };
   const [memberNotesInput, setMemberNotesInput] = useState('');
 
   // Progress Logger Form state
@@ -150,19 +187,19 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
   const memberMeals = mealLogs.filter((m) => m.memberId === member.id);
   const memberProgress = progressRecords.filter((r) => r.memberId === member.id);
   const memberTrainingSessions = trainingSessions.filter((s) => s.memberId === member.id);
+  // The database already returns only the notices aimed at this member.
   const memberNotices = notices.filter(
-    (n) =>
-      n.targetAudience === 'All Members' ||
-      (n.targetAudience === 'Specific Member' && n.targetMemberId === member.id)
+    (n) => n.targetAudience !== 'Specific Member' || n.targetMemberId === member.id
   );
 
-  const todayMs = new Date('2026-11-02').getTime();
+  const today = todayDhaka();
+  const todayMs = new Date(today).getTime();
   const endMs = new Date(member.membershipEndDate).getTime();
   const remainingDays = Math.max(0, Math.ceil((endMs - todayMs) / (1000 * 60 * 60 * 24)));
 
   // Today's meal logs
-  const todayMeals = memberMeals.filter((m) => m.date === '2026-11-02');
-  const novCheckIns = (member.gymCheckInDates || []).filter((d) => d.startsWith('2026-11')).length;
+  const todayMeals = memberMeals.filter((m) => m.date === today);
+  const novCheckIns = (member.gymCheckInDates || []).filter((d) => d.startsWith(today.slice(0, 7))).length;
   const totalCheckIns = (member.gymCheckInDates || []).length;
 
   // Active workout day
@@ -185,9 +222,9 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
     }
   };
 
-  const handleSubmitWorkoutSession = (e: React.FormEvent) => {
+  const handleSubmitWorkoutSession = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentWorkoutDay) return;
+    if (!currentWorkoutDay || isSubmittingWorkout) return;
 
     const completedExercises: WorkoutExerciseLog[] = currentWorkoutDay.exercises.map((ex) => {
       const prog = exerciseProgress[ex.id] || {
@@ -210,41 +247,62 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
       };
     });
 
+    const duration = parseInt(workoutDuration) || 60;
+    const endTime = nowTimeDhaka();
+    const [endH, endM] = endTime.split(':').map(Number);
+    const startMinutes = Math.max(0, endH * 60 + endM - duration);
+    const startTime = `${String(Math.floor(startMinutes / 60)).padStart(2, '0')}:${String(startMinutes % 60).padStart(2, '0')}`;
+    const doneCount = completedExercises.filter((x) => x.completed).length;
+
     const newSession: WorkoutSession = {
-      id: `ws-${Date.now()}`,
+      id: '',
       memberId: member.id,
       memberName: member.fullName,
-      planId: assignedWorkout?.id || 'wp-01',
-      planName: assignedWorkout?.name || 'Strength & Conditioning',
+      planId: assignedWorkout?.id || '',
+      planName: assignedWorkout?.name || 'Workout',
       dayName: currentWorkoutDay.dayName,
-      scheduledDate: '2026-11-02',
-      startTime: '17:30',
-      durationMinutes: parseInt(workoutDuration) || 60,
+      scheduledDate: todayDhaka(),
+      startTime,
+      endTime,
+      durationMinutes: duration,
       exerciseLogs: completedExercises,
-      completionPercentage: 100,
+      completionPercentage: completedExercises.length ? Math.round((doneCount / completedExercises.length) * 100) : 100,
       status: 'Completed',
       trainerReviewStatus: 'Pending Review',
       memberNotes: sessionNotes
     };
 
-    onSubmitWorkout(newSession);
-    setIsWorkingOut(false);
-    showToast('Great work! Your workout session was logged for Coach Oliul Azim to verify.');
+    setIsSubmittingWorkout(true);
+    try {
+      await onSubmitWorkout(newSession);
+      setIsWorkingOut(false);
+      setSessionNotes('');
+      showToast(`Great work! Your workout was sent to ${coach?.fullName ?? 'your coach'} to verify.`);
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setIsSubmittingWorkout(false);
+    }
   };
 
-  const handleSubmitMeal = (e: React.FormEvent) => {
+  const handleSubmitMeal = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmittingMeal) return;
+    if (!mealPhotoFile) {
+      showToast('Please add a photo of your meal for your coach to verify.', 'error');
+      return;
+    }
 
-    const newMealLog: MealLog = {
-      id: `ml-${Date.now()}`,
+    const newMealLog: MealLog & { photoFile: Blob | null } = {
+      id: '',
+      photoFile: mealPhotoFile,
       memberId: member.id,
       memberName: member.fullName,
       memberAvatar: member.avatarUrl,
-      dietPlanId: assignedDiet?.id || 'dp-01',
+      dietPlanId: assignedDiet?.id || '',
       date: mealDate,
       scheduledMealName: mealName,
       adherence: mealAdherence,
-      photoUrl: mealPhotoPreview,
       prescribedFoodsSummary:
         assignedDiet?.meals
           .find((m) => m.name === mealName)
@@ -252,88 +310,72 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
           .join(', ') || 'Custom meal',
       foodsConsumed: [
         {
-          id: `fi-${Date.now()}`,
+          id: '',
           name: foodsInput,
           quantity: 'Portion as consumed',
-          calories: parseInt(mealCalories) || 450,
-          proteinG: parseInt(mealProtein) || 40,
-          carbsG: parseInt(mealCarbs) || 50,
-          fatG: parseInt(mealFat) || 15,
+          calories: parseInt(mealCalories) || 0,
+          proteinG: parseInt(mealProtein) || 0,
+          carbsG: parseInt(mealCarbs) || 0,
+          fatG: parseInt(mealFat) || 0,
           wasInPlan: mealAdherence === 'Followed Plan' || mealAdherence === 'Partially Followed'
         }
       ],
-      totalCalories: parseInt(mealCalories) || 500,
-      totalProteinG: parseInt(mealProtein) || 40,
-      totalCarbsG: parseInt(mealCarbs) || 50,
-      totalFatG: parseInt(mealFat) || 15,
+      totalCalories: parseInt(mealCalories) || 0,
+      totalProteinG: parseInt(mealProtein) || 0,
+      totalCarbsG: parseInt(mealCarbs) || 0,
+      totalFatG: parseInt(mealFat) || 0,
       memberNotes: memberNotesInput,
       trainerReviewStatus: 'Pending',
-      loggedAt: `${mealDate} 14:00`
+      loggedAt: ''
     };
 
-    onSubmitMealLog(newMealLog);
-    showToast('Meal evidence submitted! Coach Oliul has received your food photograph.');
-    switchTab('dashboard');
+    setIsSubmittingMeal(true);
+    try {
+      await onSubmitMealLog(newMealLog);
+      showToast(`Meal photo submitted! ${coach?.fullName ?? 'Your coach'} has been notified.`);
+      setFoodsInput('');
+      setMealCalories('');
+      setMealProtein('');
+      setMealCarbs('');
+      setMealFat('');
+      setMemberNotesInput('');
+      setMealPhotoFile(null);
+      setMealPhotoPreview('');
+      switchTab('dashboard');
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setIsSubmittingMeal(false);
+    }
   };
 
-  const handleLogProgress = (e: React.FormEvent) => {
+  const handleLogProgress = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newProg: ProgressRecord = {
-      id: `pr-${Date.now()}`,
+    if (isSavingProgress) return;
+    const newProg: ProgressRecord & { photoFile: Blob | null } = {
+      id: '',
+      photoFile: progressPhotoFile,
       memberId: member.id,
-      date: '2026-11-02',
+      date: todayDhaka(),
       weightKg: parseFloat(logWeight) || member.currentWeightKg,
       waistCm: logWaist ? parseFloat(logWaist) : undefined,
       personalBests: logBenchPR ? { benchPressKg: parseFloat(logBenchPR) } : undefined,
       notes: 'Morning weigh-in recorded via Member Portal'
     };
-    onAddProgressRecord(newProg);
-    showToast('Body assessment saved! Progress history updated.');
-  };
-
-  // Meal categories for Food Discovery UI
-  const mealCategories = [
-    {
-      name: 'Breakfast',
-      time: '08:30 AM',
-      sampleImg: '/src/assets/images/meal_evidence_healthy_1793655257146.jpg',
-      desc: 'High-protein start: boiled whole eggs, oats, and banana',
-      calories: 485,
-      protein: 32,
-      carbs: 65,
-      fat: 16
-    },
-    {
-      name: 'Lunch',
-      time: '01:30 PM',
-      sampleImg: '/src/assets/images/meal_evidence_healthy_1793655257146.jpg',
-      desc: 'Steamed brown rice, tender grilled chicken breast, and broccoli',
-      calories: 580,
-      protein: 55,
-      carbs: 52,
-      fat: 9
-    },
-    {
-      name: 'Afternoon Snack',
-      time: '05:00 PM',
-      sampleImg: '/src/assets/images/meal_evidence_healthy_1793655257146.jpg',
-      desc: 'Low-fat Greek yogurt, crisp apple, and raw almonds',
-      calories: 295,
-      protein: 21,
-      carbs: 34,
-      fat: 10
-    },
-    {
-      name: 'Dinner',
-      time: '09:00 PM',
-      sampleImg: '/src/assets/images/meal_evidence_healthy_1793655257146.jpg',
-      desc: 'Freshwater fish fillet, steamed sweet potato, and leafy greens',
-      calories: 440,
-      protein: 42,
-      carbs: 38,
-      fat: 11
+    setIsSavingProgress(true);
+    try {
+      await onAddProgressRecord(newProg);
+      showToast('Body assessment saved! Progress history updated.');
+      setLogWaist('');
+      setLogBenchPR('');
+      setProgressPhotoFile(null);
+      setProgressPhotoPreview('');
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setIsSavingProgress(false);
     }
-  ];
+  };
 
   const renderAccessLockedCard = (sectionName: 'Workout Routine' | 'Diet Blueprint') => (
     <div className="bg-white rounded-3xl p-8 sm:p-10 border border-neutral-200/70 shadow-[0_4px_24px_rgba(0,0,0,0.03)] text-center max-w-xl mx-auto space-y-5">
@@ -386,7 +428,7 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
           className="px-6 py-3.5 rounded-2xl bg-[#E2136E] hover:bg-[#c00f5c] text-white text-xs font-bold shadow-[0_4px_16px_rgba(226,19,110,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
         >
           <CreditCard className="w-4 h-4 shrink-0" />
-          Pay via bKash (01717014371) / Cash Now
+          Pay via bKash{coach?.bkashNumber ? ` (${coach.bkashNumber})` : ''} / Cash Now
         </button>
       </div>
     </div>
@@ -414,10 +456,15 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
                   Athlete Member
                 </span>
                 <span aria-hidden="true" className="text-neutral-300">·</span>
-                <span className="text-xs text-neutral-400 font-medium">Monday, Nov 2, 2026</span>
+                <span className="text-xs text-neutral-400 font-medium">
+                  {new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Dhaka', weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#171717] mt-0.5 truncate">
-                Good Morning, {member.fullName.split(' ')[0]}!
+                {(() => {
+                  const h = Number(nowTimeDhaka().slice(0, 2));
+                  return h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+                })()}, {member.fullName.split(' ')[0]}!
               </h1>
               <p className="text-xs text-neutral-500 mt-0.5 truncate">
                 Goal: <span className="font-semibold text-neutral-700">{member.fitnessGoal}</span> · {member.fitnessLevel}
@@ -500,6 +547,8 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
           {/* SECTION: DASHBOARD */}
           {memberTab === 'dashboard' && (
             <div className="space-y-6">
+              <CoachConnectCard coach={coach} onSendUpdate={onSendUpdate} />
+
               {/* Calendar Check-in Grid */}
               <GymAttendanceCalendar
                 memberId={member.id}
@@ -875,22 +924,35 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
 
                 {/* Food Discovery Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {mealCategories.map((meal, idx) => {
-                    const assignedMeal = assignedDiet?.meals[idx];
+                  {(assignedDiet?.meals ?? []).length === 0 && (
+                    <div className="md:col-span-2">
+                      <EmptyState
+                        title="No meals in your plan yet"
+                        description="Your coach has not added meals to your diet blueprint."
+                      />
+                    </div>
+                  )}
+                  {(assignedDiet?.meals ?? []).map((assignedMeal) => {
+                    const sum = (key: 'calories' | 'proteinG' | 'carbsG' | 'fatG') =>
+                      Math.round(assignedMeal.foodItems.reduce((acc, f) => acc + f[key], 0));
+                    const meal = {
+                      name: assignedMeal.name,
+                      time: assignedMeal.scheduledTime,
+                      desc: assignedMeal.preparationNotes || '',
+                      calories: sum('calories'),
+                      protein: sum('proteinG'),
+                      carbs: sum('carbsG'),
+                      fat: sum('fatG')
+                    };
                     return (
                       <div
-                        key={meal.name}
+                        key={assignedMeal.id}
                         className="bg-white rounded-3xl p-5 border border-neutral-200/70 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.07)] transition-shadow flex flex-col justify-between group"
                       >
                         <div>
                           {/* Meal Food Photograph (Unified top overlay container prevents left/right pill collision) */}
-                          <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-neutral-100 mb-4">
-                            <img
-                              src={meal.sampleImg}
-                              alt={meal.name}
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
+                          <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-4 bg-gradient-to-br from-[#F0EEFC] via-white to-[#ECFDF5] flex items-center justify-center">
+                            <Utensils className="w-12 h-12 text-[#7155E8]/40 group-hover:scale-110 transition-transform duration-300" />
                             <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2 pointer-events-none">
                               <span className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-[#171717] shadow-xs truncate">
                                 {meal.name}
@@ -1151,9 +1213,10 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
 
                           <button
                             type="submit"
-                            className="w-full py-3 bg-[#7155E8] hover:bg-[#6245DE] text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
+                            disabled={isSubmittingWorkout}
+                            className="w-full py-3 bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
                           >
-                            <Check className="w-4 h-4" /> Submit Workout Report for Verification
+                            <Check className="w-4 h-4" /> {isSubmittingWorkout ? 'Submitting…' : 'Submit Workout Report for Verification'}
                           </button>
                         </div>
                       </form>
@@ -1255,29 +1318,15 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
                       </span>
                       <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                         <label className="px-4 py-2 bg-[#7155E8] text-white rounded-xl cursor-pointer hover:bg-[#6245DE] transition-colors inline-block text-xs font-bold shadow-xs active:scale-95">
-                          Choose Photo
+                          {mealPhotoFile ? 'Change Photo' : 'Choose Photo'}
                           <input
                             type="file"
                             accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                const url = URL.createObjectURL(file);
-                                setMealPhotoPreview(url);
-                              }
-                            }}
+                            capture="environment"
+                            className="sr-only"
+                            onChange={(e) => pickPhoto(e, setMealPhotoFile, setMealPhotoPreview)}
                           />
                         </label>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setMealPhotoPreview('/src/assets/images/meal_evidence_healthy_1793655257146.jpg')
-                          }
-                          className="px-3 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-xl hover:bg-neutral-100 text-xs font-semibold"
-                        >
-                          Use Sample Plate
-                        </button>
                       </div>
                       <span className="text-[11px] text-neutral-400 block">
                         Photo evidence helps Coach Oliul Azim verify accurate portion size and clean preparation.
@@ -1352,9 +1401,10 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[#7155E8] hover:bg-[#6245DE] text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
+                  disabled={isSubmittingMeal}
+                  className="w-full py-3 bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
                 >
-                  <Send className="w-4 h-4" /> Submit Meal Report for Coach Review
+                  <Send className="w-4 h-4" /> {isSubmittingMeal ? 'Uploading…' : 'Submit Meal Report for Coach Review'}
                 </button>
               </form>
             </div>
@@ -1408,10 +1458,38 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
                   <div className="flex items-end">
                     <button
                       type="submit"
-                      className="w-full py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white font-bold text-xs rounded-2xl shadow-xs transition-all active:scale-95"
+                      disabled={isSavingProgress}
+                      className="w-full py-2.5 bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-xs transition-all active:scale-95"
                     >
-                      Save Assessment
+                      {isSavingProgress ? 'Saving…' : 'Save Assessment'}
                     </button>
+                  </div>
+                  <div className="sm:col-span-4 flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-2xl border border-neutral-200/80">
+                    {progressPhotoPreview ? (
+                      <img
+                        src={progressPhotoPreview}
+                        alt="Progress photo preview"
+                        className="w-12 h-12 rounded-xl object-cover border border-white shadow-xs shrink-0"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-white border border-neutral-200 flex items-center justify-center text-neutral-400 shrink-0">
+                        <Camera className="w-5 h-5" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <span className="font-bold text-[#171717] block">Progress photo (optional)</span>
+                      <span className="text-[11px] text-neutral-500">Only you and your coach can see it.</span>
+                    </div>
+                    <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold cursor-pointer hover:bg-neutral-50 focus-within:ring-2 focus-within:ring-[#7155E8] shrink-0">
+                      <Camera className="w-3.5 h-3.5" />
+                      {progressPhotoFile ? 'Change' : 'Add Photo'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={(e) => pickPhoto(e, setProgressPhotoFile, setProgressPhotoPreview)}
+                      />
+                    </label>
                   </div>
                 </form>
               </div>
@@ -1548,18 +1626,14 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
         </motion.div>
       </AnimatePresence>
 
-      {/* Pay Modal (bKash 01717014371 & Cash) */}
+      {/* Pay Modal (bKash & Cash) */}
       <PayModal
         isOpen={isPayModalOpen}
         onClose={() => setIsPayModalOpen(false)}
         member={member}
-        onSubmitPaymentRequest={(data) => {
-          if (onSubmitPaymentRequest) {
-            onSubmitPaymentRequest(data);
-          } else {
-            storage.submitPaymentRequest(data);
-          }
-          showToast('Payment request sent to Coach Oliul Azim for verification!');
+        onSubmitPaymentRequest={async (data) => {
+          await (onSubmitPaymentRequest ?? ((d) => storage.submitPaymentRequest(d)))(data);
+          showToast(`Payment request sent to ${coach?.fullName ?? 'your coach'} for verification!`);
         }}
       />
     </div>

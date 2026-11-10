@@ -1,20 +1,24 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Azims Workout Manager
 
-# Run and deploy your AI Studio app
+Coaching platform for Coach Oliul Azim's gym: a coach portal (clients, workout and diet plans, meal photo review, payments, schedule, notices, reports) and a client portal (workouts, diet, meal and progress logging, payments, notices). Data, sign-in, photos and notifications run on Supabase.
 
-This contains everything you need to run your app locally.
+## Run locally
 
-View your app in AI Studio: https://ai.studio/apps/28191971-8d36-45f2-a382-779280d8b728
+**Prerequisites:** Node.js 20+ and a Supabase project set up as described in [supabase/ARCHITECTURE.md](supabase/ARCHITECTURE.md).
 
-## Run Locally
+1. Install dependencies: `npm install --legacy-peer-deps`
+2. Copy `.env.example` to `.env.local` and fill in your Supabase URL and anon key.
+3. Start the app: `npm run dev`, then open http://localhost:3000
 
-**Prerequisites:**  Node.js
+If the project folder name contains `&`, `npm run dev` fails on Windows; rename the folder, or run `node node_modules/vite/bin/vite.js --port=3000`.
 
+## Project layout
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+| Path | Contents |
+|---|---|
+| `src/services/storage.ts` | Supabase data layer used by every screen |
+| `src/services/session.ts` | Sign-in state and role routing |
+| `src/services/push.ts`, `public/sw.js` | Web push notifications |
+| `supabase/migrations/` | Database schema, rules and functions (run in order) |
+| `supabase/functions/` | Edge Functions: `send-push`, `invite-member` |
+| `scripts/upload-coach-photo.mjs` | One-time upload of the main coach photo to Storage |

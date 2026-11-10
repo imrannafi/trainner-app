@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { todayDhaka } from '../../lib/dates';
+import { storage } from '../../services/storage';
 import { Plus } from 'lucide-react';
 import { TrainingSessionEvent, Member } from '../../types';
 import { Avatar, Modal, showToast } from '../common/CommonUI';
@@ -20,7 +22,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id || '');
-  const [sessionDate, setSessionDate] = useState('2026-11-03');
+  const [sessionDate, setSessionDate] = useState(todayDhaka());
   const [startTime, setStartTime] = useState('18:00');
   const [endTime, setEndTime] = useState('19:00');
   const [sessionTitle, setSessionTitle] = useState('Personal Coaching: Hypertrophy & Technique');
@@ -35,7 +37,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
     onScheduleSession({
       memberId: member.id,
       memberName: member.fullName,
-      trainerId: 'trainer-01',
+      trainerId: storage.getTrainer().id,
       sessionDate,
       startTime,
       endTime,
