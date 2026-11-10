@@ -12,6 +12,8 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 import { Member, PaymentVerificationRequest } from '../../types';
 import { showToast, useBodyScrollLock } from '../common/CommonUI';
+import { storage } from '../../services/storage';
+import { currentBillingMonth } from '../../lib/dates';
 
 interface PayModalProps {
   isOpen: boolean;
@@ -19,7 +21,7 @@ interface PayModalProps {
   member: Member;
   onSubmitPaymentRequest: (
     data: Omit<PaymentVerificationRequest, 'id' | 'submittedAt' | 'status'>
-  ) => void;
+  ) => Promise<void> | void;
 }
 
 export const PayModal: React.FC<PayModalProps> = ({
@@ -29,16 +31,17 @@ export const PayModal: React.FC<PayModalProps> = ({
   onSubmitPaymentRequest
 }) => {
   const [method, setMethod] = useState<'bKash' | 'Cash'>('bKash');
-  const [amount, setAmount] = useState<string>('3500');
-  const [senderPhone, setSenderPhone] = useState<string>(member.phone || '01700000000');
+  const balanceDue = Math.max(member.packagePrice - member.amountPaid, 0);
+  const [amount, setAmount] = useState<string>(String(balanceDue || member.packagePrice || ''));
+  const [senderPhone, setSenderPhone] = useState<string>(member.phone || '');
   const [trxId, setTrxId] = useState<string>('');
-  const [notes, setNotes] = useState<string>('November 2026 Monthly Coaching Fee');
+  const [notes, setNotes] = useState<string>(`${currentBillingMonth()} Monthly Coaching Fee`);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submittedSuccess, setSubmittedSuccess] = useState<boolean>(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const bkashNumber = '01717014371';
+  const bkashNumber = storage.getMainCoach()?.bkashNumber || '';
 
   useBodyScrollLock(isOpen);
 
@@ -67,6 +70,20 @@ export const PayModal: React.FC<PayModalProps> = ({
     e.preventDefault();
     setValidationError(null);
 
+    if (method === 'bKash' && !bkashNumber) {
+      const errMsg = 'The coach has not added a bKash number yet. Please pay in cash or contact the coach.';
+      setValidationError(errMsg);
+      showToast(errMsg, 'error');
+      return;
+    }
+
+    if (!(parseFloat(amount) > 0)) {
+      const errMsg = 'Please enter the amount you paid.';
+      setValidationError(errMsg);
+      showToast(errMsg, 'error');
+      return;
+    }
+
     if (method === 'bKash' && !trxId.trim()) {
       const errMsg = 'Please enter your bKash Transaction ID (TrxID) after completing the Send Money transfer.';
       setValidationError(errMsg);
@@ -75,28 +92,34 @@ export const PayModal: React.FC<PayModalProps> = ({
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    Promise.resolve(
       onSubmitPaymentRequest({
         memberId: member.id,
         memberName: member.fullName,
         memberAvatar: member.avatarUrl,
         memberPhone: member.phone,
-        amount: parseFloat(amount) || 3500,
+        amount: parseFloat(amount),
         method,
         targetBkashNumber: method === 'bKash' ? bkashNumber : undefined,
         senderBkashNumber: method === 'bKash' ? senderPhone : undefined,
         trxId: method === 'bKash' ? trxId.trim().toUpperCase() : undefined,
-        billingMonth: 'November 2026',
+        billingMonth: currentBillingMonth(),
         notes: notes.trim()
-      });
-      setIsSubmitting(false);
-      setSubmittedSuccess(true);
-      setTrxId('');
-      setTimeout(() => {
-        setSubmittedSuccess(false);
-        onClose();
-      }, 1700);
-    }, 350);
+      })
+    )
+      .then(() => {
+        setSubmittedSuccess(true);
+        setTrxId('');
+        setTimeout(() => {
+          setSubmittedSuccess(false);
+          onClose();
+        }, 1700);
+      })
+      .catch((err: Error) => {
+        setValidationError(err.message);
+        showToast(err.message, 'error');
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   return (
@@ -205,7 +228,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                         </span>
                       </div>
                       <span className="text-[11px] text-neutral-500 font-mono">
-                        01717014371
+                        {bkashNumber || 'Not set'}
                       </span>
                     </button>
 
@@ -373,7 +396,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                     type="text"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="e.g. November 2026 Monthly Coaching Fee"
+                    placeholder={`e.g. ${currentBillingMonth()} Monthly Coaching Fee`}
                     className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl text-xs focus:bg-white focus:outline-none focus:border-[#7155E8]"
                   />
                 </div>

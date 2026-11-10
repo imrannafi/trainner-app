@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { todayDhaka } from '../../lib/dates';
+import { resizeImage } from '../../lib/image';
 import {
   Users,
   CreditCard,
@@ -86,7 +88,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
   const totalPaid = members.reduce((sum, m) => sum + m.amountPaid, 0);
   const totalOutstanding = Math.max(0, totalPackageValue - totalPaid);
 
-  const currentMonthPrefix = '2026-11';
+  const currentMonthPrefix = todayDhaka().slice(0, 7);
   const monthlyCollections = payments
     .filter((p) => p.date.startsWith(currentMonthPrefix) && p.status === 'Completed')
     .reduce((sum, p) => sum + p.amount, 0);
@@ -141,7 +143,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
           <div className="flex items-center gap-4 min-w-0">
             <div className="relative shrink-0 group">
               <Avatar
-                src={trainerProfile.avatarUrl || '/src/assets/images/oliul_azim_coach_1794068467381.jpg'}
+                src={trainerProfile.avatarUrl}
                 name="Coach Oliul"
                 size="lg"
                 className="rounded-3xl border-2 border-white shadow-md object-cover"
@@ -156,16 +158,18 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        const dataUrl = event.target?.result as string;
-                        storage.updateTrainer({ avatarUrl: dataUrl });
-                        showToast('Coach profile photo updated successfully!');
-                      };
-                      reader.readAsDataURL(file);
+                  onChange={async (e) => {
+                    const input = e.target;
+                    const file = input.files?.[0];
+                    if (!file) return;
+                    try {
+                      const resized = await resizeImage(file, 800);
+                      await storage.uploadTrainerPhoto(resized);
+                      showToast('Coach profile photo updated for every client!');
+                    } catch (err) {
+                      showToast((err as Error).message, 'error');
+                    } finally {
+                      input.value = '';
                     }
                   }}
                 />
@@ -333,7 +337,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
         </div>
       </div>
 
-      {/* 3.1 PENDING PAYMENT REQUESTS (bKash 01717014371 & Cash) */}
+      {/* 3.1 PENDING PAYMENT REQUESTS (bKash & Cash) */}
       {pendingPayments.length > 0 && (
         <div className="bg-white rounded-3xl p-5 sm:p-7 border border-[#E2136E]/30 shadow-[0_4px_24px_rgba(226,19,110,0.06)] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 pb-3">
@@ -605,12 +609,18 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                 <div>
                   {/* Large Profile Photograph Container */}
                   <div className="relative w-full h-44 rounded-2xl overflow-hidden bg-neutral-100 mb-3.5">
-                    <img
-                      src={member.avatarUrl}
-                      alt={member.fullName}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    {member.avatarUrl ? (
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.fullName}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#F0EEFC] text-[#7155E8] text-4xl font-extrabold">
+                        {member.fullName.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
+                      </div>
+                    )}
                     {/* Unified Top Overlay Flex Row - Prevents Left/Right Badge Collisions */}
                     <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2 pointer-events-none">
                       <span
@@ -821,12 +831,15 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   onClick={() => onSelectTab('meal-hub')}
                   className="p-2.5 rounded-2xl bg-[#F5F5F5] hover:bg-[#EFEFEF] cursor-pointer transition-colors flex items-center gap-3 min-w-0"
                 >
-                  <img
-                    src={log.photoUrl || '/src/assets/images/meal_evidence_healthy_1793655257146.jpg'}
-                    alt="Meal"
-                    referrerPolicy="no-referrer"
-                    className="w-12 h-12 rounded-xl object-cover shrink-0"
-                  />
+                  {log.photoUrl ? (
+                    <img
+                      src={log.photoUrl}
+                      alt="Meal"
+                      className="w-12 h-12 rounded-xl object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-white border border-neutral-200 shrink-0" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-[#171717] truncate">

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { todayDhaka } from '../../lib/dates';
 import {
   Search,
   Phone,
@@ -7,7 +8,7 @@ import {
   ArrowUpDown,
   Grid,
   List,
-  Copy,
+  Mail,
   Check,
   Users,
   UserPlus
@@ -21,7 +22,7 @@ interface MembersListProps {
   onOpenAddMember: () => void;
   onOpenDirectEnroll?: () => void;
   onOpenRecordPayment: (memberId?: string) => void;
-  onActivateAccount: (memberId: string) => void;
+  onActivateAccount: (memberId: string) => Promise<void>;
   onDeleteMember: (memberId: string) => void;
 }
 
@@ -29,13 +30,14 @@ export const MembersList: React.FC<MembersListProps> = ({
   members,
   onSelectMember,
   onOpenAddMember,
-  onOpenDirectEnroll
+  onOpenDirectEnroll,
+  onActivateAccount
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'days' | 'due' | 'status'>('name');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
-  const [favorites, setFavorites] = useState<Set<string>>(new Set(['mem-01']));
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
@@ -48,13 +50,21 @@ export const MembersList: React.FC<MembersListProps> = ({
     });
   };
 
-  const copyActivationLink = (m: Member, e: React.MouseEvent) => {
+  const sendInvitation = async (m: Member, e: React.MouseEvent) => {
     e.stopPropagation();
-    const link = `${window.location.origin}/#activate?user=${m.userId}&code=APEX-${m.id.toUpperCase()}`;
-    navigator.clipboard?.writeText(link);
+    if (m.userId) {
+      showToast(`${m.fullName} already has an account.`, 'info');
+      return;
+    }
     setCopiedId(m.id);
-    showToast(`Invite activation link copied for ${m.fullName}!`, 'info');
-    setTimeout(() => setCopiedId(null), 2000);
+    try {
+      await onActivateAccount(m.id);
+      showToast(`Invitation emailed to ${m.email}.`);
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setCopiedId(null);
+    }
   };
 
   const filtered = members
@@ -230,7 +240,7 @@ export const MembersList: React.FC<MembersListProps> = ({
             const dueAmount = Math.max(0, member.packagePrice - member.amountPaid);
             const isFavorite = favorites.has(member.id);
 
-            const todayMs = new Date('2026-11-02').getTime();
+            const todayMs = new Date(todayDhaka()).getTime();
             const endMs = new Date(member.membershipEndDate).getTime();
             const remainingDays = Math.max(0, Math.ceil((endMs - todayMs) / (1000 * 60 * 60 * 24)));
 
@@ -246,12 +256,18 @@ export const MembersList: React.FC<MembersListProps> = ({
                 <div>
                   {/* Large Profile Photograph */}
                   <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-neutral-100 mb-4">
-                    <img
-                      src={member.avatarUrl}
-                      alt={member.fullName}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    {member.avatarUrl ? (
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.fullName}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-[#F0EEFC] text-[#7155E8] text-4xl font-extrabold">
+                        {member.fullName.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
+                      </div>
+                    )}
 
                     {/* Unified Top Overlay Flex Row */}
                     <div className="absolute inset-x-3 top-3 flex items-start justify-between gap-2 pointer-events-none">
@@ -353,14 +369,16 @@ export const MembersList: React.FC<MembersListProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={(e) => copyActivationLink(member, e)}
-                      className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"
-                      title="Copy invite activation link"
+                      onClick={(e) => sendInvitation(member, e)}
+                      disabled={copiedId === member.id}
+                      className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                      title={member.userId ? 'Client has an account' : 'Email an invitation to create their account'}
+                      aria-label={member.userId ? 'Client has an account' : `Email an invitation to ${member.fullName}`}
                     >
-                      {copiedId === member.id ? (
+                      {member.userId ? (
                         <Check className="w-3.5 h-3.5 text-[#10B981]" />
                       ) : (
-                        <Copy className="w-3.5 h-3.5" />
+                        <Mail className="w-3.5 h-3.5" />
                       )}
                     </button>
                     <a

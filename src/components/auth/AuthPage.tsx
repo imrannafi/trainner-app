@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dumbbell,
   Mail,
@@ -15,89 +15,91 @@ import {
   Upload
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { UserRole, Member, MemberRegistrationRequest } from '../../types';
+import { supabase } from '../../lib/supabase';
+import { storage } from '../../services/storage';
+import { RegistrationStatus, signInWithGoogle } from '../../services/session';
+import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
 
-const MAX_PHOTO_DIMENSION = 512;
+const GoogleIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" aria-hidden="true">
+    <path fill="#4285F4" d="M23.5 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.86c2.26-2.08 3.58-5.15 3.58-8.81z" />
+    <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.92l-3.86-3c-1.08.72-2.45 1.15-4.09 1.15-3.14 0-5.8-2.12-6.75-4.98H1.27v3.1A12 12 0 0 0 12 24z" />
+    <path fill="#FBBC05" d="M5.25 14.25A7.2 7.2 0 0 1 4.87 12c0-.78.14-1.54.38-2.25v-3.1H1.27A12 12 0 0 0 0 12c0 1.94.46 3.77 1.27 5.35l3.98-3.1z" />
+    <path fill="#EA4335" d="M12 4.77c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.27 6.65l3.98 3.1C6.2 6.89 8.86 4.77 12 4.77z" />
+  </svg>
+);
 
-// Photos are persisted in localStorage (~5 MB total), so originals must be downscaled to fit.
-const resizePhotoToDataUrl = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const objectUrl = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      const scale = Math.min(1, MAX_PHOTO_DIMENSION / Math.max(image.width, image.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(image.width * scale);
-      canvas.height = Math.round(image.height * scale);
-      const context = canvas.getContext('2d');
-      if (!context) {
-        reject(new Error('Canvas is not available'));
-        return;
-      }
-      // JPEG has no alpha channel; without this, transparent areas turn black.
-      context.fillStyle = '#FFFFFF';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.85));
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error('Image could not be decoded'));
-    };
-    image.src = objectUrl;
-  });
+export interface AuthPrefill {
+  email: string;
+  fullName: string;
+  avatarUrl?: string;
+}
 
 interface AuthPageProps {
-  onLogin: (role: UserRole, memberId?: string) => void;
-  allMembers: Member[];
-  onActivateAccount: (memberId: string) => void;
-  onSubmitRegistrationRequest: (
-    data: Omit<MemberRegistrationRequest, 'id' | 'submittedAt' | 'status'>
-  ) => void;
+  /** 'complete-registration': signed in (e.g. with Google) but not yet an approved client. */
+  mode: 'sign-in' | 'complete-registration';
+  prefill?: AuthPrefill;
+  registration?: RegistrationStatus | null;
+  onRegistrationSubmitted: () => void;
+  onSignOut: () => void;
 }
 
 export const AuthPage: React.FC<AuthPageProps> = ({
-  onLogin,
-  allMembers,
-  onSubmitRegistrationRequest
+  mode,
+  prefill,
+  registration,
+  onRegistrationSubmitted,
+  onSignOut
 }) => {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const isCompleting = mode === 'complete-registration';
+  const [isSignUp, setIsSignUp] = useState(isCompleting);
   const [showPassword, setShowPassword] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   // Sign In inputs
-  const [email, setEmail] = useState('tariq@apexperformance.bd');
-  const [password, setPassword] = useState('password123');
-  const [rememberMe, setRememberMe] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   // Sign Up inputs (Member registration with full body condition & photo)
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('017');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPassword, setSignupPassword] = useState('pass1234');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [photoFileName, setPhotoFileName] = useState('');
+  const [name, setName] = useState(prefill?.fullName ?? '');
+  const [phone, setPhone] = useState('');
+  const [signupEmail, setSignupEmail] = useState(prefill?.email ?? '');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState(prefill?.avatarUrl ?? '');
+  const [avatarFile, setAvatarFile] = useState<Blob | null>(null);
+  const [photoFileName, setPhotoFileName] = useState(prefill?.avatarUrl ? 'Google profile photo' : '');
   const [photoError, setPhotoError] = useState<string | null>(null);
-  const [age, setAge] = useState('26');
+  const [age, setAge] = useState('');
   const [gender, setGender] = useState('Male');
-  const [heightCm, setHeightCm] = useState('175');
-  const [currentWeightKg, setCurrentWeightKg] = useState('78');
-  const [targetWeightKg, setTargetWeightKg] = useState('70');
+  const [heightCm, setHeightCm] = useState('');
+  const [currentWeightKg, setCurrentWeightKg] = useState('');
+  const [targetWeightKg, setTargetWeightKg] = useState('');
   const [fitnessGoal, setFitnessGoal] = useState('Muscle Building & Hypertrophy');
   const [fitnessLevel, setFitnessLevel] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Athlete'>('Beginner');
-  const [medicalConditions, setMedicalConditions] = useState('None');
-  const [injuries, setInjuries] = useState('None');
-  const [bodyConditionNotes, setBodyConditionNotes] = useState(
-    'Sedentary lifestyle with desk job for 2 years. High belly fat, low stamina, slight posture slouch. Looking for structured progressive guidance.'
-  );
+  const [medicalConditions, setMedicalConditions] = useState('');
+  const [injuries, setInjuries] = useState('');
+  const [bodyConditionNotes, setBodyConditionNotes] = useState('');
 
   // Submission state
-  const [submittedSuccess, setSubmittedSuccess] = useState(false);
-  const [submittedCandidateName, setSubmittedCandidateName] = useState('');
+  const [submittedSuccess, setSubmittedSuccess] = useState(registration?.status === 'Pending');
+  const [submittedCandidateName, setSubmittedCandidateName] = useState(registration?.fullName ?? '');
 
   // Messages
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    registration?.status === 'Rejected'
+      ? `Your previous application was declined: ${registration.rejectionReason ?? 'no reason given'}. You can update your details and apply again.`
+      : null
+  );
+
+  useEffect(() => {
+    setSubmittedSuccess(registration?.status === 'Pending');
+    if (registration?.fullName) setSubmittedCandidateName(registration.fullName);
+  }, [registration?.status, registration?.fullName]);
+
+  useEffect(() => {
+    if (avatarUrl.startsWith('blob:')) return () => URL.revokeObjectURL(avatarUrl);
+  }, [avatarUrl]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -105,23 +107,33 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     if (!file) return;
 
     try {
-      if (!file.type.startsWith('image/')) {
-        throw new Error('Not an image file');
-      }
-      setAvatarUrl(await resizePhotoToDataUrl(file));
+      const resized = await resizeImage(file, 512);
+      setAvatarFile(resized);
+      setAvatarUrl(URL.createObjectURL(resized));
       setPhotoFileName(file.name);
       setPhotoError(null);
       setErrorMessage(null);
     } catch {
-      setPhotoError('That file could not be read as a photo. Please choose a JPG or PNG image.');
+      setPhotoError(PHOTO_READ_ERROR);
     } finally {
       // Lets the same file be picked again after an error or a change of mind.
       input.value = '';
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleGoogle = async () => {
+    setErrorMessage(null);
+    setIsBusy(true);
+    const { error } = await signInWithGoogle();
+    if (error) {
+      setErrorMessage(error.message);
+      setIsBusy(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isBusy) return;
     setErrorMessage(null);
     setInfoMessage(null);
 
@@ -134,7 +146,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         setErrorMessage('Please enter your email address.');
         return;
       }
-      if (!phone.trim() || phone.length < 10) {
+      if (!isCompleting && signupPassword.length < 8) {
+        setErrorMessage('Please choose a password with at least 8 characters.');
+        return;
+      }
+      if (!phone.trim() || phone.replace(/\D/g, '').length < 10) {
         setErrorMessage('Please enter a valid phone number.');
         return;
       }
@@ -144,57 +160,77 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         return;
       }
       if (!bodyConditionNotes.trim()) {
-        setErrorMessage('Please provide your current body condition details for Coach Oliul Azim.');
+        setErrorMessage('Please describe your current body condition for your coach.');
         return;
       }
 
-      onSubmitRegistrationRequest({
-        fullName: name.trim(),
-        email: signupEmail.trim(),
-        phone: phone.trim(),
-        password: signupPassword,
-        avatarUrl,
-        age: parseInt(age) || 25,
-        gender,
-        heightCm: parseFloat(heightCm) || 175,
-        currentWeightKg: parseFloat(currentWeightKg) || 75,
-        targetWeightKg: parseFloat(targetWeightKg) || 70,
-        fitnessGoal,
-        fitnessLevel,
-        medicalConditions,
-        injuriesOrRestrictions: injuries,
-        bodyConditionNotes: bodyConditionNotes.trim(),
-        frontPhotoUrl: avatarUrl,
-        membershipDuration: '1 month'
-      });
-
-      setSubmittedCandidateName(name);
-      setSubmittedSuccess(true);
-    } else {
-      const trimmedEmail = email.trim().toLowerCase();
-      if (
-        trimmedEmail.includes('azim') ||
-        trimmedEmail.includes('oliul') ||
-        trimmedEmail.includes('tariq') ||
-        trimmedEmail.includes('trainer') ||
-        trimmedEmail.includes('admin') ||
-        trimmedEmail.includes('apexperformance.bd') ||
-        trimmedEmail.includes('workoutmanager.com')
-      ) {
-        onLogin('trainer');
-      } else {
-        const matched = allMembers.find((m) => m.email.toLowerCase() === trimmedEmail);
-        if (matched) {
-          onLogin('member', matched.id);
-        } else {
-          onLogin('member', allMembers[0]?.id || 'mem-01');
+      setIsBusy(true);
+      try {
+        if (!isCompleting) {
+          const { data, error } = await supabase.auth.signUp({
+            email: signupEmail.trim(),
+            password: signupPassword,
+            options: { data: { full_name: name.trim() }, emailRedirectTo: window.location.origin }
+          });
+          if (error) throw error;
+          if (!data.session) {
+            setInfoMessage('Check your email to confirm your address, then sign in to finish your registration.');
+            setIsSignUp(false);
+            setEmail(signupEmail.trim());
+            return;
+          }
         }
+
+        await storage.addRegistrationRequest({
+          fullName: name.trim(),
+          email: signupEmail.trim(),
+          phone: phone.trim(),
+          avatarFile,
+          avatarUrl: avatarFile ? undefined : avatarUrl,
+          age: parseInt(age) || 0,
+          gender,
+          heightCm: parseFloat(heightCm) || 0,
+          currentWeightKg: parseFloat(currentWeightKg) || 0,
+          targetWeightKg: parseFloat(targetWeightKg) || undefined,
+          fitnessGoal,
+          fitnessLevel,
+          medicalConditions: medicalConditions.trim() || undefined,
+          injuriesOrRestrictions: injuries.trim() || undefined,
+          bodyConditionNotes: bodyConditionNotes.trim(),
+          membershipDuration: '1 month'
+        });
+
+        setSubmittedCandidateName(name);
+        setSubmittedSuccess(true);
+        onRegistrationSubmitted();
+      } catch (err) {
+        setErrorMessage((err as Error).message);
+      } finally {
+        setIsBusy(false);
+      }
+    } else {
+      setIsBusy(true);
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      setIsBusy(false);
+      if (error) {
+        setErrorMessage(
+          /invalid login/i.test(error.message)
+            ? 'Incorrect email or password. If you joined with Google, use Continue with Google.'
+            : error.message
+        );
       }
     }
   };
 
-  const handleForgotPassword = () => {
-    setInfoMessage(`Password reset instructions sent to ${email || 'your email'}!`);
+  const handleForgotPassword = async () => {
+    setErrorMessage(null);
+    if (!email.trim()) {
+      setErrorMessage('Enter your email address first, then tap "Forgot password?".');
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: window.location.origin });
+    if (error) setErrorMessage(error.message);
+    else setInfoMessage(`If an account exists for ${email.trim()}, a reset link is on its way.`);
   };
 
   return (
@@ -260,7 +296,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   Thank you, {submittedCandidateName}!
                 </h3>
                 <p className="text-xs text-neutral-600 mt-2 leading-relaxed max-w-md mx-auto">
-                  Your photograph, biometric metrics, and full body condition details have been submitted directly to <strong>Coach Oliul Azim</strong>.
+                  Your photograph, biometric metrics, and full body condition details have been submitted directly to your coach. You will be notified here once you are approved.
                 </p>
                 <div className="p-3.5 mt-3 bg-white rounded-2xl border border-neutral-100 text-xs text-neutral-500 text-left space-y-1">
                   <span className="font-bold text-[#171717] block">Coach Approval Required:</span>
@@ -273,20 +309,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
                 <button
                   type="button"
-                  onClick={() => {
-                    setSubmittedSuccess(false);
-                    setIsSignUp(false);
-                  }}
+                  onClick={onSignOut}
                   className="px-4 py-2.5 rounded-xl bg-white border border-neutral-200 hover:bg-neutral-50 text-xs font-bold text-neutral-700 transition-all"
                 >
-                  Back to Sign In
+                  Sign out
                 </button>
                 <button
                   type="button"
-                  onClick={() => onLogin('trainer')}
+                  onClick={onRegistrationSubmitted}
                   className="px-4 py-2.5 rounded-xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-xs transition-all"
                 >
-                  Switch to Coach Portal (Review Application)
+                  Check approval status
                 </button>
               </div>
             </motion.div>
@@ -301,6 +334,25 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               onSubmit={handleSubmit}
               className="space-y-4 text-xs"
             >
+              {!isCompleting && (
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={handleGoogle}
+                    disabled={isBusy}
+                    className="w-full py-3 rounded-2xl bg-white border border-neutral-200 hover:bg-neutral-50 text-xs font-bold text-[#171717] transition-all flex items-center justify-center gap-2.5 active:scale-95 cursor-pointer disabled:opacity-60"
+                  >
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
+                  <div className="flex items-center gap-3 text-[11px] text-neutral-400">
+                    <span className="h-px flex-1 bg-neutral-200" />
+                    {isSignUp ? 'or register with email' : 'or sign in with email'}
+                    <span className="h-px flex-1 bg-neutral-200" />
+                  </div>
+                </div>
+              )}
+
               {isSignUp ? (
                 /* FULL REGISTRATION FORM WITH BODY CONDITION */
                 <div className="space-y-4">
@@ -358,6 +410,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <input
                           type="email"
                           required
+                          readOnly={isCompleting}
                           value={signupEmail}
                           onChange={(e) => setSignupEmail(e.target.value)}
                           placeholder="athlete@example.com"
@@ -366,6 +419,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       </div>
                     </div>
 
+                    {!isCompleting && (
                     <div>
                       <label className="block text-[#171717] font-bold mb-1">
                         Create Password *
@@ -375,6 +429,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <input
                           type={showPassword ? 'text' : 'password'}
                           required
+                          minLength={8}
+                          autoComplete="new-password"
                           value={signupPassword}
                           onChange={(e) => setSignupPassword(e.target.value)}
                           className="w-full pl-10 pr-10 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors"
@@ -388,6 +444,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         </button>
                       </div>
                     </div>
+                    )}
                   </div>
 
                   {/* Member Photograph Preview / Upload */}
@@ -596,6 +653,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
@@ -611,27 +669,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
-                        className="rounded border-neutral-300 text-[#7155E8] focus:ring-[#7155E8]"
-                      />
-                      <span className="text-neutral-500 font-medium">Remember me</span>
-                    </label>
-                  </div>
                 </div>
               )}
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2"
+                disabled={isBusy}
+                className="w-full py-3.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2"
               >
                 <span>
-                  {isSignUp ? 'Submit Registration Application for Coach Approval' : 'Sign In'}
+                  {isBusy ? 'Please wait…' : isSignUp ? 'Submit Registration Application for Coach Approval' : 'Sign In'}
                 </span>
                 <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
@@ -640,7 +688,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </AnimatePresence>
 
         {/* Toggle Mode */}
-        {!submittedSuccess && (
+        {!submittedSuccess && isCompleting && (
+          <div className="text-center pt-2 border-t border-neutral-100 text-xs text-neutral-500">
+            Signed in as <span className="font-semibold text-[#171717]">{signupEmail}</span>.{' '}
+            <button type="button" onClick={onSignOut} className="font-bold text-[#7155E8] hover:underline cursor-pointer">
+              Use a different account
+            </button>
+          </div>
+        )}
+
+        {!submittedSuccess && !isCompleting && (
           <div className="text-center pt-2 border-t border-neutral-100">
             <span className="text-xs text-neutral-500">
               {isSignUp ? 'Already have an approved account?' : 'New athlete?'}{' '}
@@ -659,40 +716,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           </div>
         )}
 
-        {/* 1-Tap Quick Demo Credentials */}
-        {!submittedSuccess && (
-          <div className="p-3.5 rounded-2xl bg-[#F5F5F5] border border-neutral-200/60 space-y-2 text-xs">
-            <span className="font-bold text-neutral-500 text-[10px] uppercase tracking-wider block">
-              1-Tap Demo Shortcuts
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEmail('oliul.azim@workoutmanager.com');
-                  onLogin('trainer');
-                }}
-                className="p-2.5 rounded-xl bg-white border border-neutral-200/80 hover:border-[#7155E8] transition-colors text-left"
-              >
-                <span className="font-bold text-[#171717] block">Coach Oliul Azim</span>
-                <span className="text-[10px] text-neutral-400 block font-mono">Head Coach Portal</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  const m = allMembers[0];
-                  setEmail(m?.email || 'farhan@apexperformance.bd');
-                  onLogin('member', m?.id);
-                }}
-                className="p-2.5 rounded-xl bg-white border border-neutral-200/80 hover:border-[#7155E8] transition-colors text-left"
-              >
-                <span className="font-bold text-[#171717] block">Farhan (Athlete)</span>
-                <span className="text-[10px] text-neutral-400 block font-mono">Active Client Portal</span>
-              </button>
-            </div>
-          </div>
-        )}
       </motion.div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { currentBillingMonth, todayDhaka } from '../../lib/dates';
 import {
   Plus,
   Search,
@@ -41,11 +42,11 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
 
   // New Payment Form state
   const [selectedMemberId, setSelectedMemberId] = useState(members[0]?.id || '');
-  const [paymentAmount, setPaymentAmount] = useState('5000');
-  const [paymentDate, setPaymentDate] = useState('2026-11-02');
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [paymentDate, setPaymentDate] = useState(todayDhaka());
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('bKash');
   const [transactionRef, setTransactionRef] = useState('');
-  const [billingPeriod, setBillingPeriod] = useState('November 2026 Monthly PT');
+  const [billingPeriod, setBillingPeriod] = useState(`${currentBillingMonth()} Monthly PT`);
   const [paymentNotes, setPaymentNotes] = useState('');
 
   // Calculations
@@ -122,7 +123,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
         </button>
       </div>
 
-      {/* PENDING VERIFICATION REQUESTS (bKash 01717014371 & Cash) */}
+      {/* PENDING VERIFICATION REQUESTS (bKash & Cash) */}
       {pendingVerifications.length > 0 && (
         <div className="bg-white rounded-3xl p-5 sm:p-7 border border-[#E2136E]/30 shadow-[0_4px_24px_rgba(226,19,110,0.06)] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-100 pb-3">
