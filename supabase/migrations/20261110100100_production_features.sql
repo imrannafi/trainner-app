@@ -241,6 +241,29 @@ create trigger on_auth_user_identity_change
   after update of raw_app_meta_data on auth.users
   for each row execute function public.handle_auth_user_identity_change();
 
+-- Catch up accounts that signed in before this migration ran: give them a profile if they
+-- have none, and apply any role grant, so the order of signing in and migrating never matters.
+insert into public.profiles (id, email, full_name, avatar_url)
+select
+  u.id,
+  u.email,
+  coalesce(u.raw_user_meta_data->>'full_name', u.raw_user_meta_data->>'name'),
+  coalesce(u.raw_user_meta_data->>'avatar_url', u.raw_user_meta_data->>'picture')
+from auth.users u
+where not exists (select 1 from public.profiles p where p.id = u.id);
+
+do $$
+declare
+  v_user_id uuid;
+begin
+  for v_user_id in
+    select u.id from auth.users u join public.role_grants g on lower(u.email) = g.email
+  loop
+    perform public.apply_role_grant(v_user_id);
+  end loop;
+end;
+$$;
+
 -- ---------------------------------------------------------------------------
 -- Staff management (super admin only)
 -- ---------------------------------------------------------------------------
