@@ -309,7 +309,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               paymentMethod
             });
             setInfoMessage(
-              'Account created. Check your email and tap the confirmation link, then sign in here. Your registration details are saved and will be filled in for you.'
+              'One more step: your registration has not been sent to the coach yet. Open the confirmation email we sent you, tap the link, then sign in here and tap Submit. Your details are saved and will be filled in for you.'
             );
             setIsSignUp(false);
             setEmail(signupEmail.trim());
@@ -356,7 +356,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           /invalid login/i.test(error.message)
             ? 'Incorrect email or password. If you joined with Google, use Continue with Google.'
             : /email not confirmed/i.test(error.message)
-              ? 'Please confirm your email first: open the link we emailed you, then sign in again.'
+              ? 'Please confirm your email first: open the link we emailed you (check Spam too), then sign in again to send your registration.'
               : friendlySignUpError(error.message)
         );
       }

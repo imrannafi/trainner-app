@@ -21,7 +21,24 @@ This needs two things in Supabase:
 1. **Authentication > Sign In / Providers > "Allow new users to sign up"** must be on. When it is off, registration fails with "Signups not allowed for this instance". It is safe to turn on: a new account can see nothing until the coach approves it.
 2. The migration `supabase/migrations/20261119100000_registration_payment.sql` must be run (SQL Editor). It adds the payment fields.
 
-With **Confirm email** on, the applicant confirms their email first. The form is kept in their browser and filled in again when they sign in.
+With **Confirm email** on, the request is only sent after the applicant confirms their email and signs in again. The form is kept in their browser and filled in again at that point. Turn **Confirm email** off (**Authentication > Sign In / Providers > Email**) to send the request the moment they tap Submit. This is safe, because the coach approves every account anyway.
+
+The confirmation link goes to **Authentication > URL Configuration > Site URL**. Set it to your live address, and add `https://YOUR-APP.vercel.app/**` under **Redirect URLs**.
+
+### Email to the coach
+
+Every new request appears in the coach's bell and as a phone push. To also email it, the `notify-registration` Edge Function sends through [Resend](https://resend.com):
+
+1. Create a free Resend account and an API key. Without your own domain, Resend can only deliver to the email you signed up with, so sign up with the coach's address. With a verified domain, set `EMAIL_FROM` to an address on it.
+2. Deploy: `npx supabase functions deploy notify-registration --no-verify-jwt --project-ref YOUR-PROJECT-REF`
+3. Function secrets: `RESEND_API_KEY`, `EMAIL_WEBHOOK_SECRET` (a long random string) and `SITE_URL`. Optional: `EMAIL_FROM`, and `REGISTRATION_EMAIL_TO` (comma-separated). By default every coach and super admin account is emailed.
+4. Run `supabase/migrations/20261119110000_registration_email.sql`, then in the SQL Editor:
+   ```sql
+   select vault.create_secret('https://YOUR-PROJECT.supabase.co/functions/v1/notify-registration', 'email_function_url');
+   select vault.create_secret('THE-SAME-EMAIL_WEBHOOK_SECRET', 'email_webhook_secret');
+   ```
+
+Email can never block a registration. If it isn't set up or fails, the request still arrives in the app.
 
 ## Environment variables
 
