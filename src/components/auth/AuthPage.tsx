@@ -18,6 +18,74 @@ import { supabase } from '../../lib/supabase';
 import { storage } from '../../services/storage';
 import { RegistrationStatus, signInWithGoogle } from '../../services/session';
 import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
+import { MembershipDuration, RegistrationPaymentMethod } from '../../types';
+
+const DURATION_OPTIONS: { value: MembershipDuration; label: string }[] = [
+  { value: '1 month', label: '1 Month' },
+  { value: '3 months', label: '3 Months' },
+  { value: '6 months', label: '6 Months' }
+];
+const PAYMENT_METHODS: RegistrationPaymentMethod[] = ['Cash', 'bKash', 'Nagad', 'Bank Transfer'];
+
+// Email sign-up needs a confirmation click before there is a session, so the form is kept
+// in this browser and restored when the applicant signs in to finish.
+const DRAFT_KEY = 'awm-registration-draft';
+interface RegistrationDraft {
+  email: string;
+  name: string;
+  phone: string;
+  avatarDataUrl?: string;
+  age: string;
+  gender: string;
+  heightCm: string;
+  currentWeightKg: string;
+  targetWeightKg: string;
+  fitnessGoal: string;
+  fitnessLevel: 'Beginner' | 'Intermediate' | 'Advanced' | 'Athlete';
+  medicalConditions: string;
+  injuries: string;
+  bodyConditionNotes: string;
+  membershipDuration: MembershipDuration;
+  amountPaid: string;
+  paymentMethod: RegistrationPaymentMethod;
+}
+const readDraft = (): RegistrationDraft | null => {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as RegistrationDraft) : null;
+  } catch {
+    return null;
+  }
+};
+const writeDraft = (draft: RegistrationDraft | null) => {
+  try {
+    if (draft) localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    else localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Storage full or blocked: the applicant just re-enters the form.
+  }
+};
+const blobToDataUrl = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+
+/** Turns Supabase Auth errors into something an applicant can act on. */
+const friendlySignUpError = (message: string) => {
+  if (/signups? not allowed/i.test(message)) {
+    return 'New registrations are switched off for this app right now. Please ask Coach Oliul Azim to enable sign-ups, or try again later.';
+  }
+  if (/already registered|already exists/i.test(message)) {
+    return 'An account with this email already exists. Sign in instead to finish your registration.';
+  }
+  if (/amount_paid|payment_method/i.test(message) && /column|schema/i.test(message)) {
+    return 'Registration is being updated on the server. Please try again in a few minutes.';
+  }
+  return message;
+};
 
 const GoogleIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" aria-hidden="true">
@@ -78,6 +146,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [medicalConditions, setMedicalConditions] = useState('');
   const [injuries, setInjuries] = useState('');
   const [bodyConditionNotes, setBodyConditionNotes] = useState('');
+  const [membershipDuration, setMembershipDuration] = useState<MembershipDuration>('1 month');
+  const [amountPaid, setAmountPaid] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<RegistrationPaymentMethod>('Cash');
 
   // Submission state
   const [submittedSuccess, setSubmittedSuccess] = useState(registration?.status === 'Pending');
@@ -99,6 +170,40 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   useEffect(() => {
     if (avatarUrl.startsWith('blob:')) return () => URL.revokeObjectURL(avatarUrl);
   }, [avatarUrl]);
+
+  // Restore the form saved before email confirmation, for the same email only.
+  useEffect(() => {
+    if (!isCompleting) return;
+    const draft = readDraft();
+    if (!draft || draft.email.toLowerCase() !== (prefill?.email ?? '').toLowerCase()) return;
+    setName(draft.name || prefill?.fullName || '');
+    setPhone(draft.phone);
+    setAge(draft.age);
+    setGender(draft.gender);
+    setHeightCm(draft.heightCm);
+    setCurrentWeightKg(draft.currentWeightKg);
+    setTargetWeightKg(draft.targetWeightKg);
+    setFitnessGoal(draft.fitnessGoal);
+    setFitnessLevel(draft.fitnessLevel);
+    setMedicalConditions(draft.medicalConditions);
+    setInjuries(draft.injuries);
+    setBodyConditionNotes(draft.bodyConditionNotes);
+    setMembershipDuration(draft.membershipDuration);
+    setAmountPaid(draft.amountPaid);
+    setPaymentMethod(draft.paymentMethod);
+    if (draft.avatarDataUrl) {
+      fetch(draft.avatarDataUrl)
+        .then((r) => r.blob())
+        .then((blob) => {
+          setAvatarFile(blob);
+          setAvatarUrl(URL.createObjectURL(blob));
+          setPhotoFileName('Saved profile photo');
+        })
+        .catch(() => undefined);
+    }
+    setInfoMessage('We restored the details you entered. Check them and submit to finish your registration.');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCompleting, prefill?.email]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -162,6 +267,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         setErrorMessage('Please describe your current body condition for your coach.');
         return;
       }
+      const paid = Number(amountPaid);
+      if (amountPaid.trim() === '' || !Number.isFinite(paid) || paid < 0) {
+        setErrorMessage('Please enter the amount you have paid (enter 0 if you have not paid yet).');
+        return;
+      }
 
       setIsBusy(true);
       try {
@@ -173,7 +283,34 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           });
           if (error) throw error;
           if (!data.session) {
-            setInfoMessage('Check your email to confirm your address, then sign in to finish your registration.');
+            let avatarDataUrl: string | undefined;
+            try {
+              if (avatarFile) avatarDataUrl = await blobToDataUrl(avatarFile);
+            } catch {
+              avatarDataUrl = undefined;
+            }
+            writeDraft({
+              email: signupEmail.trim(),
+              name: name.trim(),
+              phone: phone.trim(),
+              avatarDataUrl,
+              age,
+              gender,
+              heightCm,
+              currentWeightKg,
+              targetWeightKg,
+              fitnessGoal,
+              fitnessLevel,
+              medicalConditions,
+              injuries,
+              bodyConditionNotes,
+              membershipDuration,
+              amountPaid,
+              paymentMethod
+            });
+            setInfoMessage(
+              'Account created. Check your email and tap the confirmation link, then sign in here. Your registration details are saved and will be filled in for you.'
+            );
             setIsSignUp(false);
             setEmail(signupEmail.trim());
             return;
@@ -196,14 +333,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           medicalConditions: medicalConditions.trim() || undefined,
           injuriesOrRestrictions: injuries.trim() || undefined,
           bodyConditionNotes: bodyConditionNotes.trim(),
-          membershipDuration: '1 month'
+          membershipDuration,
+          amountPaid: Math.round(paid * 100) / 100,
+          paymentMethod
         });
 
+        writeDraft(null);
         setSubmittedCandidateName(name);
         setSubmittedSuccess(true);
         onRegistrationSubmitted();
       } catch (err) {
-        setErrorMessage((err as Error).message);
+        setErrorMessage(friendlySignUpError((err as Error).message));
       } finally {
         setIsBusy(false);
       }
@@ -215,7 +355,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         setErrorMessage(
           /invalid login/i.test(error.message)
             ? 'Incorrect email or password. If you joined with Google, use Continue with Google.'
-            : error.message
+            : /email not confirmed/i.test(error.message)
+              ? 'Please confirm your email first: open the link we emailed you, then sign in again.'
+              : friendlySignUpError(error.message)
         );
       }
     }
@@ -579,6 +721,80 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       </select>
                     </div>
                   </div>
+
+                  {/* Membership Duration & Payment */}
+                  <fieldset className="p-3.5 sm:p-4 bg-[#F0EEFC]/50 border border-[#7155E8]/20 rounded-2xl space-y-3">
+                    <legend className="sr-only">Membership and payment</legend>
+                    <div>
+                      <span id="duration-label" className="block text-[#171717] font-bold mb-1.5">
+                        Trainer Membership Duration *
+                      </span>
+                      <div role="radiogroup" aria-labelledby="duration-label" className="grid grid-cols-3 gap-2">
+                        {DURATION_OPTIONS.map((opt) => {
+                          const selected = membershipDuration === opt.value;
+                          return (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              role="radio"
+                              aria-checked={selected}
+                              onClick={() => setMembershipDuration(opt.value)}
+                              className={`py-2.5 px-2 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer ${
+                                selected
+                                  ? 'bg-[#7155E8] border-[#7155E8] text-white shadow-[0_4px_12px_rgba(113,85,232,0.3)]'
+                                  : 'bg-white border-neutral-200 text-neutral-700 hover:border-[#7155E8]/50'
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="reg-amount-paid" className="block text-[#171717] font-bold mb-1">
+                          Amount Paid (৳) *
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 font-bold">৳</span>
+                          <input
+                            id="reg-amount-paid"
+                            type="number"
+                            inputMode="decimal"
+                            min={0}
+                            step="any"
+                            required
+                            value={amountPaid}
+                            onChange={(e) => setAmountPaid(e.target.value)}
+                            placeholder="e.g. 3500 (0 if not paid yet)"
+                            className="w-full pl-8 pr-3.5 py-2.5 bg-white border border-neutral-200/80 rounded-2xl font-mono focus:outline-none focus:border-[#7155E8] transition-colors"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label htmlFor="reg-payment-method" className="block text-[#171717] font-bold mb-1">
+                          Payment Method *
+                        </label>
+                        <select
+                          id="reg-payment-method"
+                          value={paymentMethod}
+                          onChange={(e) => setPaymentMethod(e.target.value as RegistrationPaymentMethod)}
+                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#7155E8] transition-colors"
+                        >
+                          {PAYMENT_METHODS.map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-neutral-500 leading-relaxed">
+                      Your coach confirms this payment when approving your registration.
+                    </p>
+                  </fieldset>
 
                   {/* Body Condition & Assessment Details */}
                   <div>

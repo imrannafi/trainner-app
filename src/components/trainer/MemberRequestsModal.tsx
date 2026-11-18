@@ -262,9 +262,30 @@ export const MemberRequestsModal: React.FC<MemberRequestsModalProps> = ({
                           <span aria-hidden="true">·</span>
                           <span>{selectedRequest.gender}, {selectedRequest.age} yrs</span>
                         </div>
-                        <span className="inline-block mt-2 text-[11px] font-bold text-[#7155E8] bg-[#F0EEFC] px-2.5 py-0.5 rounded-md">
-                          Requested Duration: {selectedRequest.membershipDuration}
-                        </span>
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          <span className="inline-block text-[11px] font-bold text-[#7155E8] bg-[#F0EEFC] px-2.5 py-0.5 rounded-md">
+                            Duration: {selectedRequest.membershipDuration}
+                          </span>
+                          <span
+                            className={`inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-md ${
+                              selectedRequest.amountPaid > 0
+                                ? 'text-emerald-700 bg-emerald-50'
+                                : 'text-amber-700 bg-amber-50'
+                            }`}
+                          >
+                            Paid: ৳{selectedRequest.amountPaid.toLocaleString('en-US')}
+                            {selectedRequest.paymentMethod && selectedRequest.amountPaid > 0
+                              ? ` via ${selectedRequest.paymentMethod}`
+                              : selectedRequest.amountPaid > 0
+                                ? ''
+                                : ' (not paid yet)'}
+                          </span>
+                        </div>
+                        {selectedRequest.status === 'Pending' && selectedRequest.amountPaid > 0 && (
+                          <p className="mt-1.5 text-[10px] text-neutral-500">
+                            Approving records this ৳{selectedRequest.amountPaid.toLocaleString('en-US')} as a completed payment.
+                          </p>
+                        )}
                       </div>
                     </div>
 

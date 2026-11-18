@@ -12,6 +12,17 @@ Coaching platform for Coach Oliul Azim's gym: a coach portal (clients, workout a
 
 If the project folder name contains `&`, `npm run dev` fails on Windows; rename the folder, or run `node node_modules/vite/bin/vite.js --port=3000`.
 
+## Member registration
+
+New members register on the sign-in page (**Register with Body Assessment**) or with Google. They choose a membership duration (1, 3 or 6 months) and enter the amount paid and the payment method (Cash, bKash, Nagad, Bank Transfer). The coach reviews the application under **Requests**, and approving it creates the member and records the payment.
+
+This needs two things in Supabase:
+
+1. **Authentication > Sign In / Providers > "Allow new users to sign up"** must be on. When it is off, registration fails with "Signups not allowed for this instance". It is safe to turn on: a new account can see nothing until the coach approves it.
+2. The migration `supabase/migrations/20261119100000_registration_payment.sql` must be run (SQL Editor). It adds the payment fields.
+
+With **Confirm email** on, the applicant confirms their email first. The form is kept in their browser and filled in again when they sign in.
+
 ## Environment variables
 
 Set these in `.env.local` and in your host (Vercel: **Settings > Environment Variables**). They are built into the app, so **redeploy after changing them**. All are public values.

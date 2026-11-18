@@ -324,6 +324,8 @@ class FitnessStorageService {
         bodyConditionNotes: r.body_condition_notes,
         frontPhotoUrl: r.front_photo_url ?? undefined,
         membershipDuration: r.membership_duration,
+        amountPaid: num(r.amount_paid),
+        paymentMethod: r.payment_method ?? undefined,
         submittedAt: formatDateTime(r.submitted_at),
         status: r.status,
         rejectionReason: r.rejection_reason ?? undefined,
@@ -1272,7 +1274,9 @@ class FitnessStorageService {
         injuries_or_restrictions: data.injuriesOrRestrictions || null,
         body_condition_notes: data.bodyConditionNotes,
         front_photo_url: avatarUrl,
-        membership_duration: data.membershipDuration
+        membership_duration: data.membershipDuration,
+        amount_paid: data.amountPaid,
+        payment_method: data.paymentMethod ?? null
       }),
       'Submitting registration'
     );

@@ -53,6 +53,7 @@ export type MembershipDuration = '1 month' | '3 months' | '6 months' | '12 month
 export type MembershipStatus = 'Active' | 'Expiring Soon' | 'Expired' | 'Inactive';
 export type PaymentStatus = 'Paid' | 'Partially Paid' | 'Unpaid' | 'Overdue';
 export type PaymentMethod = 'Cash' | 'bKash' | 'Nagad' | 'Rocket' | 'Bank Transfer' | 'Other';
+export type RegistrationPaymentMethod = 'Cash' | 'bKash' | 'Nagad' | 'Bank Transfer';
 
 export interface Member {
   id: string;
@@ -148,6 +149,9 @@ export interface MemberRegistrationRequest {
   bodyConditionNotes: string;
   frontPhotoUrl?: string;
   membershipDuration: MembershipDuration;
+  /** What the applicant says they paid at registration (৳). */
+  amountPaid: number;
+  paymentMethod?: RegistrationPaymentMethod;
   submittedAt: string;
   status: 'Pending' | 'Approved' | 'Rejected';
   rejectionReason?: string;
