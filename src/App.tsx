@@ -326,8 +326,9 @@ export default function App() {
     return (
       <FullScreenMessage title="Connect Supabase to continue">
         <p className="text-xs text-neutral-500 leading-relaxed">
-          Set <code className="font-mono">VITE_SUPABASE_URL</code> and <code className="font-mono">VITE_SUPABASE_ANON_KEY</code> in{' '}
-          <code className="font-mono">.env.local</code> (or your hosting provider's environment settings), then restart the app.
+          Set <code className="font-mono">VITE_SUPABASE_URL</code> and <code className="font-mono">VITE_SUPABASE_PUBLISHABLE_KEY</code> in{' '}
+          <code className="font-mono">.env.local</code>, or in your hosting provider's environment settings and then redeploy (the
+          values are built into the app).
         </p>
       </FullScreenMessage>
     );

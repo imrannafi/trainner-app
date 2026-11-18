@@ -24,7 +24,7 @@ In the **SQL Editor**, run each migration file **separately**, in filename order
 - **Authentication > URL Configuration**: set **Site URL** to your live app address and add it, plus `http://localhost:3000`, to **Redirect URLs**.
 
 ### 3. App environment
-Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (see `.env.example`) in `.env.local` and in your hosting provider.
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (see `.env.example`) in `.env.local` and in your hosting provider, then redeploy: Vite builds these values into the app. `VITE_SUPABASE_ANON_KEY` and the `NEXT_PUBLIC_` names from Supabase's Vercel integration are also accepted.
 
 ### 4. Super admin and coach photo
 1. Open the app and choose **Continue with Google** with `oliulazim65@gmail.com`. The account becomes **Super Admin** automatically, with username `oliulazim65` and the main coach profile. The grant only applies to a Google sign-in, because Google proves the address belongs to its owner; an email and password sign-up with that address stays a normal client account.

@@ -6,6 +6,9 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    // Variables with these prefixes are compiled into the browser bundle, so they must only hold
+    // public values. NEXT_PUBLIC_ is accepted too, so Supabase's Vercel integration names work as-is.
+    envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
