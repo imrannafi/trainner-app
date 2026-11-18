@@ -149,3 +149,280 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(115, 115, 115, 0.65);
 }
+
+/* ============================================================================
+ * PREMIUM GLASS LAYER
+ * Keeps the original palette (brand purple #7155E8, neutral #F5F5F5 canvas,
+ * ink #171717) and layers translucency, depth and motion on top of it.
+ * ========================================================================== */
+:root {
+  --brand: #7155e8;
+  --brand-deep: #6245de;
+  --brand-soft: #f0eefc;
+  --ink: #171717;
+  --canvas: #f5f5f5;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-strong: rgba(255, 255, 255, 0.86);
+  --glass-edge: rgba(23, 23, 23, 0.06);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 10px 30px -12px rgba(40, 28, 110, 0.14), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  --glass-shadow-lg: 0 30px 80px -20px rgba(40, 28, 110, 0.32), 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  /* Our own pull-to-refresh replaces the browser's full page reload gesture */
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Ambient backdrop: soft brand-tinted light behind the glass ---------- */
+.app-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(1200px 600px at 110% -10%, rgba(113, 85, 232, 0.1), transparent 60%),
+    radial-gradient(900px 520px at -15% 105%, rgba(16, 185, 129, 0.06), transparent 60%),
+    var(--canvas);
+}
+.app-ambient::before,
+.app-ambient::after {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  will-change: transform;
+}
+.app-ambient::before {
+  width: 46vmax;
+  height: 46vmax;
+  top: -18vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, rgba(113, 85, 232, 0.16), transparent 68%);
+  animation: ambient-drift-a 26s ease-in-out infinite alternate;
+}
+.app-ambient::after {
+  width: 40vmax;
+  height: 40vmax;
+  bottom: -16vmax;
+  right: -10vmax;
+  background: radial-gradient(circle, rgba(139, 115, 240, 0.14), transparent 68%);
+  animation: ambient-drift-b 32s ease-in-out infinite alternate;
+}
+@keyframes ambient-drift-a {
+  to {
+    transform: translate3d(8vmax, 6vmax, 0) scale(1.08);
+  }
+}
+@keyframes ambient-drift-b {
+  to {
+    transform: translate3d(-7vmax, -5vmax, 0) scale(1.1);
+  }
+}
+/* Positioned (paints above the ambient layer by DOM order) but deliberately no z-index,
+   so modals rendered inside <main> are not trapped below the header and dock. */
+.app-layer {
+  position: relative;
+}
+
+/* ---------- Reusable glass surfaces ---------- */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-highlight), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: var(--glass-highlight), var(--glass-shadow-lg);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+.glass-bar {
+  background: rgba(255, 255, 255, 0.68);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: 1px solid rgba(23, 23, 23, 0.06);
+  transition: background-color 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo);
+}
+.glass-bar.is-scrolled {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 30px -12px rgba(40, 28, 110, 0.18);
+}
+.glass-backdrop {
+  background: rgba(23, 18, 48, 0.38);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+/* Fallback when backdrop-filter is unavailable: stay solid and readable */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-strong,
+  .glass-bar {
+    background: rgba(255, 255, 255, 0.97);
+  }
+  .glass-backdrop {
+    background: rgba(23, 18, 48, 0.55);
+  }
+}
+
+/* ---------- Content cards inside the app become frosted panels ---------- */
+.app-main .bg-white.rounded-3xl {
+  background-color: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--glass-highlight), 0 1px 0 rgba(23, 23, 23, 0.04), 0 10px 30px -14px rgba(40, 28, 110, 0.14);
+  transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo), border-color 0.3s;
+}
+/* No backdrop-filter on cards on purpose: it would turn every card into the containing
+   block for `position: fixed` modals rendered inside it. Translucency over the ambient
+   light gives the frosted look; real blur lives on the header, dock, popovers and modals. */
+@media (min-width: 1024px) and (hover: hover) {
+  .app-main .bg-white.rounded-3xl {
+    background-color: rgba(255, 255, 255, 0.76);
+  }
+  .app-main .bg-white.rounded-3xl:hover {
+    border-color: rgba(113, 85, 232, 0.18);
+    box-shadow: var(--glass-highlight), 0 18px 40px -16px rgba(40, 28, 110, 0.22);
+  }
+}
+
+/* Cards rise in softly when a section opens (top-level cards only, no nesting jitter) */
+.app-main .rounded-3xl:not(.rounded-3xl .rounded-3xl):not([role="dialog"] *):not(.glass-strong):not([style*="transform"]) {
+  animation: glass-rise 0.5s var(--ease-out-expo) backwards;
+}
+.app-main .rounded-3xl:not(.rounded-3xl .rounded-3xl):not([role="dialog"] *):not(.glass-strong):not([style*="transform"]):nth-child(2) {
+  animation-delay: 0.04s;
+}
+.app-main .rounded-3xl:not(.rounded-3xl .rounded-3xl):not([role="dialog"] *):not(.glass-strong):not([style*="transform"]):nth-child(3) {
+  animation-delay: 0.08s;
+}
+.app-main .rounded-3xl:not(.rounded-3xl .rounded-3xl):not([role="dialog"] *):not(.glass-strong):not([style*="transform"]):nth-child(4) {
+  animation-delay: 0.12s;
+}
+.app-main .rounded-3xl:not(.rounded-3xl .rounded-3xl):not([role="dialog"] *):not(.glass-strong):not([style*="transform"]):nth-child(n + 5) {
+  animation-delay: 0.16s;
+}
+@keyframes glass-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Micro-interactions ---------- */
+/* Brand buttons get a subtle sheen and a glow on hover */
+.bg-\[\#7155E8\] {
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 55%);
+}
+button.bg-\[\#7155E8\] {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo), background-color 0.2s;
+}
+button.bg-\[\#7155E8\]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  button.bg-\[\#7155E8\]:not(:disabled):hover {
+    box-shadow: 0 10px 26px -8px rgba(113, 85, 232, 0.6);
+  }
+  button.bg-\[\#7155E8\]:not(:disabled):hover::after {
+    transform: translateX(120%);
+    transition: transform 0.75s var(--ease-out-expo);
+  }
+  button.bg-neutral-900:not(:disabled):hover,
+  button.bg-\[\#171717\]:not(:disabled):hover {
+    box-shadow: 0 10px 24px -10px rgba(23, 23, 23, 0.55);
+  }
+}
+
+/* Inputs: soft brand focus halo */
+input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(113, 85, 232, 0.12);
+  transition: box-shadow 0.2s var(--ease-out-expo), border-color 0.2s, background-color 0.2s;
+}
+
+/* Keyboard users always get a visible focus ring */
+:where(button, a, [role='button'], [tabindex]):focus-visible {
+  outline: 2px solid rgba(113, 85, 232, 0.6);
+  outline-offset: 2px;
+}
+
+/* Drag handle used by swipeable sheets */
+.sheet-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 9999px;
+  background: rgba(23, 23, 23, 0.16);
+  transition: background-color 0.2s, width 0.25s var(--ease-out-expo);
+}
+.sheet-grab:active .sheet-handle,
+.sheet-grab:hover .sheet-handle {
+  background: rgba(113, 85, 232, 0.45);
+  width: 56px;
+}
+.sheet-grab {
+  touch-action: none;
+  cursor: grab;
+}
+.sheet-grab:active {
+  cursor: grabbing;
+}
+
+@keyframes bell-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-12deg);
+  }
+  60% {
+    transform: rotate(8deg);
+  }
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+
+/* Toast countdown bar */
+@keyframes toast-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.toast-progress {
+  transform-origin: left;
+  animation: toast-countdown linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-ambient::before,
+  .app-ambient::after {
+    animation: none;
+  }
+}

@@ -46,6 +46,18 @@ import { ReportsSection } from './components/trainer/ReportsSection';
 import { MemberPortalView } from './components/member/MemberPortalView';
 import { MemberRequestsModal } from './components/trainer/MemberRequestsModal';
 import { AddMemberModal } from './components/trainer/AddMemberModal';
+import { AmbientBackdrop, PullToRefresh } from './components/common/GestureLayer';
+import {
+  MEMBER_TAB_ORDER,
+  TRAINER_TAB_ORDER,
+  getNavDirection,
+  pageTransition,
+  pageVariants,
+  setNavDirection,
+  useHorizontalSwipe
+} from './lib/gestures';
+
+const SWIPE_TIP_KEY = 'awm-swipe-tip-shown';
 
 type AccessState = AppAccess | { kind: 'loading' };
 
@@ -59,13 +71,19 @@ const run = (promise: Promise<unknown>, success?: string) =>
 
 const FullScreenMessage: React.FC<{ title: string; children?: React.ReactNode }> = ({ title, children }) => (
   <div className="min-h-screen flex items-center justify-center p-6 bg-[#F5F5F5] text-[#171717]">
-    <div className="max-w-md w-full bg-white rounded-3xl border border-neutral-200/70 p-8 text-center space-y-3 shadow-[0_12px_40px_rgba(0,0,0,0.06)]">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#7155E8] text-white">
+    <AmbientBackdrop />
+    <motion.div
+      initial={{ opacity: 0, y: 16, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+      className="glass-strong app-layer max-w-md w-full rounded-3xl p-8 text-center space-y-3"
+    >
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#7155E8] text-white shadow-[0_8px_20px_rgba(113,85,232,0.4)]">
         <Dumbbell className="w-6 h-6" />
       </div>
       <h1 className="text-lg font-extrabold">{title}</h1>
       {children}
-    </div>
+    </motion.div>
   </div>
 );
 
@@ -235,6 +253,60 @@ export default function App() {
     setActiveTab('dashboard');
   };
 
+  // ---------------------------------------------------------------------------
+  // Gestures & direction-aware transitions
+  // ---------------------------------------------------------------------------
+  const mainRef = useRef<HTMLElement>(null);
+  const isSignedIn = access.kind === 'staff' || access.kind === 'member';
+  const tabOrder = access.kind === 'staff' ? TRAINER_TAB_ORDER : MEMBER_TAB_ORDER;
+
+  // Work out which way the page should slide whenever the section changes.
+  const prevRoute = useRef({ tab: activeTab, memberId: selectedMemberId });
+  if (prevRoute.current.tab !== activeTab || prevRoute.current.memberId !== selectedMemberId) {
+    const prev = prevRoute.current;
+    if (prev.tab === activeTab) {
+      // Opening a member profile moves forward, closing it moves back.
+      setNavDirection(selectedMemberId ? 1 : -1);
+    } else {
+      const a = tabOrder.indexOf(prev.tab);
+      const b = tabOrder.indexOf(activeTab);
+      setNavDirection(a < 0 || b < 0 ? 0 : Math.sign(b - a));
+    }
+    prevRoute.current = { tab: activeTab, memberId: selectedMemberId };
+  }
+
+  const swipeTo = (step: 1 | -1) => {
+    // Swiping right inside a member profile goes back to the members list.
+    if (access.kind === 'staff' && activeTab === 'members' && selectedMemberId) {
+      if (step === -1) setSelectedMemberId(null);
+      return;
+    }
+    const next = tabOrder[tabOrder.indexOf(activeTab) + step];
+    if (!next) return;
+    setActiveTab(next);
+    setSelectedMemberId(null);
+    window.scrollTo({ top: 0 });
+  };
+
+  useHorizontalSwipe(mainRef, {
+    enabled: isSignedIn,
+    onSwipeLeft: () => swipeTo(1),
+    onSwipeRight: () => swipeTo(-1)
+  });
+
+  // One-time hint so touch users discover section swiping.
+  useEffect(() => {
+    if (!isSignedIn || !window.matchMedia?.('(pointer: coarse)').matches) return;
+    try {
+      if (localStorage.getItem(SWIPE_TIP_KEY)) return;
+      localStorage.setItem(SWIPE_TIP_KEY, '1');
+    } catch {
+      return;
+    }
+    const t = setTimeout(() => showToast('Tip: swipe left or right to switch sections, pull down to refresh.', 'info'), 1200);
+    return () => clearTimeout(t);
+  }, [isSignedIn]);
+
   const handleSelectTab = (tab: string, meta?: any) => {
     if ((tab === 'member-profile' || tab === 'members') && meta?.memberId) {
       setSelectedMemberId(meta.memberId);
@@ -403,7 +475,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-[#171717] flex flex-col font-sans selection:bg-[#7155E8] selection:text-white overflow-x-clip">
+      <AmbientBackdrop />
       <ToastViewport />
+      <PullToRefresh onRefresh={() => storage.reload()} />
       {recoveryModal}
 
       <Header
@@ -421,14 +495,19 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 pb-10">
-        <AnimatePresence mode="wait">
+      <main
+        ref={mainRef}
+        className="app-main app-layer flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 pb-10 touch-pan-y"
+      >
+        <AnimatePresence mode="wait" custom={getNavDirection()}>
           <motion.div
             key={routeMotionKey}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            custom={getNavDirection()}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={pageTransition}
           >
             {/* TRAINER PORTAL ROUTING */}
             {currentRole === 'trainer' && (
@@ -703,7 +782,7 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      <footer className="mt-auto border-t border-neutral-200/70 bg-white pt-4 pb-24 sm:pb-28 text-xs text-neutral-400">
+      <footer className="app-layer mt-auto border-t border-white/80 bg-white/60 backdrop-blur-md pt-4 pb-24 sm:pb-28 text-xs text-neutral-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <span>
             Azims Workout Manager · Professional Personal Coaching Platform

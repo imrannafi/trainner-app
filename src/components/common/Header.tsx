@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, Dumbbell, ChevronDown, LogOut, Settings, ShieldCheck } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useDragControls } from 'motion/react';
 import { UserRole, InAppNotification } from '../../types';
 import { Avatar } from './CommonUI';
 import { relativeTime } from '../../lib/dates';
+import { shouldDismiss, springPop } from '../../lib/gestures';
 import type { AccountSummary } from './FloatingBottomNav';
 
 interface HeaderProps {
@@ -37,6 +38,39 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const notifDrag = useDragControls();
+  const accountDrag = useDragControls();
+  const startDrag = (controls: ReturnType<typeof useDragControls>) => (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse' || (e.target as HTMLElement).closest('button')) return;
+    controls.start(e);
+  };
+
+  /** Popover motion: springs open, and can be flicked upward (from its header or handle) to dismiss. */
+  const popoverMotion = (close: () => void, controls: ReturnType<typeof useDragControls>) => ({
+    initial: { opacity: 0, y: -10, scale: 0.96 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -8, scale: 0.97, transition: { duration: 0.14 } },
+    transition: springPop,
+    drag: 'y' as const,
+    dragConstraints: { top: 0, bottom: 0 },
+    dragElastic: { top: 0.6, bottom: 0.05 },
+    dragSnapToOrigin: true,
+    dragListener: false,
+    dragControls: controls,
+    onDragEnd: (_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
+      if (shouldDismiss(-info.offset.y, -info.velocity.y, 70)) close();
+    },
+    style: { transformOrigin: 'top right' }
+  });
 
   const notifRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
@@ -89,10 +123,10 @@ export const Header: React.FC<HeaderProps> = ({
   const navLinks = currentRole === 'trainer' ? trainerNavLinks : memberNavLinks;
 
   const menuItem =
-    'w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F5F5F5] text-neutral-700 flex items-center gap-2 text-xs font-medium cursor-pointer';
+    'w-full text-left px-2.5 py-2 rounded-xl hover:bg-neutral-900/[0.05] hover:translate-x-0.5 transition-all text-neutral-700 flex items-center gap-2 text-xs font-medium cursor-pointer';
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/70 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
+    <header className={`glass-bar sticky top-0 z-40 ${isScrolled ? 'is-scrolled' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3 sm:gap-5 h-16">
           {/* Zone 1: Brand Wordmark */}
@@ -102,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onSelectTab(currentRole === 'trainer' ? 'dashboard' : 'member-dashboard')}
               className="flex items-center gap-2.5 text-left group focus:outline-none min-w-0"
             >
-              <div className="w-9 h-9 rounded-2xl bg-[#7155E8] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(113,85,232,0.32)] group-hover:scale-105 transition-transform duration-150 shrink-0">
+              <div className="w-9 h-9 rounded-2xl bg-[#7155E8] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(113,85,232,0.32)] group-hover:scale-110 group-hover:-rotate-12 group-hover:shadow-[0_8px_20px_rgba(113,85,232,0.45)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0">
                 <Dumbbell className="w-5 h-5 text-white" />
               </div>
               <span className="hidden min-[400px]:inline text-base sm:text-lg font-extrabold tracking-tight text-[#171717] whitespace-nowrap truncate">
@@ -124,14 +158,14 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => onSelectTab(link.id)}
                   className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${
-                    isActive ? 'text-white' : 'text-neutral-600 hover:text-[#171717] hover:bg-[#F5F5F5]'
+                    isActive ? 'text-white' : 'text-neutral-600 hover:text-[#171717] hover:bg-neutral-900/[0.05]'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="headerActiveNavPill"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 rounded-full bg-[#171717] -z-10"
+                      className="absolute inset-0 rounded-full bg-[#171717] shadow-[0_6px_16px_-6px_rgba(23,23,23,0.5)] -z-10"
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
@@ -150,29 +184,48 @@ export const Header: React.FC<HeaderProps> = ({
                   setShowAccountMenu(false);
                 }}
                 className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors relative active:scale-95 cursor-pointer ${
-                  showNotifications ? 'bg-[#F0EEFC] text-[#7155E8]' : 'bg-[#F5F5F5] hover:bg-neutral-200/70 text-neutral-700'
-                }`}
+                  showNotifications
+                    ? 'bg-[#F0EEFC] text-[#7155E8]'
+                    : 'bg-neutral-900/[0.04] hover:bg-neutral-900/[0.08] text-neutral-700'
+                } group`}
                 aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
                 aria-expanded={showNotifications}
               >
-                <Bell className="w-4 h-4" />
+                <Bell className="w-4 h-4 origin-top transition-transform group-hover:[animation:bell-ring_0.6s_ease-in-out]" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center font-mono ring-2 ring-white tabular-nums">
-                    {unreadCount > 99 ? '99+' : unreadCount}
-                  </span>
+                  <span
+                    key={`ping-${unreadCount}`}
+                    aria-hidden="true"
+                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#EF4444]/50 animate-ping"
+                    style={{ animationIterationCount: 3, animationFillMode: 'forwards' }}
+                  />
                 )}
+                <AnimatePresence>
+                  {unreadCount > 0 && (
+                    <motion.span
+                      key={unreadCount}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      transition={{ type: 'spring', stiffness: 600, damping: 18 }}
+                      className="absolute -top-1 -right-1 min-w-4 h-4 px-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center font-mono ring-2 ring-white tabular-nums"
+                    >
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </button>
 
               <AnimatePresence>
                 {showNotifications && (
                   <motion.div
-                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                    transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-                    className="fixed left-4 right-4 top-[4.5rem] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2.5 sm:w-96 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.14)] border border-neutral-200/80 p-4 z-50 text-xs"
+                    {...popoverMotion(() => setShowNotifications(false), notifDrag)}
+                    className="glass-strong fixed left-4 right-4 top-[4.5rem] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2.5 sm:w-96 rounded-3xl p-4 z-50 text-xs"
                   >
-                    <div className="flex items-center justify-between pb-3 border-b border-neutral-100 gap-2">
+                    <div
+                      onPointerDown={startDrag(notifDrag)}
+                      className="flex items-center justify-between pb-3 border-b border-neutral-900/[0.06] gap-2 touch-none sm:touch-auto"
+                    >
                       <span className="font-bold text-sm text-[#171717]">Notifications</span>
                       {unreadCount > 0 ? (
                         <button
@@ -191,16 +244,19 @@ export const Header: React.FC<HeaderProps> = ({
                       {notifications.length === 0 ? (
                         <div className="py-8 text-center text-neutral-400 text-xs">No notifications yet</div>
                       ) : (
-                        notifications.slice(0, 10).map((n) => (
-                          <button
+                        notifications.slice(0, 10).map((n, i) => (
+                          <motion.button
                             key={n.id}
+                            initial={{ opacity: 0, x: 12 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.03 * i, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                             type="button"
                             onClick={() => {
                               setShowNotifications(false);
                               onOpenNotification(n);
                             }}
                             className={`w-full text-left p-3 rounded-2xl cursor-pointer transition-colors flex items-start gap-2.5 ${
-                              n.isRead ? 'opacity-75 hover:bg-[#F5F5F5]' : 'bg-[#F0EEFC]/60 hover:bg-[#F0EEFC]'
+                              n.isRead ? 'opacity-75 hover:bg-neutral-900/[0.04]' : 'bg-[#F0EEFC]/70 hover:bg-[#F0EEFC]'
                             }`}
                           >
                             {n.actorName && <Avatar src={n.actorAvatarUrl} name={n.actorName} size="sm" />}
@@ -222,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 )}
                               </div>
                             </div>
-                          </button>
+                          </motion.button>
                         ))
                       )}
                     </div>
@@ -233,10 +289,17 @@ export const Header: React.FC<HeaderProps> = ({
                         setShowNotifications(false);
                         onViewAllNotifications();
                       }}
-                      className="w-full mt-2 pt-2.5 border-t border-neutral-100 text-center text-[11px] font-bold text-[#7155E8] hover:underline cursor-pointer"
+                      className="w-full mt-2 pt-2.5 border-t border-neutral-900/[0.06] text-center text-[11px] font-bold text-[#7155E8] hover:underline cursor-pointer"
                     >
                       View notification history
                     </button>
+                    <div
+                      onPointerDown={startDrag(notifDrag)}
+                      className="sheet-grab sm:hidden flex justify-center pt-3 -mb-1"
+                      aria-hidden="true"
+                    >
+                      <span className="sheet-handle" />
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -251,7 +314,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 aria-expanded={showAccountMenu}
                 aria-label="Account menu"
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-[#F5F5F5] hover:bg-neutral-200/80 rounded-2xl transition-all active:scale-95 border border-transparent hover:border-neutral-200 cursor-pointer"
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-neutral-900/[0.04] hover:bg-white/80 rounded-2xl transition-all active:scale-95 border border-transparent hover:border-white hover:shadow-[0_6px_18px_-8px_rgba(40,28,110,0.25)] cursor-pointer"
               >
                 <Avatar src={account.avatarUrl} name={account.name} size="xs" />
                 <span className="hidden sm:inline text-xs font-bold text-[#171717] max-w-[116px] truncate whitespace-nowrap">
@@ -267,13 +330,13 @@ export const Header: React.FC<HeaderProps> = ({
               <AnimatePresence>
                 {showAccountMenu && (
                   <motion.div
-                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                    transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-                    className="fixed right-4 left-4 sm:left-auto top-[4.5rem] sm:absolute sm:right-0 sm:top-full sm:mt-2.5 sm:w-64 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.14)] border border-neutral-200/80 p-3 z-50 text-xs"
+                    {...popoverMotion(() => setShowAccountMenu(false), accountDrag)}
+                    className="glass-strong fixed right-4 left-4 sm:left-auto top-[4.5rem] sm:absolute sm:right-0 sm:top-full sm:mt-2.5 sm:w-64 rounded-3xl p-3 z-50 text-xs"
                   >
-                    <div className="flex items-center gap-2.5 p-2.5 pb-3 border-b border-neutral-100">
+                    <div
+                      onPointerDown={startDrag(accountDrag)}
+                      className="flex items-center gap-2.5 p-2.5 pb-3 border-b border-neutral-900/[0.06] touch-none sm:touch-auto"
+                    >
                       <Avatar src={account.avatarUrl} name={account.name} size="sm" />
                       <div className="min-w-0">
                         <span className="block font-bold text-xs text-[#171717] truncate">{account.name}</span>
@@ -317,6 +380,13 @@ export const Header: React.FC<HeaderProps> = ({
                         <LogOut className="w-3.5 h-3.5 shrink-0" />
                         <span className="whitespace-nowrap">Log Out</span>
                       </button>
+                    </div>
+                    <div
+                      onPointerDown={startDrag(accountDrag)}
+                      className="sheet-grab sm:hidden flex justify-center pt-3 -mb-1"
+                      aria-hidden="true"
+                    >
+                      <span className="sheet-handle" />
                     </div>
                   </motion.div>
                 )}

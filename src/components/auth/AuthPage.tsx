@@ -235,13 +235,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F5F5F5] selection:bg-[#7155E8] selection:text-white overflow-x-clip">
+      <div className="app-ambient" aria-hidden="true" />
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
         className={`relative w-full ${
           isSignUp ? 'max-w-2xl' : 'max-w-md'
-        } bg-white border border-neutral-200/70 rounded-3xl p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.06)] space-y-6 z-10`}
+        } glass-strong rounded-3xl p-6 sm:p-8 space-y-6 z-10`}
       >
         {/* Brand Header */}
         <div className="text-center space-y-2">

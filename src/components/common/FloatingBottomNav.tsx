@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Home,
   Users,
@@ -21,9 +21,16 @@ import {
   LogOut,
   Settings
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useDragControls } from 'motion/react';
 import { UserRole, Member } from '../../types';
 import { Avatar, useBodyScrollLock } from './CommonUI';
+import { shouldDismiss, springPop, springSheet } from '../../lib/gestures';
+
+/** Grab handle + header area that starts a swipe-down-to-close drag (never from buttons). */
+const startSheetDrag = (controls: ReturnType<typeof useDragControls>) => (e: React.PointerEvent) => {
+  if ((e.target as HTMLElement).closest('button, a, input, select, textarea')) return;
+  controls.start(e);
+};
 
 export interface AccountSummary {
   name: string;
@@ -66,6 +73,12 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
   const [showQuickLogModal, setShowQuickLogModal] = useState(false);
 
   useBodyScrollLock(showMoreDrawer || showQuickLogModal);
+  const drawerDrag = useDragControls();
+  const quickLogDrag = useDragControls();
+  const isTouch = useMemo(
+    () => typeof window !== 'undefined' && !!window.matchMedia?.('(pointer: coarse)').matches,
+    []
+  );
 
   const handleCenterAction = () => {
     if (currentRole === 'trainer') {
@@ -103,8 +116,25 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
         aria-label="Bottom Navigation Bar"
         className="fixed bottom-3 sm:bottom-5 left-0 right-0 z-30 flex justify-center px-3 sm:px-4 pointer-events-none safe-area-bottom"
       >
-        <div className="pointer-events-auto relative w-full max-w-[390px] sm:max-w-[430px]">
-          <div className="relative bg-white/95 backdrop-blur-xl border border-neutral-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12)] rounded-[28px] px-2 py-2 grid grid-cols-5 items-center gap-1 ring-1 ring-black/5">
+        <motion.div
+          className="pointer-events-auto relative w-full max-w-[390px] sm:max-w-[430px]"
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ ...springSheet, delay: 0.1 }}
+          /* Swipe up on the dock to open the menu sheet (touch screens only) */
+          drag={isTouch ? 'y' : false}
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0.35, bottom: 0.08 }}
+          dragSnapToOrigin
+          onDragEnd={(_, info) => {
+            if (info.offset.y < -36 || info.velocity.y < -500) setShowMoreDrawer(true);
+          }}
+        >
+          <div
+            aria-hidden="true"
+            className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-9 h-1 rounded-full bg-neutral-900/15 sm:hidden"
+          />
+          <div className="glass-strong relative rounded-[28px] px-2 py-2 grid grid-cols-5 items-center gap-1">
             {/* TRAINER NAVIGATION (5 Equal Columns - Zero Protrusion Overlap) */}
             {currentRole === 'trainer' && (
               <>
@@ -121,10 +151,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightTrainer"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <Home className={`w-5 h-5 ${isTrainerHome ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <Home className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isTrainerHome ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isTrainerHome ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -147,10 +177,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightTrainer"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <Users className={`w-5 h-5 ${isTrainerMembers ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <Users className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isTrainerMembers ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isTrainerMembers ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -190,11 +220,11 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightTrainer"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
                   <div className="relative">
-                    <Flame className={`w-5 h-5 ${isTrainerActivity ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                    <Flame className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isTrainerActivity ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                     {pendingMealCount > 0 && (
                       <span className="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center font-mono ring-1 ring-white tabular-nums">
                         {pendingMealCount}
@@ -223,10 +253,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightTrainer"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <User className={`w-5 h-5 ${isTrainerProfile ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <User className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isTrainerProfile ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isTrainerProfile ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -254,10 +284,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightMember"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <Home className={`w-5 h-5 ${isMemberHome ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <Home className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isMemberHome ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isMemberHome ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -280,10 +310,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightMember"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <Compass className={`w-5 h-5 ${isMemberExplore ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <Compass className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isMemberExplore ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isMemberExplore ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -318,11 +348,11 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightMember"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
                   <div className="relative">
-                    <Bell className={`w-5 h-5 ${isMemberInbox ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                    <Bell className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isMemberInbox ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                     {unreadNoticesCount > 0 && (
                       <span className="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-1 bg-[#EF4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center font-mono ring-1 ring-white tabular-nums">
                         {unreadNoticesCount}
@@ -351,10 +381,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                     <motion.span
                       layoutId="bottomNavHighlightMember"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 bg-[#F0EEFC]/80 rounded-2xl -z-10"
+                      className="absolute inset-0 bg-[#F0EEFC] rounded-2xl -z-10 shadow-[inset_0_0_0_1px_rgba(113,85,232,0.12)]"
                     />
                   )}
-                  <User className={`w-5 h-5 ${isMemberProfile ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+                  <User className={`w-5 h-5 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isMemberProfile ? 'stroke-[2.3] -translate-y-0.5 scale-110' : 'stroke-[1.8]'}`} />
                   <span
                     className={`text-[10px] font-semibold tracking-tight mt-0.5 whitespace-nowrap ${
                       isMemberProfile ? 'text-[#7155E8]' : 'text-neutral-500'
@@ -366,7 +396,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       </aside>
 
       {/* Member Quick Log Action Modal */}
@@ -378,18 +408,36 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.16 }}
-              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+              className="fixed inset-0 glass-backdrop"
               onClick={() => setShowQuickLogModal(false)}
               aria-hidden="true"
             />
             <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Quick Activity Log"
+              initial={{ opacity: 0, y: 60, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 16, scale: 0.97 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-neutral-100 z-10"
+              exit={{ opacity: 0, y: 40, scale: 0.96, transition: { duration: 0.18 } }}
+              transition={springPop}
+              drag="y"
+              dragListener={false}
+              dragControls={quickLogDrag}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0.05, bottom: 0.7 }}
+              dragSnapToOrigin
+              onDragEnd={(_, info) => {
+                if (shouldDismiss(info.offset.y, info.velocity.y)) setShowQuickLogModal(false);
+              }}
+              className="glass-strong relative w-full max-w-sm rounded-3xl p-6 pt-4 z-10"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+              <div onPointerDown={startSheetDrag(quickLogDrag)} className="sheet-grab flex justify-center pb-3" aria-hidden="true">
+                <span className="sheet-handle" />
+              </div>
+              <div
+                onPointerDown={startSheetDrag(quickLogDrag)}
+                className="sheet-grab flex items-center justify-between pb-3 border-b border-neutral-900/[0.06]"
+              >
                 <div>
                   <h3 className="font-bold text-base text-[#171717]">Quick Activity Log</h3>
                   <p className="text-xs text-neutral-500">Record your nutrition or workout for today</p>
@@ -403,14 +451,20 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 mt-4">
-                <button
+              <motion.div
+                className="grid grid-cols-1 gap-2.5 mt-4"
+                initial="hidden"
+                animate="show"
+                variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.06 } } }}
+              >
+                <motion.button
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
                   type="button"
                   onClick={() => {
                     setShowQuickLogModal(false);
                     onSelectTab('member-meallog');
                   }}
-                  className="p-3.5 rounded-2xl bg-[#F5F5F5] hover:bg-[#F0EEFC] border border-neutral-200/60 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
+                  className="p-3.5 rounded-2xl bg-white/60 hover:bg-[#F0EEFC] border border-white/80 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
                 >
                   <div className="w-11 h-11 rounded-xl bg-white text-[#7155E8] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
                     <Camera className="w-5 h-5" />
@@ -423,15 +477,16 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                       Log breakfast, lunch, snack, or dinner
                     </span>
                   </div>
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
                   type="button"
                   onClick={() => {
                     setShowQuickLogModal(false);
                     onSelectTab('member-workout');
                   }}
-                  className="p-3.5 rounded-2xl bg-[#F5F5F5] hover:bg-[#F0EEFC] border border-neutral-200/60 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
+                  className="p-3.5 rounded-2xl bg-white/60 hover:bg-[#F0EEFC] border border-white/80 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
                 >
                   <div className="w-11 h-11 rounded-xl bg-white text-[#10B981] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
                     <Dumbbell className="w-5 h-5" />
@@ -444,15 +499,16 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                       Check off exercises, sets, and weights
                     </span>
                   </div>
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                  variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
                   type="button"
                   onClick={() => {
                     setShowQuickLogModal(false);
                     onSelectTab('member-progress');
                   }}
-                  className="p-3.5 rounded-2xl bg-[#F5F5F5] hover:bg-[#F0EEFC] border border-neutral-200/60 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
+                  className="p-3.5 rounded-2xl bg-white/60 hover:bg-[#F0EEFC] border border-white/80 hover:border-[#7155E8]/30 text-left flex items-center gap-3.5 transition-all group active:scale-[0.98]"
                 >
                   <div className="w-11 h-11 rounded-xl bg-white text-[#F59E0B] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
                     <Scale className="w-5 h-5" />
@@ -465,8 +521,8 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                       Update current body weight and waist stats
                     </span>
                   </div>
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </motion.div>
           </div>
         )}
@@ -481,22 +537,43 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.16 }}
-              className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+              className="fixed inset-0 glass-backdrop"
               onClick={() => setShowMoreDrawer(false)}
               aria-hidden="true"
             />
 
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={currentRole === 'trainer' ? 'Trainer menu' : 'Member menu'}
+              initial={{ opacity: 0, y: '60%' }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-lg bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl border-t sm:border border-neutral-200 p-6 pb-8 space-y-4 max-h-[86vh] overflow-y-auto z-10"
+              exit={{ opacity: 0, y: '50%', transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
+              transition={springSheet}
+              drag="y"
+              dragListener={false}
+              dragControls={drawerDrag}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0.04, bottom: 0.75 }}
+              dragSnapToOrigin
+              onDragEnd={(_, info) => {
+                if (shouldDismiss(info.offset.y, info.velocity.y)) setShowMoreDrawer(false);
+              }}
+              className="glass-strong relative w-full max-w-lg rounded-t-[32px] sm:rounded-3xl p-6 pt-3 pb-8 space-y-4 max-h-[86vh] overflow-y-auto overscroll-contain z-10"
             >
-              {/* Grab Handle on mobile */}
-              <div className="w-12 h-1.5 bg-neutral-200 rounded-full mx-auto mb-1 sm:hidden" />
+              {/* Grab handle: swipe down to close */}
+              <div
+                onPointerDown={startSheetDrag(drawerDrag)}
+                className="sheet-grab flex justify-center py-1.5 -mx-6"
+                aria-hidden="true"
+              >
+                <span className="sheet-handle" />
+              </div>
 
-              <div className="flex items-center justify-between gap-3 border-b border-neutral-100 pb-3">
+              <div
+                onPointerDown={startSheetDrag(drawerDrag)}
+                className="sheet-grab flex items-center justify-between gap-3 border-b border-neutral-900/[0.06] pb-3"
+              >
                 <div className="min-w-0">
                   <h3 className="font-bold text-lg text-[#171717] truncate">
                     {currentRole === 'trainer' ? 'Trainer Command & Menu' : 'Member Account & Services'}
@@ -517,7 +594,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
               </div>
 
               {/* Signed-in account */}
-              <div className="p-4 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex items-center justify-between gap-3">
+              <div className="p-4 bg-gradient-to-br from-[#F0EEFC]/80 to-white/60 rounded-2xl border border-white/80 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar src={account.avatarUrl} name={account.name} size="md" />
                   <div className="min-w-0">
@@ -552,9 +629,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('fitness');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#7155E8] flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#7155E8] flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <Dumbbell className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -571,9 +648,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('payments');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <CreditCard className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -590,9 +667,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('schedule');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-[#7155E8] flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-[#7155E8] flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <Calendar className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -609,9 +686,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('notices');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <Send className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -628,9 +705,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('reports');
                         setShowMoreDrawer(false);
                       }}
-                      className="col-span-2 p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="col-span-2 p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <FileSpreadsheet className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -683,9 +760,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('member-diet');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <Utensils className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -702,9 +779,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('member-payments');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <CreditCard className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -721,9 +798,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('member-schedule');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <Calendar className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -740,9 +817,9 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                         onSelectTab('member-progress');
                         setShowMoreDrawer(false);
                       }}
-                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white hover:bg-[#F5F5F5] text-left flex items-center gap-2.5 transition-colors group shadow-xs"
+                      className="p-3 rounded-2xl border border-neutral-200/80 bg-white/70 hover:bg-white text-left flex items-center gap-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgba(40,28,110,0.3)] active:scale-[0.98] group shadow-xs"
                     >
-                      <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#7155E8] flex items-center justify-center shrink-0">
+                      <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#7155E8] flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
                         <TrendingUp className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">

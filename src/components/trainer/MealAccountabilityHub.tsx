@@ -384,10 +384,10 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
               aria-hidden="true"
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.85, rotate: -1 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ type: 'spring', stiffness: 420, damping: 32, mass: 0.8 }}
               className="relative max-w-2xl w-full bg-white rounded-3xl overflow-hidden p-3 shadow-2xl z-10"
             >
               <button

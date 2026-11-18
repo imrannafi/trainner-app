@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useDragControls } from 'motion/react';
+import { shouldDismiss, springPop } from '../../lib/gestures';
+
+const TOAST_DURATION_MS = 3400;
 
 /* ============================================================================
  * GLOBAL NON-OVERLAPPING TOAST SYSTEM (Replaces native window.alert)
@@ -33,7 +36,7 @@ export const ToastViewport: React.FC = () => {
       setToasts((prev) => [...prev.slice(-2), item]);
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== item.id));
-      }, 3400);
+      }, TOAST_DURATION_MS);
     };
     toastListeners.add(handleToast);
     return () => {
@@ -46,29 +49,50 @@ export const ToastViewport: React.FC = () => {
       aria-live="polite"
       className="fixed top-20 right-4 left-4 sm:left-auto sm:w-96 z-[120] flex flex-col gap-2 pointer-events-none"
     >
-      <AnimatePresence initial={false}>
+      <AnimatePresence initial={false} mode="popLayout">
         {toasts.map((t) => (
           <motion.div
             key={t.id}
-            initial={{ opacity: 0, y: -12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.96 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className={`pointer-events-auto flex items-start gap-2.5 px-4 py-3 rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.12)] border backdrop-blur-md text-xs font-medium ${
-              t.type === 'error'
-                ? 'bg-white/95 border-rose-200 text-rose-800'
-                : t.type === 'info'
-                ? 'bg-white/95 border-neutral-200 text-neutral-800'
-                : 'bg-white/95 border-emerald-200 text-neutral-900'
+            layout
+            role="status"
+            initial={{ opacity: 0, y: -18, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.18 } }}
+            transition={springPop}
+            drag="x"
+            dragSnapToOrigin
+            dragElastic={0.7}
+            onDragEnd={(_, info) => {
+              if (Math.abs(info.offset.x) > 90 || Math.abs(info.velocity.x) > 600) {
+                setToasts((prev) => prev.filter((item) => item.id !== t.id));
+              }
+            }}
+            whileDrag={{ scale: 0.98 }}
+            className={`glass-strong pointer-events-auto relative overflow-hidden flex items-start gap-2.5 px-4 py-3 rounded-2xl text-xs font-medium cursor-grab active:cursor-grabbing touch-pan-y ${
+              t.type === 'error' ? 'text-rose-800' : t.type === 'info' ? 'text-neutral-800' : 'text-neutral-900'
             }`}
           >
-            {t.type === 'error' ? (
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-            ) : t.type === 'info' ? (
-              <Info className="w-4 h-4 text-[#7155E8] shrink-0 mt-0.5" />
-            ) : (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-            )}
+            <span
+              aria-hidden="true"
+              className={`toast-progress absolute left-0 bottom-0 h-[2px] w-full ${
+                t.type === 'error' ? 'bg-rose-400' : t.type === 'info' ? 'bg-[#7155E8]/70' : 'bg-emerald-400'
+              }`}
+              style={{ animationDuration: `${TOAST_DURATION_MS}ms` }}
+            />
+            <motion.span
+              initial={{ scale: 0.4, rotate: -30 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 18, delay: 0.05 }}
+              className="shrink-0 mt-0.5"
+            >
+              {t.type === 'error' ? (
+                <AlertCircle className="w-4 h-4 text-rose-600" />
+              ) : t.type === 'info' ? (
+                <Info className="w-4 h-4 text-[#7155E8]" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              )}
+            </motion.span>
             <span className="flex-1 leading-snug">{t.message}</span>
             <button
               type="button"
@@ -133,7 +157,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-white border border-neutral-200/70 rounded-3xl p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-transform duration-200 min-w-0 ${
+      className={`group bg-white border border-neutral-200/70 rounded-3xl p-4 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-transform duration-200 min-w-0 ${
         onClick
           ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.06)] active:scale-[0.99]'
           : ''
@@ -145,7 +169,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         </span>
         {icon && (
           <div
-            className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 transition-colors"
+            className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:-rotate-6"
             style={{
               backgroundColor: accentColor ? `${accentColor}15` : '#F5F5F5',
               color: accentColor || '#7155E8'
@@ -215,6 +239,7 @@ export const Modal: React.FC<ModalProps> = ({
   maxWidth = 'lg'
 }) => {
   useBodyScrollLock(isOpen);
+  const dragControls = useDragControls();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -224,6 +249,12 @@ export const Modal: React.FC<ModalProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
+
+  /** Start a swipe-down-to-close drag from the header, but never from its buttons. */
+  const startHeaderDrag = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('button, a, input, select, textarea')) return;
+    dragControls.start(e);
+  };
 
   const widthClasses = {
     sm: 'max-w-sm',
@@ -247,19 +278,32 @@ export const Modal: React.FC<ModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.16 }}
-            className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 glass-backdrop"
             onClick={onClose}
             aria-hidden="true"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
+            initial={{ opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${widthClasses} bg-white rounded-3xl border border-neutral-100 shadow-[0_24px_64px_rgba(0,0,0,0.16)] overflow-hidden my-auto z-10 flex flex-col max-h-[88vh]`}
+            exit={{ opacity: 0, scale: 0.95, y: 16, transition: { duration: 0.18, ease: [0.4, 0, 1, 1] } }}
+            transition={springPop}
+            drag="y"
+            dragListener={false}
+            dragControls={dragControls}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0.05, bottom: 0.7 }}
+            dragSnapToOrigin
+            onDragEnd={(_, info) => {
+              if (shouldDismiss(info.offset.y, info.velocity.y)) onClose();
+            }}
+            className={`glass-strong relative w-full ${widthClasses} rounded-3xl overflow-hidden my-auto z-10 flex flex-col max-h-[88vh]`}
           >
-            <div className="flex items-start justify-between gap-4 px-6 py-4 sm:py-5 border-b border-neutral-100 shrink-0">
+            <div
+              onPointerDown={startHeaderDrag}
+              className="sheet-grab relative flex items-start justify-between gap-4 px-6 pt-5 pb-4 sm:py-5 border-b border-neutral-900/[0.06] shrink-0"
+            >
+              <span aria-hidden="true" className="sheet-handle absolute top-2 left-1/2 -translate-x-1/2 sm:hidden" />
               <div className="min-w-0">
                 <h3 className="text-base sm:text-lg font-bold text-[#171717] truncate">{title}</h3>
                 {description && (
@@ -269,14 +313,14 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-full transition-colors shrink-0"
+                className="p-2 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-900/5 rounded-full transition-all duration-200 hover:rotate-90 active:scale-90 shrink-0"
                 aria-label="Close modal"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto flex-1">{children}</div>
+            <div className="p-6 overflow-y-auto overscroll-contain flex-1">{children}</div>
           </motion.div>
         </div>
       )}
@@ -350,7 +394,7 @@ export const EmptyState: React.FC<{
   icon?: React.ReactNode;
 }> = ({ title, description, actionText, onAction, icon }) => {
   return (
-    <div className="p-10 border border-dashed border-neutral-200 rounded-3xl text-center bg-white shadow-xs">
+    <div className="p-10 border border-dashed border-neutral-300/70 rounded-3xl text-center bg-white/60 shadow-xs">
       {icon && <div className="mx-auto mb-3 text-neutral-400 flex justify-center">{icon}</div>}
       <h4 className="text-sm font-bold text-[#171717]">{title}</h4>
       <p className="text-xs text-neutral-500 mt-1 max-w-sm mx-auto">{description}</p>

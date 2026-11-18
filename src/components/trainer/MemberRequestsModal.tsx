@@ -96,16 +96,16 @@ export const MemberRequestsModal: React.FC<MemberRequestsModalProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.16 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/45 backdrop-blur-xs"
+            className="fixed inset-0 glass-backdrop"
             aria-hidden="true"
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
+            initial={{ opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 bg-white rounded-3xl w-full max-w-4xl shadow-[0_24px_64px_rgba(0,0,0,0.16)] border border-neutral-100 overflow-hidden flex flex-col max-h-[88vh] my-auto"
+            transition={{ type: 'spring', stiffness: 420, damping: 32, mass: 0.8 }}
+            className="glass-strong relative z-10 rounded-3xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[88vh] my-auto"
           >
             {/* Top Header */}
             <div className="p-5 sm:p-6 pb-4 border-b border-neutral-100 flex items-start justify-between gap-4 shrink-0">

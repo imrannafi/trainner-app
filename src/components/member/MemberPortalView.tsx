@@ -12,6 +12,7 @@ import {
   Utensils
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { getNavDirection, pageTransition, pageVariants } from '../../lib/gestures';
 import {
   Member,
   WorkoutPlan,
@@ -536,13 +537,15 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
       </div>
 
       {/* Animated Tab Viewport */}
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" custom={getNavDirection()}>
         <motion.div
           key={memberTab}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+          custom={getNavDirection()}
+          variants={pageVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={pageTransition}
         >
           {/* SECTION: DASHBOARD */}
           {memberTab === 'dashboard' && (
