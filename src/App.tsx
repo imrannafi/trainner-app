@@ -43,7 +43,7 @@ import { TrainingCalendar } from './components/trainer/TrainingCalendar';
 import { NoticesManager } from './components/trainer/NoticesManager';
 import { ReportsSection } from './components/trainer/ReportsSection';
 import { MemberPortalView } from './components/member/MemberPortalView';
-import { MemberRequestsModal } from './components/trainer/MemberRequestsModal';
+import { RegistrationRequestsSection } from './components/trainer/RegistrationRequestsSection';
 import { AddMemberModal } from './components/trainer/AddMemberModal';
 import { AmbientBackdrop, PullToRefresh } from './components/common/GestureLayer';
 import { PushPrompt } from './components/common/PushPrompt';
@@ -120,7 +120,6 @@ export default function App() {
   const [mainCoach, setMainCoach] = useState<TrainerProfile | undefined>(undefined);
 
   // Modals
-  const [isMemberRequestsOpen, setIsMemberRequestsOpen] = useState(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStaffManagerOpen, setIsStaffManagerOpen] = useState(false);
@@ -264,7 +263,13 @@ export default function App() {
   // ---------------------------------------------------------------------------
   const mainRef = useRef<HTMLElement>(null);
   const isSignedIn = access.kind === 'staff' || access.kind === 'member';
-  const tabOrder = access.kind === 'staff' ? TRAINER_TAB_ORDER : MEMBER_TAB_ORDER;
+  const canReviewRegistrations = access.kind === 'staff' && access.role === 'super_admin';
+  const tabOrder =
+    access.kind === 'staff'
+      ? canReviewRegistrations
+        ? ['dashboard', 'registrations', ...TRAINER_TAB_ORDER.slice(1)]
+        : TRAINER_TAB_ORDER
+      : MEMBER_TAB_ORDER;
 
   // Work out which way the page should slide whenever the section changes.
   const prevRoute = useRef({ tab: activeTab, memberId: selectedMemberId });
@@ -466,7 +471,19 @@ export default function App() {
   const unreadNoticesCount = notices.filter(
     (n) => currentMember && !n.readByMemberIds.includes(currentMember.id)
   ).length;
-  const pendingRegistrationCount = registrationRequests.filter((r) => r.status === 'Pending').length;
+  // Registration requests are Super Admin only (also enforced by the database).
+  const pendingRegistrationCount = isSuperAdmin
+    ? registrationRequests.filter((r) => r.status === 'Pending').length
+    : 0;
+  const openRegistrationRequests = () => {
+    if (isSuperAdmin) {
+      setSelectedMemberId(null);
+      setActiveTab('registrations');
+      window.scrollTo({ top: 0 });
+    } else {
+      setIsAddMemberOpen(true);
+    }
+  };
 
   const routeMotionKey =
     currentRole === 'trainer'
@@ -492,6 +509,7 @@ export default function App() {
         currentRole={currentRole}
         account={account}
         isSuperAdmin={isSuperAdmin}
+        pendingRequestsCount={pendingRegistrationCount}
         activeTab={activeTab}
         onSelectTab={handleSelectTab}
         notifications={notifications}
@@ -530,11 +548,11 @@ export default function App() {
                     auditLogs={auditLogs}
                     notices={notices}
                     paymentRequests={paymentRequests}
-                    registrationRequests={registrationRequests}
+                    registrationRequests={isSuperAdmin ? registrationRequests : []}
                     onSelectTab={handleSelectTab}
                     onResolveAlert={(id) => run(storage.resolveAlert(id), 'Alert dismissed.')}
                     onOpenAddMember={() => setIsAddMemberOpen(true)}
-                    onOpenMemberRequests={() => setIsMemberRequestsOpen(true)}
+                    onOpenMemberRequests={isSuperAdmin ? openRegistrationRequests : undefined}
                     onOpenRecordPayment={() => setActiveTab('payments')}
                     onOpenPublishNotice={() => setActiveTab('notices')}
                     onApprovePaymentRequest={(id) =>
@@ -543,6 +561,15 @@ export default function App() {
                     onRejectPaymentRequest={(id, reason) =>
                       run(storage.rejectPaymentRequest(id, reason), 'Payment verification declined.')
                     }
+                  />
+                )}
+
+                {activeTab === 'registrations' && isSuperAdmin && (
+                  <RegistrationRequestsSection
+                    requests={registrationRequests}
+                    onApprove={(id) => storage.approveRegistrationRequest(id)}
+                    onReject={(id, reason) => storage.rejectRegistrationRequest(id, reason)}
+                    onOpenMember={openMember}
                   />
                 )}
 
@@ -594,7 +621,7 @@ export default function App() {
                       <MembersList
                         members={members}
                         onSelectMember={(id) => setSelectedMemberId(id)}
-                        onOpenAddMember={() => setIsMemberRequestsOpen(true)}
+                        onOpenAddMember={openRegistrationRequests}
                         onOpenDirectEnroll={() => setIsAddMemberOpen(true)}
                         onOpenRecordPayment={() => setActiveTab('payments')}
                         onActivateAccount={async (id) => {
@@ -726,14 +753,6 @@ export default function App() {
 
       {isStaff && (
         <>
-          <MemberRequestsModal
-            isOpen={isMemberRequestsOpen}
-            onClose={() => setIsMemberRequestsOpen(false)}
-            requests={registrationRequests}
-            onApprove={(id) => storage.approveRegistrationRequest(id)}
-            onReject={(id, reason) => run(storage.rejectRegistrationRequest(id, reason))}
-          />
-
           <AddMemberModal
             isOpen={isAddMemberOpen}
             onClose={() => setIsAddMemberOpen(false)}
@@ -784,7 +803,7 @@ export default function App() {
         pendingMealCount={pendingMealCount}
         unreadNoticesCount={unreadNoticesCount}
         pendingRequestsCount={pendingRegistrationCount}
-        onOpenAddMember={() => setIsMemberRequestsOpen(true)}
+        onOpenAddMember={openRegistrationRequests}
         onOpenDirectEnroll={() => setIsAddMemberOpen(true)}
         onOpenRecordPayment={() => setActiveTab('payments')}
         onLogout={handleLogout}

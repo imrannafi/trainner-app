@@ -195,7 +195,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({
                   <button
                     type="button"
                     onClick={handleCenterAction}
-                    aria-label="Member Registration Requests"
+                    aria-label={pendingRequestsCount > 0 ? `Registration requests (${pendingRequestsCount} pending)` : "Members: requests and enrolment"}
                     className="w-12 h-12 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white flex items-center justify-center shadow-[0_6px_18px_rgba(113,85,232,0.4)] transition-transform duration-150 hover:scale-105 active:scale-95 focus:outline-none relative cursor-pointer"
                   >
                     <UserPlus className="w-5 h-5 stroke-[2.2]" />

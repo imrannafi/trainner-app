@@ -20,58 +20,14 @@ import { RegistrationStatus, signInWithGoogle } from '../../services/session';
 import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
 import { MembershipDuration, RegistrationPaymentMethod } from '../../types';
 
+type RegistrationTrainer = { id: string; fullName: string; title: string; isMainCoach: boolean };
+
 const DURATION_OPTIONS: { value: MembershipDuration; label: string }[] = [
   { value: '1 month', label: '1 Month' },
   { value: '3 months', label: '3 Months' },
   { value: '6 months', label: '6 Months' }
 ];
 const PAYMENT_METHODS: RegistrationPaymentMethod[] = ['Cash', 'bKash', 'Nagad', 'Bank Transfer'];
-
-// Email sign-up needs a confirmation click before there is a session, so the form is kept
-// in this browser and restored when the applicant signs in to finish.
-const DRAFT_KEY = 'awm-registration-draft';
-interface RegistrationDraft {
-  email: string;
-  name: string;
-  phone: string;
-  avatarDataUrl?: string;
-  age: string;
-  gender: string;
-  heightCm: string;
-  currentWeightKg: string;
-  targetWeightKg: string;
-  fitnessGoal: string;
-  fitnessLevel: 'Beginner' | 'Intermediate' | 'Advanced' | 'Athlete';
-  medicalConditions: string;
-  injuries: string;
-  bodyConditionNotes: string;
-  membershipDuration: MembershipDuration;
-  amountPaid: string;
-  paymentMethod: RegistrationPaymentMethod;
-}
-const readDraft = (): RegistrationDraft | null => {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    return raw ? (JSON.parse(raw) as RegistrationDraft) : null;
-  } catch {
-    return null;
-  }
-};
-const writeDraft = (draft: RegistrationDraft | null) => {
-  try {
-    if (draft) localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    else localStorage.removeItem(DRAFT_KEY);
-  } catch {
-    // Storage full or blocked: the applicant just re-enters the form.
-  }
-};
-const blobToDataUrl = (blob: Blob) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
 
 /** Turns Supabase Auth errors into something an applicant can act on. */
 const friendlySignUpError = (message: string) => {
@@ -81,7 +37,13 @@ const friendlySignUpError = (message: string) => {
   if (/already registered|already exists/i.test(message)) {
     return 'An account with this email already exists. Sign in instead to finish your registration.';
   }
-  if (/amount_paid|payment_method/i.test(message) && /column|schema/i.test(message)) {
+  if (/already have a registration waiting/i.test(message)) {
+    return 'You already have a registration waiting for approval. Sign in to check its status.';
+  }
+  if (/sign in to submit your registration/i.test(message)) {
+    return 'This email is already registered. Sign in to continue your registration.';
+  }
+  if (/function .*does not exist|could not find the function/i.test(message)) {
     return 'Registration is being updated on the server. Please try again in a few minutes.';
   }
   return message;
@@ -149,6 +111,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [membershipDuration, setMembershipDuration] = useState<MembershipDuration>('1 month');
   const [amountPaid, setAmountPaid] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<RegistrationPaymentMethod>('Cash');
+  const [trainers, setTrainers] = useState<RegistrationTrainer[]>([]);
+  const [trainerId, setTrainerId] = useState('');
+  const [trainersError, setTrainersError] = useState(false);
+  // Set when the request was saved before email confirmation (no session yet).
+  const [awaitingEmailConfirm, setAwaitingEmailConfirm] = useState(false);
 
   // Submission state
   const [submittedSuccess, setSubmittedSuccess] = useState(registration?.status === 'Pending');
@@ -168,42 +135,27 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   }, [registration?.status, registration?.fullName]);
 
   useEffect(() => {
+    if (!isSignUp || trainers.length) return;
+    let cancelled = false;
+    storage
+      .listRegistrationTrainers()
+      .then((list) => {
+        if (cancelled) return;
+        setTrainers(list);
+        setTrainersError(false);
+        setTrainerId((current) => current || list.find((t) => t.isMainCoach)?.id || list[0]?.id || '');
+      })
+      .catch(() => {
+        if (!cancelled) setTrainersError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignUp, trainers.length]);
+
+  useEffect(() => {
     if (avatarUrl.startsWith('blob:')) return () => URL.revokeObjectURL(avatarUrl);
   }, [avatarUrl]);
-
-  // Restore the form saved before email confirmation, for the same email only.
-  useEffect(() => {
-    if (!isCompleting) return;
-    const draft = readDraft();
-    if (!draft || draft.email.toLowerCase() !== (prefill?.email ?? '').toLowerCase()) return;
-    setName(draft.name || prefill?.fullName || '');
-    setPhone(draft.phone);
-    setAge(draft.age);
-    setGender(draft.gender);
-    setHeightCm(draft.heightCm);
-    setCurrentWeightKg(draft.currentWeightKg);
-    setTargetWeightKg(draft.targetWeightKg);
-    setFitnessGoal(draft.fitnessGoal);
-    setFitnessLevel(draft.fitnessLevel);
-    setMedicalConditions(draft.medicalConditions);
-    setInjuries(draft.injuries);
-    setBodyConditionNotes(draft.bodyConditionNotes);
-    setMembershipDuration(draft.membershipDuration);
-    setAmountPaid(draft.amountPaid);
-    setPaymentMethod(draft.paymentMethod);
-    if (draft.avatarDataUrl) {
-      fetch(draft.avatarDataUrl)
-        .then((r) => r.blob())
-        .then((blob) => {
-          setAvatarFile(blob);
-          setAvatarUrl(URL.createObjectURL(blob));
-          setPhotoFileName('Saved profile photo');
-        })
-        .catch(() => undefined);
-    }
-    setInfoMessage('We restored the details you entered. Check them and submit to finish your registration.');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCompleting, prefill?.email]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
@@ -267,6 +219,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         setErrorMessage('Please describe your current body condition for your coach.');
         return;
       }
+      if (trainers.length && !trainerId) {
+        setErrorMessage('Please choose your trainer.');
+        return;
+      }
       const paid = Number(amountPaid);
       if (amountPaid.trim() === '' || !Number.isFinite(paid) || paid < 0) {
         setErrorMessage('Please enter the amount you have paid (enter 0 if you have not paid yet).');
@@ -275,6 +231,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
       setIsBusy(true);
       try {
+        // With "Confirm email" on there is no session yet; the request is still saved now,
+        // using the brand-new account id.
+        let pendingUserId: string | undefined;
         if (!isCompleting) {
           const { data, error } = await supabase.auth.signUp({
             email: signupEmail.trim(),
@@ -282,66 +241,42 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             options: { data: { full_name: name.trim() }, emailRedirectTo: window.location.origin }
           });
           if (error) throw error;
-          if (!data.session) {
-            let avatarDataUrl: string | undefined;
-            try {
-              if (avatarFile) avatarDataUrl = await blobToDataUrl(avatarFile);
-            } catch {
-              avatarDataUrl = undefined;
-            }
-            writeDraft({
-              email: signupEmail.trim(),
-              name: name.trim(),
-              phone: phone.trim(),
-              avatarDataUrl,
-              age,
-              gender,
-              heightCm,
-              currentWeightKg,
-              targetWeightKg,
-              fitnessGoal,
-              fitnessLevel,
-              medicalConditions,
-              injuries,
-              bodyConditionNotes,
-              membershipDuration,
-              amountPaid,
-              paymentMethod
-            });
-            setInfoMessage(
-              'One more step: your registration has not been sent to the coach yet. Open the confirmation email we sent you, tap the link, then sign in here and tap Submit. Your details are saved and will be filled in for you.'
-            );
-            setIsSignUp(false);
-            setEmail(signupEmail.trim());
-            return;
+          // Supabase hides existing accounts by returning a user with no identities.
+          if (data.user && data.user.identities?.length === 0) {
+            throw new Error('An account with this email already exists.');
           }
+          if (!data.session) pendingUserId = data.user?.id;
         }
 
-        await storage.addRegistrationRequest({
-          fullName: name.trim(),
-          email: signupEmail.trim(),
-          phone: phone.trim(),
-          avatarFile,
-          avatarUrl: avatarFile ? undefined : avatarUrl,
-          age: parseInt(age) || 0,
-          gender,
-          heightCm: parseFloat(heightCm) || 0,
-          currentWeightKg: parseFloat(currentWeightKg) || 0,
-          targetWeightKg: parseFloat(targetWeightKg) || undefined,
-          fitnessGoal,
-          fitnessLevel,
-          medicalConditions: medicalConditions.trim() || undefined,
-          injuriesOrRestrictions: injuries.trim() || undefined,
-          bodyConditionNotes: bodyConditionNotes.trim(),
-          membershipDuration,
-          amountPaid: Math.round(paid * 100) / 100,
-          paymentMethod
-        });
+        await storage.addRegistrationRequest(
+          {
+            fullName: name.trim(),
+            email: signupEmail.trim(),
+            phone: phone.trim(),
+            avatarFile,
+            avatarUrl: avatarFile ? undefined : avatarUrl,
+            age: parseInt(age) || 0,
+            gender,
+            heightCm: parseFloat(heightCm) || 0,
+            currentWeightKg: parseFloat(currentWeightKg) || 0,
+            targetWeightKg: parseFloat(targetWeightKg) || undefined,
+            fitnessGoal,
+            fitnessLevel,
+            medicalConditions: medicalConditions.trim() || undefined,
+            injuriesOrRestrictions: injuries.trim() || undefined,
+            bodyConditionNotes: bodyConditionNotes.trim(),
+            membershipDuration,
+            amountPaid: Math.round(paid * 100) / 100,
+            paymentMethod,
+            trainerId: trainerId || undefined
+          },
+          pendingUserId
+        );
 
-        writeDraft(null);
+        setAwaitingEmailConfirm(!!pendingUserId);
         setSubmittedCandidateName(name);
         setSubmittedSuccess(true);
-        onRegistrationSubmitted();
+        if (!pendingUserId) onRegistrationSubmitted();
       } catch (err) {
         setErrorMessage(friendlySignUpError((err as Error).message));
       } finally {
@@ -442,8 +377,16 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   Thank you, {submittedCandidateName}!
                 </h3>
                 <p className="text-xs text-neutral-600 mt-2 leading-relaxed max-w-md mx-auto">
-                  Your photograph, biometric metrics, and full body condition details have been submitted directly to your coach. You will be notified here once you are approved.
+                  Your registration request has been sent to the Super Admin for review, with your photo, body details, membership and payment information.
                 </p>
+                {awaitingEmailConfirm && (
+                  <div className="p-3.5 mt-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 text-left space-y-1">
+                    <span className="font-bold block">Before you sign in:</span>
+                    <p>
+                      Open the confirmation email we sent to <strong>{signupEmail}</strong> (check Spam too) and tap the link. Then sign in here to see your approval status.
+                    </p>
+                  </div>
+                )}
                 <div className="p-3.5 mt-3 bg-white rounded-2xl border border-neutral-100 text-xs text-neutral-500 text-left space-y-1">
                   <span className="font-bold text-[#171717] block">Coach Approval Required:</span>
                   <p>
@@ -452,6 +395,23 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </div>
               </div>
 
+              {awaitingEmailConfirm ? (
+                <div className="pt-2 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmittedSuccess(false);
+                      setAwaitingEmailConfirm(false);
+                      setIsSignUp(false);
+                      setEmail(signupEmail.trim());
+                      setSignupPassword('');
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-xs transition-all"
+                  >
+                    Back to sign in
+                  </button>
+                </div>
+              ) : (
               <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
                 <button
                   type="button"
@@ -468,6 +428,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   Check approval status
                 </button>
               </div>
+              )}
             </motion.div>
           ) : (
             /* Main Auth Form */
@@ -724,7 +685,34 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   {/* Membership Duration & Payment */}
                   <fieldset className="p-3.5 sm:p-4 bg-[#F0EEFC]/50 border border-[#7155E8]/20 rounded-2xl space-y-3">
-                    <legend className="sr-only">Membership and payment</legend>
+                    <legend className="sr-only">Trainer, membership and payment</legend>
+                    <div>
+                      <label htmlFor="reg-trainer" className="block text-[#171717] font-bold mb-1">
+                        Select Trainer *
+                      </label>
+                      {trainersError ? (
+                        <p className="p-2.5 bg-white border border-amber-200 rounded-2xl text-amber-700">
+                          Couldn't load trainers. Your request will go to the head coach.
+                        </p>
+                      ) : (
+                        <select
+                          id="reg-trainer"
+                          value={trainerId}
+                          onChange={(e) => setTrainerId(e.target.value)}
+                          disabled={!trainers.length}
+                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#7155E8] transition-colors disabled:opacity-60"
+                        >
+                          {!trainers.length && <option value="">Loading trainers…</option>}
+                          {trainers.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.fullName}
+                              {t.title ? ` · ${t.title}` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+
                     <div>
                       <span id="duration-label" className="block text-[#171717] font-bold mb-1.5">
                         Trainer Membership Duration *

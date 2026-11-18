@@ -270,10 +270,12 @@ class FitnessStorageService {
     const mappedMembers = memberRows.map((r) => this.mapMember(r, notesById.get(r.id), checkInsById.get(r.id)));
     const byId = new Map(mappedMembers.map((m) => [m.id, m]));
     const nameOf = (id: string) => byId.get(id)?.fullName ?? 'Former client';
+    const trainerRows = check(trainers, 'Coach profiles') as Row[];
+    const trainerNameOf = (id: string | null) => (id ? trainerRows.find((t) => t.id === id)?.full_name : undefined);
     const avatarOf = (id: string) => byId.get(id)?.avatarUrl ?? '';
 
     return {
-      trainers: (check(trainers, 'Coach profiles') as Row[]).map(this.mapTrainer),
+      trainers: trainerRows.map(this.mapTrainer),
       members: mappedMembers,
       payments: (check(payments, 'Payments') as Row[]).map((r) => ({
         id: r.id,
@@ -326,6 +328,8 @@ class FitnessStorageService {
         membershipDuration: r.membership_duration,
         amountPaid: num(r.amount_paid),
         paymentMethod: r.payment_method ?? undefined,
+        trainerId: r.trainer_id ?? undefined,
+        trainerName: trainerNameOf(r.trainer_id),
         submittedAt: formatDateTime(r.submitted_at),
         status: r.status,
         rejectionReason: r.rejection_reason ?? undefined,
@@ -1246,40 +1250,77 @@ class FitnessStorageService {
   // ---------------------------------------------------------------------------
   // Registration
   // ---------------------------------------------------------------------------
+  /** Trainers an applicant can pick on the sign-up form (works before sign-in). */
+  public async listRegistrationTrainers(): Promise<{ id: string; fullName: string; title: string; isMainCoach: boolean }[]> {
+    const { data, error } = await supabase.rpc('list_registration_trainers');
+    if (error) throw new Error(`Could not load trainers: ${error.message}`);
+    return ((data ?? []) as Row[]).map((t) => ({
+      id: t.id,
+      fullName: t.full_name,
+      title: t.title ?? '',
+      isMainCoach: !!t.is_main_coach
+    }));
+  }
+
+  /**
+   * Saves a registration request. Works signed in, or straight after email sign-up while the
+   * address is still unconfirmed (pass that new account's id as `pendingUserId`).
+   */
   public async addRegistrationRequest(
-    data: Omit<MemberRegistrationRequest, 'id' | 'submittedAt' | 'status' | 'avatarUrl'> & {
+    data: Omit<MemberRegistrationRequest, 'id' | 'submittedAt' | 'status' | 'avatarUrl' | 'trainerName'> & {
       avatarUrl?: string;
       avatarFile?: Blob | null;
+    },
+    pendingUserId?: string
+  ): Promise<string> {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user.id ?? pendingUserId;
+    if (!userId) throw new Error('Please sign in before submitting your registration.');
+
+    let avatarUrl = data.avatarUrl;
+    if (data.avatarFile) {
+      if (sessionData.session) {
+        avatarUrl = await this.uploadAvatar(data.avatarFile);
+      } else {
+        const path = `pending/${userId}/${crypto.randomUUID()}.jpg`;
+        const { error } = await supabase.storage.from('avatars').upload(path, data.avatarFile, {
+          contentType: 'image/jpeg',
+          cacheControl: '31536000',
+          upsert: false
+        });
+        if (error) throw new Error(`Photo upload failed: ${error.message}`);
+        avatarUrl = supabase.storage.from('avatars').getPublicUrl(path).data.publicUrl;
+      }
     }
-  ) {
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) throw new Error('Please sign in before submitting your registration.');
-    const avatarUrl = data.avatarFile ? await this.uploadAvatar(data.avatarFile) : data.avatarUrl;
     if (!avatarUrl) throw new Error('Please upload your profile photo.');
-    check(
-      await supabase.from('registration_requests').insert({
-        user_id: auth.user.id,
-        full_name: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        avatar_url: avatarUrl,
-        age: data.age,
-        gender: data.gender,
-        height_cm: data.heightCm,
-        current_weight_kg: data.currentWeightKg,
-        target_weight_kg: data.targetWeightKg ?? null,
-        fitness_goal: data.fitnessGoal,
-        fitness_level: data.fitnessLevel,
-        medical_conditions: data.medicalConditions || null,
-        injuries_or_restrictions: data.injuriesOrRestrictions || null,
-        body_condition_notes: data.bodyConditionNotes,
-        front_photo_url: avatarUrl,
-        membership_duration: data.membershipDuration,
-        amount_paid: data.amountPaid,
-        payment_method: data.paymentMethod ?? null
+
+    const id = check(
+      await supabase.rpc('submit_registration_request', {
+        p_user_id: userId,
+        p_request: {
+          full_name: data.fullName,
+          email: data.email,
+          phone: data.phone,
+          avatar_url: avatarUrl,
+          age: data.age || null,
+          gender: data.gender,
+          height_cm: data.heightCm || null,
+          current_weight_kg: data.currentWeightKg || null,
+          target_weight_kg: data.targetWeightKg ?? null,
+          fitness_goal: data.fitnessGoal,
+          fitness_level: data.fitnessLevel,
+          medical_conditions: data.medicalConditions || null,
+          injuries_or_restrictions: data.injuriesOrRestrictions || null,
+          body_condition_notes: data.bodyConditionNotes,
+          membership_duration: data.membershipDuration,
+          amount_paid: data.amountPaid,
+          payment_method: data.paymentMethod ?? null,
+          trainer_id: data.trainerId ?? null
+        }
       }),
       'Submitting registration'
-    );
+    ) as string;
+    return id;
   }
 
   public async approveRegistrationRequest(id: string): Promise<Member | null> {

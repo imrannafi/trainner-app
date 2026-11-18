@@ -195,19 +195,21 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
 
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap items-center gap-2.5 self-start lg:self-auto shrink-0">
+            {onOpenMemberRequests && (
             <button
               type="button"
               onClick={onOpenMemberRequests}
               className="px-4 py-2.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap cursor-pointer"
             >
               <Users className="w-4 h-4 shrink-0" />
-              <span>Applications</span>
+              <span>Registration Requests</span>
               {pendingRegistrations.length > 0 && (
                 <span className="min-w-5 h-5 px-1 rounded-full bg-amber-400 text-neutral-900 text-[10px] font-black flex items-center justify-center tabular-nums">
                   {pendingRegistrations.length}
                 </span>
               )}
             </button>
+            )}
 
             <button
               type="button"
@@ -509,7 +511,8 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                     {req.fullName}
                   </span>
                   <span className="text-xs text-neutral-500 font-mono block truncate">
-                    {req.phone} · {req.currentWeightKg}kg ({req.gender}, {req.age}y)
+                    {req.phone} · {req.membershipDuration} ·{' '}
+                    {req.amountPaid > 0 ? `৳${req.amountPaid.toLocaleString('en-US')} ${req.paymentMethod ?? ''}` : 'Unpaid'}
                   </span>
                   <p className="text-[11px] text-neutral-600 mt-1 line-clamp-2 italic bg-white/70 p-2 rounded-xl">
                     "{req.bodyConditionNotes}"

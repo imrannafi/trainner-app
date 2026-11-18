@@ -11,6 +11,8 @@ interface HeaderProps {
   currentRole: UserRole;
   account: AccountSummary;
   isSuperAdmin: boolean;
+  /** Pending registration requests (Super Admin only). */
+  pendingRequestsCount?: number;
   activeTab: string;
   onSelectTab: (tab: string) => void;
   notifications: InAppNotification[];
@@ -26,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentRole,
   account,
   isSuperAdmin,
+  pendingRequestsCount = 0,
   activeTab,
   onSelectTab,
   notifications,
@@ -99,8 +102,9 @@ export const Header: React.FC<HeaderProps> = ({
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const trainerNavLinks = [
+  const trainerNavLinks: { id: string; label: string; badge?: number }[] = [
     { id: 'dashboard', label: 'Home' },
+    ...(isSuperAdmin ? [{ id: 'registrations', label: 'Requests', badge: pendingRequestsCount }] : []),
     { id: 'members', label: 'Members' },
     { id: 'fitness', label: 'Workouts' },
     { id: 'meal-hub', label: 'Meals' },
@@ -110,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'reports', label: 'Reports' }
   ];
 
-  const memberNavLinks = [
+  const memberNavLinks: { id: string; label: string; badge?: number }[] = [
     { id: 'member-dashboard', label: 'Home' },
     { id: 'member-workout', label: 'Workout' },
     { id: 'member-diet', label: 'Diet Plan' },
@@ -173,6 +177,14 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
+                  {!!link.badge && (
+                    <span
+                      aria-label={`${link.badge} pending`}
+                      className="relative z-10 ml-1.5 inline-flex min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-neutral-900 text-[10px] font-extrabold items-center justify-center tabular-nums align-middle"
+                    >
+                      {link.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}

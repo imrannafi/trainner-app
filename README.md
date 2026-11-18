@@ -14,31 +14,22 @@ If the project folder name contains `&`, `npm run dev` fails on Windows; rename 
 
 ## Member registration
 
-New members register on the sign-in page (**Register with Body Assessment**) or with Google. They choose a membership duration (1, 3 or 6 months) and enter the amount paid and the payment method (Cash, bKash, Nagad, Bank Transfer). The coach reviews the application under **Requests**, and approving it creates the member and records the payment.
+New members register on the sign-in page (**Register with Body Assessment**) or with Google. They choose a trainer and a membership duration (1, 3 or 6 months), and enter the amount paid and the payment method (Cash, bKash, Nagad, Bank Transfer).
 
-This needs two things in Supabase:
+The whole workflow runs on Supabase Database and Realtime. No email service is involved.
 
-1. **Authentication > Sign In / Providers > "Allow new users to sign up"** must be on. When it is off, registration fails with "Signups not allowed for this instance". It is safe to turn on: a new account can see nothing until the coach approves it.
-2. The migration `supabase/migrations/20261119100000_registration_payment.sql` must be run (SQL Editor). It adds the payment fields.
+1. **Submit** saves the request in `registration_requests` straight away, even before the applicant confirms their email (`submit_registration_request`).
+2. Every Super Admin gets an in-app notification (and a phone push, if push is set up).
+3. The Super Admin reviews it under **Requests**. The badge shows how many are pending, and the list updates live. **Approve** creates the member and records the payment. **Reject** stores the reason and tells the applicant.
+4. Requests are never deleted. Approved and rejected ones stay in the history.
 
-With **Confirm email** on, the request is only sent after the applicant confirms their email and signs in again. The form is kept in their browser and filled in again at that point. Turn **Confirm email** off (**Authentication > Sign In / Providers > Email**) to send the request the moment they tap Submit. This is safe, because the coach approves every account anyway.
+Only the Super Admin can see or review registration requests; this is enforced by row-level security and by the approve and reject functions. Coaches and members cannot read them, and applicants see only their own.
 
-The confirmation link goes to **Authentication > URL Configuration > Site URL**. Set it to your live address, and add `https://YOUR-APP.vercel.app/**` under **Redirect URLs**.
+Setup in Supabase:
 
-### Email to the coach
-
-Every new request appears in the coach's bell and as a phone push. To also email it, the `notify-registration` Edge Function sends through [Resend](https://resend.com):
-
-1. Create a free Resend account and an API key. Without your own domain, Resend can only deliver to the email you signed up with, so sign up with the coach's address. With a verified domain, set `EMAIL_FROM` to an address on it.
-2. Deploy: `npx supabase functions deploy notify-registration --no-verify-jwt --project-ref YOUR-PROJECT-REF`
-3. Function secrets: `RESEND_API_KEY`, `EMAIL_WEBHOOK_SECRET` (a long random string) and `SITE_URL`. Optional: `EMAIL_FROM`, and `REGISTRATION_EMAIL_TO` (comma-separated). By default every coach and super admin account is emailed.
-4. Run `supabase/migrations/20261119110000_registration_email.sql`, then in the SQL Editor:
-   ```sql
-   select vault.create_secret('https://YOUR-PROJECT.supabase.co/functions/v1/notify-registration', 'email_function_url');
-   select vault.create_secret('THE-SAME-EMAIL_WEBHOOK_SECRET', 'email_webhook_secret');
-   ```
-
-Email can never block a registration. If it isn't set up or fails, the request still arrives in the app.
+1. **Authentication > Sign In / Providers > "Allow new users to sign up"** must be on.
+2. Run the migrations `20261119100000_registration_payment.sql` and `20261119120000_super_admin_registrations.sql` (SQL Editor) in that order.
+3. **Authentication > URL Configuration**: set **Site URL** to your live address and add `https://YOUR-APP.vercel.app/**` to **Redirect URLs**, so the confirmation email opens the app.
 
 ## Environment variables
 

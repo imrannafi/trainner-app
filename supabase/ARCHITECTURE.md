@@ -140,8 +140,10 @@ Deleting a member removes their activity, but `payments` rows stay with `member_
 |---|---|
 | `approve_payment_request(id)` | Records the payment and moves the deadline to the 10th of next month |
 | `reject_payment_request(id, reason)` | Declines and notifies the member |
-| `approve_registration_request(id, price, sessions, workout_plan, diet_plan)` | Creates the member. Last four arguments are optional (defaults: ৳3500, 12 sessions, no plans) |
-| `reject_registration_request(id, reason)` | Declines the application |
+| `submit_registration_request(user_id, request)` | Saves a registration. Works signed in, or right after email sign-up before confirmation (anon) |
+| `list_registration_trainers()` | Trainers shown on the sign-up form (anon) |
+| `approve_registration_request(id, price, sessions, workout_plan, diet_plan)` | **Super Admin only.** Creates the member and records the registration payment. Last four arguments are optional (defaults: ৳3500, 12 sessions, no plans) |
+| `reject_registration_request(id, reason)` | **Super Admin only.** Declines the application and notifies the applicant |
 | `save_workout_plan(plan)` / `save_diet_plan(plan)` | Saves a whole nested plan in one transaction. Accepts the existing `WorkoutPlan` / `DietPlan` JSON shape |
 | `current_member_is_unlocked()` | Replaces `isMemberWorkoutDietUnlocked` for the locked screen |
 
@@ -189,7 +191,7 @@ Delivery has three layers. Each new row reaches open apps instantly over Realtim
 
 ## Account flows
 
-**Email registration.** `supabase.auth.signUp` → photo uploaded to `avatars` → row in `registration_requests` → coach approves with `approve_registration_request`, which creates the client record linked to that login.
+**Email registration.** `supabase.auth.signUp` → photo uploaded to `avatars` (to `pending/<user id>/` when there is no session yet) → `submit_registration_request` saves the row in `registration_requests` → Super Admins get an in-app notification and see it live under Requests → `approve_registration_request` creates the client record linked to that login. Only Super Admins can read or review registration requests (RLS); applicants see their own.
 
 **Google sign-in.** On every sign-in the app calls `claim_member_profile()`. If a coach already created a client record with the same Google-verified email, it is linked automatically. Otherwise the person sees the registration form prefilled with their Google name, email and photo, and waits for approval like anyone else.
 

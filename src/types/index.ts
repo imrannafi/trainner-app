@@ -152,6 +152,9 @@ export interface MemberRegistrationRequest {
   /** What the applicant says they paid at registration (৳). */
   amountPaid: number;
   paymentMethod?: RegistrationPaymentMethod;
+  /** Trainer the applicant chose (trainer_profiles.id). */
+  trainerId?: string;
+  trainerName?: string;
   submittedAt: string;
   status: 'Pending' | 'Approved' | 'Rejected';
   rejectionReason?: string;
