@@ -393,7 +393,7 @@ export const MemberPortalView: React.FC<MemberPortalViewProps> = ({
           {sectionName} Locked
         </h2>
         <p className="text-xs text-neutral-500 leading-relaxed max-w-md mx-auto">
-          Per Azims Workout Manager gym policy, all members must complete their monthly coaching fee between the <strong>1st and 10th of every month</strong>. Once Coach Oliul Azim verifies and accepts your payment, your {sectionName.toLowerCase()} will unlock immediately.
+          Per Fitness With Oliul Azim gym policy, all members must complete their monthly coaching fee between the <strong>1st and 10th of every month</strong>. Once Coach Oliul Azim verifies and accepts your payment, your {sectionName.toLowerCase()} will unlock immediately.
         </p>
       </div>
 

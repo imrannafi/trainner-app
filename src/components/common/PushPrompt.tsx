@@ -91,7 +91,7 @@ export const PushPrompt: React.FC = () => {
               <span className="block font-bold text-sm text-[#171717]">Get notified on your phone</span>
               {state === 'needs-install' ? (
                 <p className="text-neutral-500 mt-1 leading-relaxed">
-                  Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Open Azim Trainer from your Home
+                  Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Open Fitness With Oliul Azim from your Home
                   Screen and turn notifications on in Settings.
                 </p>
               ) : (

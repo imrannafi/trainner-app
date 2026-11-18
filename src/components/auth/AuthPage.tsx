@@ -324,13 +324,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         <div className="text-center space-y-2">
           <img
             src="/icons/logo-256.png"
-            alt="Azim Trainer logo"
+            alt="Fitness With Oliul Azim logo"
             width={80}
             height={80}
             className="inline-block w-20 h-20 rounded-[22px] object-cover shadow-[0_10px_28px_rgba(37,84,226,0.35)] mb-1"
           />
           <h1 className="text-2xl font-extrabold tracking-tight text-[#171717] font-sans">
-            Azims Workout Manager
+            Fitness With Oliul Azim
           </h1>
           <p className="text-xs text-neutral-400">
             {isSignUp

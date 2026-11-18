@@ -80,7 +80,7 @@ const FullScreenMessage: React.FC<{ title: string; children?: React.ReactNode }>
     >
       <img
         src="/icons/logo-256.png"
-        alt="Azim Trainer logo"
+        alt="Fitness With Oliul Azim logo"
         width={64}
         height={64}
         className="inline-block w-16 h-16 rounded-2xl object-cover shadow-[0_8px_20px_rgba(37,84,226,0.35)]"
@@ -812,7 +812,7 @@ export default function App() {
       <footer className="app-layer mt-auto border-t border-white/80 bg-white/60 backdrop-blur-md pt-4 pb-24 sm:pb-28 text-xs text-neutral-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <span>
-            Azims Workout Manager · Professional Personal Coaching Platform
+            Fitness With Oliul Azim · Professional Personal Coaching Platform
             {footerCoach ? ` by ${footerCoach.fullName}` : ''}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] text-neutral-400">

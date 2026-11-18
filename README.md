@@ -1,4 +1,4 @@
-# Azim Trainer · Azims Workout Manager
+# Fitness With Oliul Azim
 
 Coaching platform for Coach Oliul Azim's gym: a coach portal (clients, workout and diet plans, meal photo review, payments, schedule, notices, reports) and a client portal (workouts, diet, meal and progress logging, payments, notices). Data, sign-in, photos and notifications run on Supabase. The app is installable on phones (PWA) and sends push notifications.
 
@@ -71,7 +71,7 @@ How a notification reaches a phone:
 ### Turning it on (each person, each device)
 
 - **Android (Chrome, Edge, Samsung Internet):** open the app, tap **Turn on** on the "Get notified on your phone" card, or go to **Settings > Push notifications > Turn on**, and allow the prompt.
-- **iPhone / iPad (iOS 16.4 or later):** in Safari tap **Share > Add to Home Screen**, open **Azim Trainer** from the Home Screen, then turn notifications on in **Settings**. Apple only allows push for apps added to the Home Screen.
+- **iPhone / iPad (iOS 16.4 or later):** in Safari tap **Share > Add to Home Screen**, open **Fitness With Oliul Azim** from the Home Screen, then turn notifications on in **Settings**. Apple only allows push for apps added to the Home Screen.
 - **Desktop (Chrome, Edge, Firefox, Safari):** **Settings > Push notifications > Turn on**.
 
 Then tap **Send test notification** in Settings. Settings also shows whether server delivery is ready.
@@ -83,7 +83,7 @@ Then tap **Send test notification** in Settings. Settings also shows whether ser
 - **Android (Chrome):** menu **⋮ > Install app** (or **Add to Home screen**).
 - **iPhone (Safari):** **Share > Add to Home Screen**.
 
-The app opens full-screen with the Azim Trainer icon. All icons come from `assets/brand/azim-trainer-logo.jpg`. If the logo changes, replace that file and run:
+The app opens full-screen with the Fitness With Oliul Azim icon. All icons come from `assets/brand/azim-trainer-logo.jpg`. If the logo changes, replace that file and run:
 
 ```
 npm install --no-save sharp

@@ -1,7 +1,7 @@
 // Service worker for push notifications. It runs even when the app is closed or in the background.
 // Bump this when the file changes so browsers pick up the new version promptly.
-const SW_VERSION = '2026-11-18';
-const APP_NAME = 'Azim Trainer';
+const SW_VERSION = '2026-11-19';
+const APP_NAME = 'Fitness With Oliul Azim';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
