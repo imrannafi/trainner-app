@@ -3,7 +3,14 @@ import { Bell, BellOff, Camera, ExternalLink, KeyRound, Search, ShieldCheck, Use
 import { AccountRole, InAppNotification } from '../../types';
 import { Avatar, Modal, showToast } from './CommonUI';
 import { storage } from '../../services/storage';
-import { disablePush, enablePush, getPushState, PushState } from '../../services/push';
+import {
+  disablePush,
+  enablePush,
+  getPushServerStatus,
+  getPushState,
+  PushState,
+  sendTestNotification
+} from '../../services/push';
 import { supabase } from '../../lib/supabase';
 import { formatDateTime, relativeTime } from '../../lib/dates';
 import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
@@ -274,6 +281,9 @@ interface SettingsModalProps {
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, isStaff }) => {
   const [pushState, setPushState] = useState<PushState>('disabled');
   const [pushBusy, setPushBusy] = useState(false);
+  // null = unknown (could not check); false = server delivery not set up yet
+  const [serverReady, setServerReady] = useState<boolean | null>(null);
+  const [testBusy, setTestBusy] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [passwordBusy, setPasswordBusy] = useState(false);
 
@@ -284,6 +294,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
   useEffect(() => {
     if (!isOpen) return;
     getPushState().then(setPushState);
+    getPushServerStatus().then((s) => setServerReady(s ? s.configured : null));
     setNewPassword('');
     if (coach) {
       setCoachForm({
@@ -303,12 +314,31 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
     try {
       const next = pushState === 'enabled' ? await disablePush() : await enablePush();
       setPushState(next);
-      if (next === 'enabled') showToast('Notifications enabled on this device.');
+      if (next === 'enabled') showToast('Notifications enabled on this device. Send a test to check delivery.');
       if (next === 'denied') showToast('Notifications are blocked. Allow them in your browser settings.', 'error');
+      if (next === 'needs-install') showToast('On iPhone, add the app to your Home Screen first.', 'info');
     } catch (err) {
       showToast((err as Error).message, 'error');
     } finally {
       setPushBusy(false);
+    }
+  };
+
+  const sendTest = async () => {
+    setTestBusy(true);
+    try {
+      const status = await sendTestNotification();
+      setServerReady(status.configured);
+      showToast(
+        status.configured
+          ? 'Test sent. It should appear on this device within a few seconds, even with the app closed.'
+          : 'Test saved in your in-app notifications, but phone delivery is not set up on the server yet.',
+        status.configured ? 'success' : 'info'
+      );
+    } catch (err) {
+      showToast((err as Error).message, 'error');
+    } finally {
+      setTestBusy(false);
     }
   };
 
@@ -359,11 +389,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
   };
 
   const pushCopy: Record<PushState, string> = {
-    enabled: 'On for this device. You will be notified even when the app is closed.',
-    disabled: 'Off for this device.',
-    denied: 'Blocked by your browser. Allow notifications for this site in browser settings.',
-    unsupported: 'This browser does not support push notifications. On iPhone, add the app to your Home Screen first.',
-    'not-configured': 'Push notifications have not been configured for this app yet.'
+    enabled:
+      serverReady === false
+        ? 'On for this device, but the server is not sending pushes yet. You will still see notifications in the app.'
+        : 'On for this device. You will be notified even when the app is closed.',
+    disabled: 'Off for this device. Turn on to get alerts on your phone, even when the app is closed.',
+    denied: 'Blocked for this site. Allow notifications in your browser or phone settings, then reopen Settings.',
+    unsupported: 'This browser does not support push notifications. Try Chrome on Android or Safari on iPhone.',
+    'needs-install':
+      'On iPhone and iPad, tap Share, then "Add to Home Screen", open the app from there and turn notifications on (iOS 16.4+).',
+    'not-configured': 'Phone notifications are not available in this version of the app. In-app notifications still work.'
   };
 
   return (
@@ -394,6 +429,30 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
             </button>
           )}
         </section>
+        {pushState === 'enabled' && (
+          <div className="-mt-3 px-4 pb-1 flex flex-wrap items-center justify-between gap-2">
+            <span
+              className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${
+                serverReady === false ? 'text-amber-600' : serverReady ? 'text-emerald-600' : 'text-neutral-400'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  serverReady === false ? 'bg-amber-500' : serverReady ? 'bg-emerald-500' : 'bg-neutral-300'
+                }`}
+              />
+              {serverReady === false ? 'Server delivery not set up' : serverReady ? 'Server delivery ready' : 'Server status unknown'}
+            </span>
+            <button
+              type="button"
+              onClick={sendTest}
+              disabled={testBusy}
+              className="px-3 py-1.5 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold hover:border-[#7155E8]/40 hover:text-[#7155E8] transition-colors disabled:opacity-60"
+            >
+              {testBusy ? 'Sending…' : 'Send test notification'}
+            </button>
+          </div>
+        )}
 
         {isStaff && coach && (
           <form onSubmit={saveCoach} className="space-y-3">

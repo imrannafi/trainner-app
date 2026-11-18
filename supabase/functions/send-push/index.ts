@@ -4,13 +4,23 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import webpush from 'npm:web-push@3.6.7';
 
 const PUSH_SECRET = Deno.env.get('PUSH_WEBHOOK_SECRET') ?? '';
-const SITE_URL = Deno.env.get('SITE_URL') ?? '';
+const SITE_URL = (Deno.env.get('SITE_URL') ?? '').replace(/\/+$/, '');
 
-webpush.setVapidDetails(
-  Deno.env.get('VAPID_SUBJECT') ?? 'mailto:admin@example.com',
-  Deno.env.get('VAPID_PUBLIC_KEY') ?? '',
-  Deno.env.get('VAPID_PRIVATE_KEY') ?? ''
-);
+// Configured lazily: web-push throws on missing/invalid keys, and doing that at load time
+// crashed every request with an opaque WORKER_ERROR. Now a request gets a clear 503 instead.
+let vapidError: string | null = null;
+try {
+  const missing = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'PUSH_WEBHOOK_SECRET'].filter((k) => !Deno.env.get(k));
+  if (missing.length) throw new Error(`Missing function secrets: ${missing.join(', ')}`);
+  webpush.setVapidDetails(
+    Deno.env.get('VAPID_SUBJECT') || 'mailto:admin@example.com',
+    Deno.env.get('VAPID_PUBLIC_KEY')!,
+    Deno.env.get('VAPID_PRIVATE_KEY')!
+  );
+} catch (e) {
+  vapidError = (e as Error).message;
+  console.error('send-push is not configured:', vapidError);
+}
 
 const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
   auth: { persistSession: false }
@@ -28,6 +38,7 @@ Deno.serve(async (req) => {
   if (!safeEqual(req.headers.get('x-push-secret') ?? '', PUSH_SECRET)) {
     return new Response('Unauthorized', { status: 401 });
   }
+  if (vapidError) return Response.json({ error: vapidError }, { status: 503 });
 
   const { record } = await req.json();
   if (!record?.user_id) return Response.json({ sent: 0 });

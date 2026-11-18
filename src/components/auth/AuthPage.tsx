@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Dumbbell,
   Mail,
   Lock,
   Eye,
@@ -246,9 +245,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       >
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#7155E8] text-white shadow-[0_4px_16px_rgba(113,85,232,0.35)] mb-1">
-            <Dumbbell className="w-6 h-6 stroke-[2.2]" />
-          </div>
+          <img
+            src="/icons/logo-256.png"
+            alt="Azim Trainer logo"
+            width={80}
+            height={80}
+            className="inline-block w-20 h-20 rounded-[22px] object-cover shadow-[0_10px_28px_rgba(37,84,226,0.35)] mb-1"
+          />
           <h1 className="text-2xl font-extrabold tracking-tight text-[#171717] font-sans">
             Azims Workout Manager
           </h1>

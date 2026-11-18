@@ -1,4 +1,7 @@
-// Service worker for push notifications. It runs even when the app tab is closed.
+// Service worker for push notifications. It runs even when the app is closed or in the background.
+// Bump this when the file changes so browsers pick up the new version promptly.
+const SW_VERSION = '2026-11-18';
+const APP_NAME = 'Azim Trainer';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
@@ -8,17 +11,21 @@ self.addEventListener('push', (event) => {
   try {
     payload = event.data ? event.data.json() : {};
   } catch {
-    payload = { title: 'Azims Workout Manager', body: event.data ? event.data.text() : '' };
+    payload = { title: APP_NAME, body: event.data ? event.data.text() : '' };
   }
 
-  const title = payload.title || 'Azims Workout Manager';
+  const title = payload.title || APP_NAME;
+  // Every push must show a notification: iOS and Chrome penalise silent pushes.
   event.waitUntil(
     self.registration.showNotification(title, {
       body: payload.body || '',
-      icon: payload.icon || '/icon-192.png',
-      badge: '/icon-192.png',
+      icon: payload.icon || '/icons/icon-192.png',
+      badge: '/icons/badge-96.png',
       tag: payload.tag,
-      data: { url: payload.url || '/', notificationId: payload.notificationId }
+      renotify: Boolean(payload.tag),
+      timestamp: Date.now(),
+      vibrate: [80, 40, 80],
+      data: { url: payload.url || '/', notificationId: payload.notificationId, v: SW_VERSION }
     })
   );
 });
@@ -37,5 +44,22 @@ self.addEventListener('notificationclick', (event) => {
       }
       return self.clients.openWindow(target);
     })
+  );
+});
+
+// Browsers occasionally rotate push subscriptions. Re-subscribe with the same key straight away;
+// the app saves the new subscription to the server the next time it opens (refreshPushSubscription).
+self.addEventListener('pushsubscriptionchange', (event) => {
+  const key = event.oldSubscription?.options?.applicationServerKey;
+  if (!key) return;
+  event.waitUntil(
+    self.registration.pushManager
+      .subscribe({ userVisibleOnly: true, applicationServerKey: key })
+      .then(() =>
+        self.clients.matchAll({ type: 'window' }).then((windows) =>
+          windows.forEach((client) => client.postMessage({ type: 'push-subscription-changed' }))
+        )
+      )
+      .catch(() => undefined)
   );
 });

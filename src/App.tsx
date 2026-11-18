@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Session } from '@supabase/supabase-js';
-import { Dumbbell } from 'lucide-react';
 import {
   UserRole,
   Member,
@@ -47,6 +46,7 @@ import { MemberPortalView } from './components/member/MemberPortalView';
 import { MemberRequestsModal } from './components/trainer/MemberRequestsModal';
 import { AddMemberModal } from './components/trainer/AddMemberModal';
 import { AmbientBackdrop, PullToRefresh } from './components/common/GestureLayer';
+import { PushPrompt } from './components/common/PushPrompt';
 import {
   MEMBER_TAB_ORDER,
   TRAINER_TAB_ORDER,
@@ -78,9 +78,13 @@ const FullScreenMessage: React.FC<{ title: string; children?: React.ReactNode }>
       transition={{ type: 'spring', stiffness: 320, damping: 28 }}
       className="glass-strong app-layer max-w-md w-full rounded-3xl p-8 text-center space-y-3"
     >
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#7155E8] text-white shadow-[0_8px_20px_rgba(113,85,232,0.4)]">
-        <Dumbbell className="w-6 h-6" />
-      </div>
+      <img
+        src="/icons/logo-256.png"
+        alt="Azim Trainer logo"
+        width={64}
+        height={64}
+        className="inline-block w-16 h-16 rounded-2xl object-cover shadow-[0_8px_20px_rgba(37,84,226,0.35)]"
+      />
       <h1 className="text-lg font-extrabold">{title}</h1>
       {children}
     </motion.div>
@@ -209,6 +213,8 @@ export default function App() {
         pendingNotificationId.current = event.data.notificationId;
         storage.scheduleReload(0);
       }
+      // The browser rotated this device's push subscription: save the new one to the server.
+      if (event.data?.type === 'push-subscription-changed') refreshPushSubscription();
     };
     navigator.serviceWorker?.addEventListener('message', onMessage);
 
@@ -479,6 +485,7 @@ export default function App() {
       <AmbientBackdrop />
       <ToastViewport />
       <PullToRefresh onRefresh={() => storage.reload()} />
+      <PushPrompt key={access.user.id} />
       {recoveryModal}
 
       <Header

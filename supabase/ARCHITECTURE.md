@@ -10,6 +10,7 @@ The app reads and writes all data in Supabase: Postgres for data, Supabase Auth 
 | `20261109100300_storage.sql` | Photo buckets and their policies |
 | `20261110100000_super_admin_role.sql` | Adds the `super_admin` role (must run on its own) |
 | `20261110100100_production_features.sql` | Super admin, Google account linking, coach/client notifications, client updates, push, live updates for all tables |
+| `20261118100000_push_status_and_test.sql` | Push server status check and "Send test notification" (see README > Push notifications) |
 
 ## Setup
 
@@ -47,7 +48,7 @@ Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (see `.env.example`)
    select vault.create_secret('THE-SAME-PUSH_WEBHOOK_SECRET', 'push_webhook_secret');
    ```
    Until these exist, notifications still appear in the app; only the push to the device is skipped.
-6. Each person turns notifications on for their device in **Settings**. On iPhone, the app must first be added to the Home Screen (iOS 16.4 or later).
+6. Run `20261118100000_push_status_and_test.sql`, then each person turns notifications on for their device in **Settings** and taps **Send test notification**. On iPhone, the app must first be added to the Home Screen (iOS 16.4 or later).
 
 ### 6. Client invitations
 The `invite-member` function (deployed in step 5) emails a coach-enrolled client a sign-in link and links the new login to their record. A client whose record the coach created can also simply choose **Continue with Google** with the same email; they are linked automatically.

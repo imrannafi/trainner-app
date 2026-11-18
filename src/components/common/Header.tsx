@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, Dumbbell, ChevronDown, LogOut, Settings, ShieldCheck } from 'lucide-react';
+import { Bell, ChevronDown, LogOut, Settings, ShieldCheck } from 'lucide-react';
 import { AnimatePresence, motion, useDragControls } from 'motion/react';
 import { UserRole, InAppNotification } from '../../types';
 import { Avatar } from './CommonUI';
@@ -136,9 +136,13 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => onSelectTab(currentRole === 'trainer' ? 'dashboard' : 'member-dashboard')}
               className="flex items-center gap-2.5 text-left group focus:outline-none min-w-0"
             >
-              <div className="w-9 h-9 rounded-2xl bg-[#7155E8] flex items-center justify-center text-white shadow-[0_4px_12px_rgba(113,85,232,0.32)] group-hover:scale-110 group-hover:-rotate-12 group-hover:shadow-[0_8px_20px_rgba(113,85,232,0.45)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0">
-                <Dumbbell className="w-5 h-5 text-white" />
-              </div>
+              <img
+                src="/icons/logo-256.png"
+                alt="Azim Trainer logo"
+                width={36}
+                height={36}
+                className="w-9 h-9 rounded-xl object-cover shadow-[0_4px_12px_rgba(37,84,226,0.32)] group-hover:scale-110 group-hover:-rotate-12 group-hover:shadow-[0_8px_20px_rgba(37,84,226,0.45)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0"
+              />
               <span className="hidden min-[400px]:inline text-base sm:text-lg font-extrabold tracking-tight text-[#171717] whitespace-nowrap truncate">
                 Azims Workout Manager
               </span>
