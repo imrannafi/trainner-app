@@ -62,7 +62,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Notices & Announcements Broadcast
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -73,7 +73,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
         >
           <Plus className="w-4 h-4 shrink-0" />
           Compose Notice
@@ -165,7 +165,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Schedule Update / Payment Due"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
 
@@ -175,7 +175,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
               <select
                 value={category}
                 onChange={(e: any) => setCategory(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="General">General</option>
                 <option value="Payment">Payment</option>
@@ -190,7 +190,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
               <select
                 value={priority}
                 onChange={(e: any) => setPriority(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="Normal">Normal</option>
                 <option value="High">High</option>
@@ -205,7 +205,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
               <select
                 value={targetAudience}
                 onChange={(e: any) => setTargetAudience(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="All Members">All Members</option>
                 <option value="Specific Member">Specific Member</option>
@@ -220,7 +220,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
                 <select
                   value={targetMemberId}
                   onChange={(e) => setTargetMemberId(e.target.value)}
-                  className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                  className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
                 >
                   {members.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -240,7 +240,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type the announcement or direct client instruction..."
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl leading-relaxed focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl leading-relaxed focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
 
@@ -254,7 +254,7 @@ export const NoticesManager: React.FC<NoticesManagerProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
+              className="px-5 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
             >
               Publish Notice
             </button>

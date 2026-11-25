@@ -20,7 +20,7 @@ interface AreaTrendChartProps {
 export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
   data,
   height = 190,
-  color = '#7155E8',
+  color = '#D4AF37',
   fillOpacity = 0.14,
   valuePrefix = '',
   valueSuffix = '',
@@ -102,7 +102,7 @@ export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
               y1={y}
               x2={chartWidth - paddingX}
               y2={y}
-              stroke="#e5e7eb"
+              stroke="#2A2A2A"
               strokeDasharray="3 3"
               strokeWidth="1"
             />
@@ -130,7 +130,7 @@ export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
               y1={paddingTop - 4}
               x2={points[hoverIndex].x}
               y2={baselineY}
-              stroke="#94a3b8"
+              stroke="#737373"
               strokeDasharray="2 2"
               strokeWidth="1"
             />
@@ -139,7 +139,7 @@ export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
               cy={points[hoverIndex].y}
               r="6"
               fill={color}
-              stroke="#ffffff"
+              stroke="#0E0E0E"
               strokeWidth="2.5"
             />
           </g>
@@ -161,7 +161,7 @@ export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
                 cx={pt.x}
                 cy={pt.y}
                 r={hoverIndex === i ? 5.5 : 4}
-                fill="#ffffff"
+                fill="#0E0E0E"
                 stroke={color}
                 strokeWidth="2.2"
                 className="transition-transform duration-150"
@@ -190,7 +190,7 @@ export const AreaTrendChart: React.FC<AreaTrendChartProps> = ({
       {/* Clamped Floating Tooltip - Never clips or overlaps title above */}
       {hoverIndex !== null && points[hoverIndex] && (
         <div
-          className="absolute z-20 pointer-events-none top-0 -translate-x-1/2 bg-[#171717] text-white px-3 py-1.5 rounded-xl shadow-lg text-xs whitespace-nowrap animate-fade-in"
+          className="absolute z-20 pointer-events-none top-0 -translate-x-1/2 bg-[#D4AF37] text-white px-3 py-1.5 rounded-xl shadow-lg text-xs whitespace-nowrap animate-fade-in"
           style={{ left: `${clampedLeftPct}%` }}
         >
           <div className="font-bold text-white leading-tight">
@@ -291,7 +291,7 @@ export const RadialGauge: React.FC<RadialGaugeProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#f1f5f9"
+          stroke="#262626"
           strokeWidth={strokeWidth}
           fill="none"
         />

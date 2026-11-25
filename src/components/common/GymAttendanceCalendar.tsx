@@ -84,10 +84,10 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-neutral-100">
         <div className="min-w-0">
           <div className="flex items-center gap-2.5">
-            <span className="p-2 bg-[#F0EEFC] text-[#7155E8] rounded-2xl shrink-0">
+            <span className="p-2 bg-[#221C0D] text-[#D4AF37] rounded-2xl shrink-0">
               <Dumbbell className="w-4 h-4" />
             </span>
-            <h3 className="text-base sm:text-lg font-extrabold text-[#171717] tracking-tight truncate">
+            <h3 className="text-base sm:text-lg font-extrabold text-[#F5F5F5] tracking-tight truncate">
               Monthly Gym Attendance Grid
             </h3>
           </div>
@@ -103,20 +103,20 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
           <button
             type="button"
             onClick={goToPrevMonth}
-            className="p-2 hover:bg-[#F5F5F5] text-neutral-600 rounded-xl transition-colors cursor-pointer"
+            className="p-2 hover:bg-[#0E0E0E] text-neutral-600 rounded-xl transition-colors cursor-pointer"
             title="Previous Month"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <span className="text-xs font-bold font-mono text-[#171717] min-w-32 text-center whitespace-nowrap">
+          <span className="text-xs font-bold font-mono text-[#F5F5F5] min-w-32 text-center whitespace-nowrap">
             {monthNames[currentMonth]} {currentYear}
           </span>
 
           <button
             type="button"
             onClick={goToNextMonth}
-            className="p-2 hover:bg-[#F5F5F5] text-neutral-600 rounded-xl transition-colors cursor-pointer"
+            className="p-2 hover:bg-[#0E0E0E] text-neutral-600 rounded-xl transition-colors cursor-pointer"
             title="Next Month"
           >
             <ChevronRight className="w-4 h-4" />
@@ -126,7 +126,7 @@ export const GymAttendanceCalendar: React.FC<GymAttendanceCalendarProps> = ({
             <button
               type="button"
               onClick={goToCurrentMonth}
-              className="text-xs font-bold text-[#7155E8] ml-1 px-3 py-1 bg-[#F0EEFC] rounded-full whitespace-nowrap"
+              className="text-xs font-bold text-[#D4AF37] ml-1 px-3 py-1 bg-[#221C0D] rounded-full whitespace-nowrap"
             >
               Today
             </button>

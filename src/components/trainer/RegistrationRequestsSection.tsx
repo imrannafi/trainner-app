@@ -104,7 +104,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
         setShowDetailOnMobile(false);
       }}
       className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-        filter === value ? 'bg-[#7155E8] text-white shadow-xs' : 'bg-white/80 text-neutral-600 hover:bg-white border border-neutral-200/70'
+        filter === value ? 'bg-[#D4AF37] text-white shadow-xs' : 'bg-white/80 text-neutral-600 hover:bg-white border border-neutral-200/70'
       }`}
     >
       {label} ({counts[value]})
@@ -116,13 +116,13 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
       {/* Heading */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <span className="text-[11px] font-bold text-[#7155E8] uppercase tracking-wider bg-[#F0EEFC] px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider bg-[#221C0D] px-2.5 py-0.5 rounded-full">
             Super Admin
           </span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-[#171717] mt-1.5 flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-[#F5F5F5] mt-1.5 flex items-center gap-2">
             Registration Requests
             {counts.Pending > 0 && (
-              <span className="min-w-6 h-6 px-1.5 rounded-full bg-amber-400 text-neutral-900 text-xs font-extrabold flex items-center justify-center tabular-nums">
+              <span className="min-w-6 h-6 px-1.5 rounded-full bg-amber-400 text-black text-xs font-extrabold flex items-center justify-center tabular-nums">
                 {counts.Pending}
               </span>
             )}
@@ -176,7 +176,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                   }}
                   className={`w-full text-left p-3.5 rounded-2xl border transition-colors ${
                     selected?.id === req.id
-                      ? 'border-neutral-200/70 bg-white md:border-[#7155E8] md:bg-[#F0EEFC]/50'
+                      ? 'border-neutral-200/70 bg-white md:border-[#D4AF37] md:bg-[#221C0D]/50'
                       : 'border-neutral-200/70 bg-white hover:bg-neutral-50'
                   }`}
                 >
@@ -184,7 +184,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                     <Avatar src={req.avatarUrl} name={req.fullName} size="md" className="rounded-2xl" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-extrabold text-sm text-[#171717] truncate">{req.fullName}</span>
+                        <span className="font-extrabold text-sm text-[#F5F5F5] truncate">{req.fullName}</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${STATUS_STYLE[req.status]}`}>
                           {req.status}
                         </span>
@@ -215,7 +215,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
               <button
                 type="button"
                 onClick={() => setShowDetailOnMobile(false)}
-                className="md:hidden inline-flex items-center gap-1.5 text-xs font-bold text-[#7155E8]"
+                className="md:hidden inline-flex items-center gap-1.5 text-xs font-bold text-[#D4AF37]"
               >
                 <ArrowLeft className="w-4 h-4" /> All requests
               </button>
@@ -226,15 +226,15 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                 </a>
                 <div className="min-w-0 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-lg font-extrabold text-[#171717]">{selected.fullName}</h2>
+                    <h2 className="text-lg font-extrabold text-[#F5F5F5]">{selected.fullName}</h2>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_STYLE[selected.status]}`}>
                       {selected.status}
                     </span>
                   </div>
-                  <a href={`tel:${selected.phone}`} className="flex items-center gap-1.5 text-xs text-neutral-600 font-mono hover:text-[#7155E8]">
+                  <a href={`tel:${selected.phone}`} className="flex items-center gap-1.5 text-xs text-neutral-600 font-mono hover:text-[#D4AF37]">
                     <Phone className="w-3.5 h-3.5 shrink-0" /> {selected.phone}
                   </a>
-                  <a href={`mailto:${selected.email}`} className="flex items-center gap-1.5 text-xs text-neutral-600 hover:text-[#7155E8] min-w-0">
+                  <a href={`mailto:${selected.email}`} className="flex items-center gap-1.5 text-xs text-neutral-600 hover:text-[#D4AF37] min-w-0">
                     <Mail className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">{selected.email}</span>
                   </a>
                   <span className="block text-[11px] text-neutral-400">
@@ -246,17 +246,17 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
 
               {/* Trainer, membership, payment */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-                <div className="p-3 rounded-2xl bg-[#F0EEFC]/60 border border-[#7155E8]/15">
-                  <span className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7155E8]">
+                <div className="p-3 rounded-2xl bg-[#221C0D]/60 border border-[#D4AF37]/15">
+                  <span className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#D4AF37]">
                     <Dumbbell className="w-3.5 h-3.5" /> Trainer
                   </span>
-                  <span className="block font-extrabold text-[#171717] mt-1">{selected.trainerName ?? 'Not chosen'}</span>
+                  <span className="block font-extrabold text-[#F5F5F5] mt-1">{selected.trainerName ?? 'Not chosen'}</span>
                 </div>
-                <div className="p-3 rounded-2xl bg-[#F0EEFC]/60 border border-[#7155E8]/15">
-                  <span className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#7155E8]">
+                <div className="p-3 rounded-2xl bg-[#221C0D]/60 border border-[#D4AF37]/15">
+                  <span className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-[#D4AF37]">
                     <CalendarRange className="w-3.5 h-3.5" /> Membership
                   </span>
-                  <span className="block font-extrabold text-[#171717] mt-1">{durationLabel(selected.membershipDuration)}</span>
+                  <span className="block font-extrabold text-[#F5F5F5] mt-1">{durationLabel(selected.membershipDuration)}</span>
                 </div>
                 <div
                   className={`p-3 rounded-2xl border ${
@@ -270,7 +270,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                   >
                     <Wallet className="w-3.5 h-3.5" /> Payment
                   </span>
-                  <span className="block font-extrabold text-[#171717] mt-1 tabular-nums">
+                  <span className="block font-extrabold text-[#F5F5F5] mt-1 tabular-nums">
                     {selected.amountPaid > 0 ? `৳${selected.amountPaid.toLocaleString('en-US')}` : '৳0'}
                   </span>
                   <span className="block text-[11px] text-neutral-500">
@@ -281,11 +281,11 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
 
               <div className="grid grid-cols-3 gap-2.5 font-mono tabular-nums text-center">
                 {[
-                  ['Height', selected.heightCm ? `${selected.heightCm} cm` : '–', 'text-[#171717]'],
-                  ['Weight', selected.currentWeightKg ? `${selected.currentWeightKg} kg` : '–', 'text-[#7155E8]'],
+                  ['Height', selected.heightCm ? `${selected.heightCm} cm` : '–', 'text-[#F5F5F5]'],
+                  ['Weight', selected.currentWeightKg ? `${selected.currentWeightKg} kg` : '–', 'text-[#D4AF37]'],
                   ['Target', selected.targetWeightKg ? `${selected.targetWeightKg} kg` : '–', 'text-[#10B981]']
                 ].map(([label, value, color]) => (
-                  <div key={label} className="p-3 bg-[#F5F5F5] rounded-2xl">
+                  <div key={label} className="p-3 bg-[#0E0E0E] rounded-2xl">
                     <span className="text-[10px] text-neutral-400 font-sans block uppercase font-bold">{label}</span>
                     <span className={`text-base font-extrabold ${color}`}>{value}</span>
                   </div>
@@ -293,8 +293,8 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
               </div>
 
               <div className="text-xs text-neutral-600">
-                <span className="font-bold text-[#171717]">Goal:</span> {selected.fitnessGoal || '–'} ·{' '}
-                <span className="font-bold text-[#171717]">Experience:</span> {selected.fitnessLevel}
+                <span className="font-bold text-[#F5F5F5]">Goal:</span> {selected.fitnessGoal || '–'} ·{' '}
+                <span className="font-bold text-[#F5F5F5]">Experience:</span> {selected.fitnessLevel}
               </div>
 
               <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/70 space-y-2">
@@ -308,14 +308,14 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3.5 rounded-2xl bg-[#F5F5F5] space-y-1">
-                  <span className="font-bold text-[#171717] flex items-center gap-1.5">
+                <div className="p-3.5 rounded-2xl bg-[#0E0E0E] space-y-1">
+                  <span className="font-bold text-[#F5F5F5] flex items-center gap-1.5">
                     <Heart className="w-3.5 h-3.5 text-rose-500 shrink-0" /> Medical Conditions
                   </span>
                   <p className="text-neutral-500">{selected.medicalConditions || 'None reported.'}</p>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-[#F5F5F5] space-y-1">
-                  <span className="font-bold text-[#171717] flex items-center gap-1.5">
+                <div className="p-3.5 rounded-2xl bg-[#0E0E0E] space-y-1">
+                  <span className="font-bold text-[#F5F5F5] flex items-center gap-1.5">
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" /> Injuries / Restrictions
                   </span>
                   <p className="text-neutral-500">{selected.injuriesOrRestrictions || 'None reported.'}</p>
@@ -334,7 +334,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                       type="button"
                       disabled={busyId === selected.id}
                       onClick={() => handleApprove(selected)}
-                      className="flex-1 py-3 px-4 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
+                      className="flex-1 py-3 px-4 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] disabled:opacity-60 text-white text-xs font-bold shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95"
                     >
                       {busyId === selected.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCheck className="w-4 h-4 shrink-0" />}
                       Approve
@@ -383,11 +383,11 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                   )}
                 </div>
               ) : (
-                <div className="p-3 rounded-2xl bg-[#F5F5F5] text-xs text-neutral-500 space-y-1.5">
+                <div className="p-3 rounded-2xl bg-[#0E0E0E] text-xs text-neutral-500 space-y-1.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="flex items-center gap-1.5">
                       {selected.status === 'Approved' && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-                      Status: <strong className="text-[#171717]">{selected.status}</strong>
+                      Status: <strong className="text-[#F5F5F5]">{selected.status}</strong>
                     </span>
                     {selected.reviewedAt && <span className="font-mono text-[11px]">Reviewed {selected.reviewedAt}</span>}
                   </div>
@@ -396,7 +396,7 @@ export const RegistrationRequestsSection: React.FC<RegistrationRequestsSectionPr
                     <button
                       type="button"
                       onClick={() => onOpenMember(selected.createdMemberId!)}
-                      className="font-bold text-[#7155E8] hover:underline"
+                      className="font-bold text-[#D4AF37] hover:underline"
                     >
                       Open member profile
                     </button>

@@ -71,13 +71,13 @@ export const CoachConnectCard: React.FC<CoachConnectCardProps> = ({ coach, onSen
           className="rounded-3xl border-2 border-white shadow-md object-cover shrink-0"
         />
         <div className="min-w-0">
-          <span className="text-[11px] font-bold text-[#7155E8] uppercase tracking-wider block">Your Coach</span>
-          <h3 className="text-lg font-extrabold text-[#171717] truncate">{coach?.fullName || 'Coach'}</h3>
+          <span className="text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider block">Your Coach</span>
+          <h3 className="text-lg font-extrabold text-[#F5F5F5] truncate">{coach?.fullName || 'Coach'}</h3>
           {coach?.title && <p className="text-xs text-neutral-500 truncate">{coach.title}</p>}
           {coach?.phone && (
             <a
               href={`tel:${coach.phone}`}
-              className="inline-flex items-center gap-1.5 mt-1.5 text-xs font-semibold text-neutral-600 hover:text-[#7155E8]"
+              className="inline-flex items-center gap-1.5 mt-1.5 text-xs font-semibold text-neutral-600 hover:text-[#D4AF37]"
             >
               <Phone className="w-3.5 h-3.5" />
               {coach.phone}
@@ -87,14 +87,14 @@ export const CoachConnectCard: React.FC<CoachConnectCardProps> = ({ coach, onSen
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-2.5 text-xs">
-        <span className="font-bold text-[#171717] block">Send an update to your coach</span>
+        <span className="font-bold text-[#F5F5F5] block">Send an update to your coach</span>
         <input
           type="text"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           maxLength={120}
           placeholder="Subject, e.g. Knee pain after squats"
-          className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#7155E8]"
+          className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#D4AF37]"
         />
         <textarea
           rows={2}
@@ -102,7 +102,7 @@ export const CoachConnectCard: React.FC<CoachConnectCardProps> = ({ coach, onSen
           onChange={(e) => setMessage(e.target.value)}
           maxLength={2000}
           placeholder="Anything your coach should know"
-          className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#7155E8] leading-relaxed"
+          className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl focus:bg-white focus:outline-none focus:border-[#D4AF37] leading-relaxed"
         />
         <div className="flex flex-wrap items-center gap-2">
           {photoPreview ? (
@@ -118,7 +118,7 @@ export const CoachConnectCard: React.FC<CoachConnectCardProps> = ({ coach, onSen
               </button>
             </span>
           ) : (
-            <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold cursor-pointer hover:bg-neutral-50 focus-within:ring-2 focus-within:ring-[#7155E8]">
+            <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold cursor-pointer hover:bg-neutral-50 focus-within:ring-2 focus-within:ring-[#D4AF37]">
               <Camera className="w-3.5 h-3.5" />
               Attach Photo
               <input type="file" accept="image/*" className="sr-only" onChange={handlePhoto} />
@@ -127,7 +127,7 @@ export const CoachConnectCard: React.FC<CoachConnectCardProps> = ({ coach, onSen
           <button
             type="submit"
             disabled={isSending}
-            className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold shadow-xs active:scale-95 transition-all"
+            className="ml-auto inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D4AF37] hover:bg-[#B8912B] disabled:opacity-60 text-white font-bold shadow-xs active:scale-95 transition-all"
           >
             <Send className="w-3.5 h-3.5" />
             {isSending ? 'Sending…' : 'Send to Coach'}

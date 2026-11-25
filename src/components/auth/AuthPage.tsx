@@ -310,7 +310,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#F5F5F5] selection:bg-[#7155E8] selection:text-white overflow-x-clip">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-[#0E0E0E] selection:bg-[#D4AF37] selection:text-white overflow-x-clip">
       <div className="app-ambient" aria-hidden="true" />
       <motion.div
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
@@ -327,9 +327,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             alt="Fitness With Oliul Azim logo"
             width={80}
             height={80}
-            className="inline-block w-20 h-20 rounded-[22px] object-cover shadow-[0_10px_28px_rgba(37,84,226,0.35)] mb-1"
+            className="inline-block w-20 h-20 rounded-[22px] object-cover shadow-[0_10px_28px_rgba(212,175,55,0.35)] mb-1"
           />
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717] font-sans">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5] font-sans">
             Fitness With Oliul Azim
           </h1>
           <p className="text-xs text-neutral-400">
@@ -363,17 +363,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.97 }}
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="p-6 bg-[#F0EEFC]/50 border border-[#7155E8]/30 rounded-3xl text-center space-y-4"
+              className="p-6 bg-[#221C0D]/50 border border-[#D4AF37]/30 rounded-3xl text-center space-y-4"
             >
-              <div className="w-14 h-14 rounded-full bg-[#7155E8] text-white mx-auto flex items-center justify-center shadow-[0_4px_16px_rgba(113,85,232,0.35)]">
+              <div className="w-14 h-14 rounded-full bg-[#D4AF37] text-white mx-auto flex items-center justify-center shadow-[0_4px_16px_rgba(212,175,55,0.35)]">
                 <ShieldCheck className="w-7 h-7" />
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#7155E8] block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block mb-1">
                   Application Received
                 </span>
-                <h3 className="text-lg font-black text-[#171717]">
+                <h3 className="text-lg font-black text-[#F5F5F5]">
                   Thank you, {submittedCandidateName}!
                 </h3>
                 <p className="text-xs text-neutral-600 mt-2 leading-relaxed max-w-md mx-auto">
@@ -388,7 +388,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
                 )}
                 <div className="p-3.5 mt-3 bg-white rounded-2xl border border-neutral-100 text-xs text-neutral-500 text-left space-y-1">
-                  <span className="font-bold text-[#171717] block">Coach Approval Required:</span>
+                  <span className="font-bold text-[#F5F5F5] block">Coach Approval Required:</span>
                   <p>
                     Per club policy, your official member profile and personalized workout/diet blueprint will be generated once Coach Oliul Azim reviews and accepts your application.
                   </p>
@@ -406,7 +406,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       setEmail(signupEmail.trim());
                       setSignupPassword('');
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-xs transition-all"
+                    className="px-4 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold shadow-xs transition-all"
                   >
                     Back to sign in
                   </button>
@@ -423,7 +423,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <button
                   type="button"
                   onClick={onRegistrationSubmitted}
-                  className="px-4 py-2.5 rounded-xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-xs transition-all"
+                  className="px-4 py-2.5 rounded-xl bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold shadow-xs transition-all"
                 >
                   Check approval status
                 </button>
@@ -447,7 +447,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     type="button"
                     onClick={handleGoogle}
                     disabled={isBusy}
-                    className="w-full py-3 rounded-2xl bg-white border border-neutral-200 hover:bg-neutral-50 text-xs font-bold text-[#171717] transition-all flex items-center justify-center gap-2.5 active:scale-95 cursor-pointer disabled:opacity-60"
+                    className="w-full py-3 rounded-2xl bg-white border border-neutral-200 hover:bg-neutral-50 text-xs font-bold text-[#F5F5F5] transition-all flex items-center justify-center gap-2.5 active:scale-95 cursor-pointer disabled:opacity-60"
                   >
                     <GoogleIcon />
                     Continue with Google
@@ -473,7 +473,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   {/* Personal Information */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">
+                      <label className="block text-[#F5F5F5] font-bold mb-1">
                         Full Name *
                       </label>
                       <div className="relative">
@@ -484,13 +484,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="e.g. Tanvir Hossain"
-                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors"
+                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">
+                      <label className="block text-[#F5F5F5] font-bold mb-1">
                         Phone Number *
                       </label>
                       <div className="relative">
@@ -501,7 +501,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="017XXXXXXXX"
-                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl font-mono focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors"
+                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl font-mono focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors"
                         />
                       </div>
                     </div>
@@ -509,7 +509,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">
+                      <label className="block text-[#F5F5F5] font-bold mb-1">
                         Email Address *
                       </label>
                       <div className="relative">
@@ -521,14 +521,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           value={signupEmail}
                           onChange={(e) => setSignupEmail(e.target.value)}
                           placeholder="athlete@example.com"
-                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors"
+                          className="w-full pl-10 pr-3.5 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors"
                         />
                       </div>
                     </div>
 
                     {!isCompleting && (
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">
+                      <label className="block text-[#F5F5F5] font-bold mb-1">
                         Create Password *
                       </label>
                       <div className="relative">
@@ -540,7 +540,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           autoComplete="new-password"
                           value={signupPassword}
                           onChange={(e) => setSignupPassword(e.target.value)}
-                          className="w-full pl-10 pr-10 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors"
+                          className="w-full pl-10 pr-10 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors"
                         />
                         <button
                           type="button"
@@ -556,10 +556,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   {/* Member Photograph Preview / Upload */}
                   <div>
-                    <span className="block text-[#171717] font-bold mb-1">
+                    <span className="block text-[#F5F5F5] font-bold mb-1">
                       Member Photograph *
                     </span>
-                    <div className="flex items-center gap-3 p-3 bg-[#F5F5F5] rounded-2xl border border-neutral-200/80">
+                    <div className="flex items-center gap-3 p-3 bg-[#0E0E0E] rounded-2xl border border-neutral-200/80">
                       {avatarUrl ? (
                         <img
                           src={avatarUrl}
@@ -572,10 +572,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         </div>
                       )}
                       <div className="flex-1 min-w-0 text-xs">
-                        <span className="font-bold text-[#171717] block truncate">
+                        <span className="font-bold text-[#F5F5F5] block truncate">
                           {photoFileName || 'Add your profile photo'}
                         </span>
-                        <label className="inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#7155E8] text-white cursor-pointer transition-colors hover:bg-[#6245DE] focus-within:ring-2 focus-within:ring-[#7155E8] focus-within:ring-offset-2">
+                        <label className="inline-flex items-center gap-1.5 mt-1 px-2.5 py-1 rounded-xl text-[10px] font-bold bg-[#D4AF37] text-white cursor-pointer transition-colors hover:bg-[#B8912B] focus-within:ring-2 focus-within:ring-[#D4AF37] focus-within:ring-offset-2">
                           <Upload className="w-3 h-3" />
                           {avatarUrl ? 'Change Photo' : 'Upload Photo'}
                           <input
@@ -603,7 +603,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         required
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
-                        className="w-full p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl"
+                        className="w-full p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl"
                       />
                     </div>
                     <div>
@@ -611,7 +611,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       <select
                         value={gender}
                         onChange={(e) => setGender(e.target.value)}
-                        className="w-full p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl font-sans"
+                        className="w-full p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl font-sans"
                       >
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -624,7 +624,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         required
                         value={heightCm}
                         onChange={(e) => setHeightCm(e.target.value)}
-                        className="w-full p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl"
+                        className="w-full p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl"
                       />
                     </div>
                     <div>
@@ -635,7 +635,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         required
                         value={currentWeightKg}
                         onChange={(e) => setCurrentWeightKg(e.target.value)}
-                        className="w-full p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl text-[#7155E8] font-bold"
+                        className="w-full p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl text-[#D4AF37] font-bold"
                       />
                     </div>
                     <div className="col-span-2 sm:col-span-1">
@@ -646,7 +646,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         required
                         value={targetWeightKg}
                         onChange={(e) => setTargetWeightKg(e.target.value)}
-                        className="w-full p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl text-[#10B981] font-bold"
+                        className="w-full p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl text-[#10B981] font-bold"
                       />
                     </div>
                   </div>
@@ -654,11 +654,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   {/* Fitness Goal & Experience */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">Primary Fitness Goal</label>
+                      <label className="block text-[#F5F5F5] font-bold mb-1">Primary Fitness Goal</label>
                       <select
                         value={fitnessGoal}
                         onChange={(e) => setFitnessGoal(e.target.value)}
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl font-semibold"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl font-semibold"
                       >
                         <option value="Muscle Building & Hypertrophy">Muscle Building & Hypertrophy</option>
                         <option value="Fat Loss & Lean Definition">Fat Loss & Lean Definition</option>
@@ -669,11 +669,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-[#171717] font-bold mb-1">Experience Level</label>
+                      <label className="block text-[#F5F5F5] font-bold mb-1">Experience Level</label>
                       <select
                         value={fitnessLevel}
                         onChange={(e) => setFitnessLevel(e.target.value as any)}
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl font-semibold"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl font-semibold"
                       >
                         <option value="Beginner">Beginner (0 - 6 months)</option>
                         <option value="Intermediate">Intermediate (6 months - 2 years)</option>
@@ -684,10 +684,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
 
                   {/* Membership Duration & Payment */}
-                  <fieldset className="p-3.5 sm:p-4 bg-[#F0EEFC]/50 border border-[#7155E8]/20 rounded-2xl space-y-3">
+                  <fieldset className="p-3.5 sm:p-4 bg-[#221C0D]/50 border border-[#D4AF37]/20 rounded-2xl space-y-3">
                     <legend className="sr-only">Trainer, membership and payment</legend>
                     <div>
-                      <label htmlFor="reg-trainer" className="block text-[#171717] font-bold mb-1">
+                      <label htmlFor="reg-trainer" className="block text-[#F5F5F5] font-bold mb-1">
                         Select Trainer *
                       </label>
                       {trainersError ? (
@@ -700,7 +700,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           value={trainerId}
                           onChange={(e) => setTrainerId(e.target.value)}
                           disabled={!trainers.length}
-                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#7155E8] transition-colors disabled:opacity-60"
+                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#D4AF37] transition-colors disabled:opacity-60"
                         >
                           {!trainers.length && <option value="">Loading trainers…</option>}
                           {trainers.map((t) => (
@@ -714,7 +714,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     </div>
 
                     <div>
-                      <span id="duration-label" className="block text-[#171717] font-bold mb-1.5">
+                      <span id="duration-label" className="block text-[#F5F5F5] font-bold mb-1.5">
                         Trainer Membership Duration *
                       </span>
                       <div role="radiogroup" aria-labelledby="duration-label" className="grid grid-cols-3 gap-2">
@@ -729,8 +729,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                               onClick={() => setMembershipDuration(opt.value)}
                               className={`py-2.5 px-2 rounded-xl text-xs font-bold border transition-all active:scale-95 cursor-pointer ${
                                 selected
-                                  ? 'bg-[#7155E8] border-[#7155E8] text-white shadow-[0_4px_12px_rgba(113,85,232,0.3)]'
-                                  : 'bg-white border-neutral-200 text-neutral-700 hover:border-[#7155E8]/50'
+                                  ? 'bg-[#D4AF37] border-[#D4AF37] text-white shadow-[0_4px_12px_rgba(212,175,55,0.3)]'
+                                  : 'bg-white border-neutral-200 text-neutral-700 hover:border-[#D4AF37]/50'
                               }`}
                             >
                               {opt.label}
@@ -742,7 +742,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor="reg-amount-paid" className="block text-[#171717] font-bold mb-1">
+                        <label htmlFor="reg-amount-paid" className="block text-[#F5F5F5] font-bold mb-1">
                           Amount Paid (৳) *
                         </label>
                         <div className="relative">
@@ -757,19 +757,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                             value={amountPaid}
                             onChange={(e) => setAmountPaid(e.target.value)}
                             placeholder="e.g. 3500 (0 if not paid yet)"
-                            className="w-full pl-8 pr-3.5 py-2.5 bg-white border border-neutral-200/80 rounded-2xl font-mono focus:outline-none focus:border-[#7155E8] transition-colors"
+                            className="w-full pl-8 pr-3.5 py-2.5 bg-white border border-neutral-200/80 rounded-2xl font-mono focus:outline-none focus:border-[#D4AF37] transition-colors"
                           />
                         </div>
                       </div>
                       <div>
-                        <label htmlFor="reg-payment-method" className="block text-[#171717] font-bold mb-1">
+                        <label htmlFor="reg-payment-method" className="block text-[#F5F5F5] font-bold mb-1">
                           Payment Method *
                         </label>
                         <select
                           id="reg-payment-method"
                           value={paymentMethod}
                           onChange={(e) => setPaymentMethod(e.target.value as RegistrationPaymentMethod)}
-                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#7155E8] transition-colors"
+                          className="w-full p-2.5 bg-white border border-neutral-200/80 rounded-2xl font-semibold focus:outline-none focus:border-[#D4AF37] transition-colors"
                         >
                           {PAYMENT_METHODS.map((m) => (
                             <option key={m} value={m}>
@@ -786,7 +786,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                   {/* Body Condition & Assessment Details */}
                   <div>
-                    <label className="block text-[#171717] font-bold mb-1 flex flex-wrap items-center justify-between gap-1">
+                    <label className="block text-[#F5F5F5] font-bold mb-1 flex flex-wrap items-center justify-between gap-1">
                       <span>Full Body Condition & Physical Details *</span>
                       <span className="text-[10px] text-neutral-400 font-normal">Required for Coach Oliul Azim</span>
                     </label>
@@ -796,7 +796,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={bodyConditionNotes}
                       onChange={(e) => setBodyConditionNotes(e.target.value)}
                       placeholder="Describe your current body shape, fat distribution, daily energy, back/neck posture, past sports history, and goals."
-                      className="w-full p-3 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors leading-relaxed"
+                      className="w-full p-3 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors leading-relaxed"
                     />
                   </div>
 
@@ -808,7 +808,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={medicalConditions}
                         onChange={(e) => setMedicalConditions(e.target.value)}
                         placeholder="e.g. Asthma, High BP, None"
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl"
                       />
                     </div>
                     <div>
@@ -818,7 +818,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={injuries}
                         onChange={(e) => setInjuries(e.target.value)}
                         placeholder="e.g. Lower back pain, None"
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl"
                       />
                     </div>
                   </div>
@@ -827,7 +827,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 /* SIGN IN FORM */
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[#171717] font-bold mb-1.5">
+                    <label className="block text-[#F5F5F5] font-bold mb-1.5">
                       Email Address
                     </label>
                     <div className="relative">
@@ -838,20 +838,20 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@domain.com"
-                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors text-xs"
+                        className="w-full pl-10 pr-3.5 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors text-xs"
                       />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-[#171717] font-bold">
+                      <label className="text-[#F5F5F5] font-bold">
                         Password
                       </label>
                       <button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="text-neutral-400 hover:text-[#7155E8] text-[11px] font-semibold transition-colors"
+                        className="text-neutral-400 hover:text-[#D4AF37] text-[11px] font-semibold transition-colors"
                       >
                         Forgot password?
                       </button>
@@ -865,7 +865,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-2.5 bg-[#F5F5F5] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#7155E8] transition-colors text-xs"
+                        className="w-full pl-10 pr-10 py-2.5 bg-[#0E0E0E] border border-neutral-200/80 rounded-2xl focus:bg-white focus:outline-none focus:border-[#D4AF37] transition-colors text-xs"
                       />
                       <button
                         type="button"
@@ -884,7 +884,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <button
                 type="submit"
                 disabled={isBusy}
-                className="w-full py-3.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2"
+                className="w-full py-3.5 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] disabled:opacity-60 text-white text-xs font-bold shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2"
               >
                 <span>
                   {isBusy ? 'Please wait…' : isSignUp ? 'Submit Registration Application for Coach Approval' : 'Sign In'}
@@ -898,8 +898,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         {/* Toggle Mode */}
         {!submittedSuccess && isCompleting && (
           <div className="text-center pt-2 border-t border-neutral-100 text-xs text-neutral-500">
-            Signed in as <span className="font-semibold text-[#171717]">{signupEmail}</span>.{' '}
-            <button type="button" onClick={onSignOut} className="font-bold text-[#7155E8] hover:underline cursor-pointer">
+            Signed in as <span className="font-semibold text-[#F5F5F5]">{signupEmail}</span>.{' '}
+            <button type="button" onClick={onSignOut} className="font-bold text-[#D4AF37] hover:underline cursor-pointer">
               Use a different account
             </button>
           </div>
@@ -916,7 +916,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   setErrorMessage(null);
                   setInfoMessage(null);
                 }}
-                className="font-bold text-[#7155E8] hover:underline cursor-pointer"
+                className="font-bold text-[#D4AF37] hover:underline cursor-pointer"
               >
                 {isSignUp ? 'Sign In here' : 'Register with Body Assessment'}
               </button>

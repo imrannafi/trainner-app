@@ -75,7 +75,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Meal Accountability & Photo Evidence Hub
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -84,7 +84,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
         </div>
 
         <div className="flex items-center gap-2 self-start md:self-auto">
-          <span className="text-xs font-bold font-mono tabular-nums text-[#7155E8] bg-[#F0EEFC] px-4 py-2 rounded-2xl border border-[#7155E8]/20 whitespace-nowrap">
+          <span className="text-xs font-bold font-mono tabular-nums text-[#D4AF37] bg-[#221C0D] px-4 py-2 rounded-2xl border border-[#D4AF37]/20 whitespace-nowrap">
             {pendingCount} Awaiting Verification
           </span>
         </div>
@@ -128,7 +128,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Pending Review
           </span>
-          <div className="text-2xl font-bold font-mono tabular-nums text-[#7155E8] mt-1">
+          <div className="text-2xl font-bold font-mono tabular-nums text-[#D4AF37] mt-1">
             {pendingCount}
           </div>
           <span className="text-[11px] text-neutral-400 mt-1 block truncate">Requires Coach Action</span>
@@ -138,8 +138,8 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
       {/* Filter Toolbar (Pill tabs) */}
       <div className="bg-white rounded-3xl p-4 border border-neutral-200/70 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col lg:flex-row lg:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar min-w-0">
-          <span className="font-bold text-[#171717] shrink-0">Filter Status:</span>
-          <div className="flex items-center gap-1 p-1 bg-[#F5F5F5] rounded-full shrink-0">
+          <span className="font-bold text-[#F5F5F5] shrink-0">Filter Status:</span>
+          <div className="flex items-center gap-1 p-1 bg-[#0E0E0E] rounded-full shrink-0">
             {['all', 'Pending', 'Approved', 'Correction Requested', 'Flagged'].map((status) => (
               <button
                 key={status}
@@ -147,8 +147,8 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
                 onClick={() => setFilterStatus(status)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                   filterStatus === status
-                    ? 'bg-[#171717] text-white shadow-xs'
-                    : 'text-neutral-500 hover:text-[#171717]'
+                    ? 'bg-[#D4AF37] text-white shadow-xs'
+                    : 'text-neutral-500 hover:text-[#F5F5F5]'
                 }`}
               >
                 {status === 'all' ? 'All Submissions' : status}
@@ -158,11 +158,11 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="font-bold text-[#171717] whitespace-nowrap">Adherence:</span>
+          <span className="font-bold text-[#F5F5F5] whitespace-nowrap">Adherence:</span>
           <select
             value={filterAdherence}
             onChange={(e) => setFilterAdherence(e.target.value)}
-            className="border border-neutral-200 rounded-2xl px-3 py-1.5 bg-[#F5F5F5] font-semibold text-[#171717] focus:outline-none focus:border-[#7155E8]"
+            className="border border-neutral-200 rounded-2xl px-3 py-1.5 bg-[#0E0E0E] font-semibold text-[#F5F5F5] focus:outline-none focus:border-[#D4AF37]"
           >
             <option value="all">All Adherence Levels</option>
             <option value="Followed Plan">Followed Plan (100%)</option>
@@ -194,7 +194,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
                         <button
                           type="button"
                           onClick={() => onSelectMember(log.memberId)}
-                          className="font-extrabold text-[#171717] hover:text-[#7155E8] transition-colors text-base text-left block truncate"
+                          className="font-extrabold text-[#F5F5F5] hover:text-[#D4AF37] transition-colors text-base text-left block truncate"
                         >
                           {log.memberName}
                         </button>
@@ -206,7 +206,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
 
                     {/* Scheduled Meal & Adherence Badge */}
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#F5F5F5] text-[#171717] whitespace-nowrap">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#0E0E0E] text-[#F5F5F5] whitespace-nowrap">
                         {log.scheduledMealName}
                       </span>
                       <span
@@ -225,16 +225,16 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
 
                   {/* Prescribed vs Reported Comparison */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 text-xs">
-                    <div className="p-4 bg-[#F5F5F5] rounded-2xl">
+                    <div className="p-4 bg-[#0E0E0E] rounded-2xl">
                       <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
                         Assigned Nutrition Blueprint
                       </span>
-                      <p className="text-[#171717] mt-1 font-medium leading-relaxed">
+                      <p className="text-[#F5F5F5] mt-1 font-medium leading-relaxed">
                         {log.prescribedFoodsSummary}
                       </p>
                     </div>
 
-                    <div className="p-4 bg-[#F5F5F5] rounded-2xl">
+                    <div className="p-4 bg-[#0E0E0E] rounded-2xl">
                       <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider block">
                         Foods Actually Consumed (Client Report)
                       </span>
@@ -243,7 +243,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
                           <div
                             key={i}
                             className={`flex flex-wrap items-center justify-between gap-2 ${
-                              !f.wasInPlan ? 'text-[#EF4444] font-bold' : 'text-[#171717]'
+                              !f.wasInPlan ? 'text-[#EF4444] font-bold' : 'text-[#F5F5F5]'
                             }`}
                           >
                             <span className="min-w-0">{f.name} ({f.quantity})</span>
@@ -257,7 +257,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
                   </div>
 
                   {/* Reported Macros Strip (Flex-wrapped so zero clipping on mobile) */}
-                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-3 px-4 py-2.5 bg-[#F0EEFC] rounded-2xl text-xs font-mono tabular-nums text-[#7155E8] font-bold">
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-3 px-4 py-2.5 bg-[#221C0D] rounded-2xl text-xs font-mono tabular-nums text-[#D4AF37] font-bold">
                     <span>Total: {log.totalCalories} kcal</span>
                     <span aria-hidden="true">·</span>
                     <span>{log.totalProteinG}g Protein</span>
@@ -275,7 +275,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
 
                   {/* Trainer Feedback Input */}
                   <div className="mt-4 pt-3 border-t border-neutral-100">
-                    <label className="block text-xs font-bold text-[#171717] mb-1.5">
+                    <label className="block text-xs font-bold text-[#F5F5F5] mb-1.5">
                       Coach Feedback & Instructions:
                     </label>
                     <input
@@ -283,7 +283,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
                       placeholder="Add guidance (e.g. good portion control, watch sodium)..."
                       value={feedbackTextMap[log.id] !== undefined ? feedbackTextMap[log.id] : log.trainerFeedback || ''}
                       onChange={(e) => handleFeedbackChange(log.id, e.target.value)}
-                      className="w-full p-2.5 text-xs bg-[#F5F5F5] focus:bg-white border border-neutral-200/60 focus:border-[#7155E8] rounded-2xl focus:outline-none transition-colors"
+                      className="w-full p-2.5 text-xs bg-[#0E0E0E] focus:bg-white border border-neutral-200/60 focus:border-[#D4AF37] rounded-2xl focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export const MealAccountabilityHub: React.FC<MealAccountabilityHubProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedPhotoModal(null)}
-                className="absolute top-5 right-5 p-2 bg-black/65 text-white rounded-full hover:bg-black/90 transition-colors z-10"
+                className="absolute top-5 right-5 p-2 bg-black/65 text-[#fff] rounded-full hover:bg-black/90 transition-colors z-10"
                 aria-label="Close photo lightbox"
               >
                 <X className="w-5 h-5" />

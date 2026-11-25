@@ -16,7 +16,7 @@ import { formatDateTime, relativeTime } from '../../lib/dates';
 import { PHOTO_READ_ERROR, resizeImage } from '../../lib/image';
 
 const inputClass =
-  'w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]';
+  'w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]';
 
 // ---------------------------------------------------------------------------
 // Notification detail
@@ -33,7 +33,7 @@ const Detail: React.FC<{ label: string; value?: React.ReactNode }> = ({ label, v
   value === undefined || value === null || value === '' ? null : (
     <div className="flex justify-between gap-3 py-1.5 border-b border-neutral-100 last:border-b-0">
       <span className="text-neutral-500">{label}</span>
-      <span className="font-semibold text-[#171717] text-right">{value}</span>
+      <span className="font-semibold text-[#F5F5F5] text-right">{value}</span>
     </div>
   );
 
@@ -108,7 +108,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
         return u ? (
           <>
             <Detail label="Subject" value={u.subject} />
-            {u.message && <p className="pt-2 text-[#171717] leading-relaxed whitespace-pre-wrap">{u.message}</p>}
+            {u.message && <p className="pt-2 text-[#F5F5F5] leading-relaxed whitespace-pre-wrap">{u.message}</p>}
           </>
         ) : null;
       }
@@ -140,7 +140,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
           )}
           <div className="min-w-0">
             {notification.actorName && (
-              <span className="font-bold text-sm text-[#171717] block truncate">{notification.actorName}</span>
+              <span className="font-bold text-sm text-[#F5F5F5] block truncate">{notification.actorName}</span>
             )}
             <span className="text-neutral-500 font-mono text-[11px]">
               {formatDateTime(notification.createdAt)} · {relativeTime(notification.createdAt)} ·{' '}
@@ -163,14 +163,14 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
           </div>
         )}
 
-        {details && <div className="p-3 bg-[#F5F5F5] rounded-2xl">{details}</div>}
+        {details && <div className="p-3 bg-[#0E0E0E] rounded-2xl">{details}</div>}
 
         <div className="flex flex-wrap justify-end gap-2 pt-2 border-t border-neutral-100">
           {isStaff && notification.actorMemberId && (
             <button
               type="button"
               onClick={() => onOpenMember(notification.actorMemberId!)}
-              className="px-4 py-2.5 rounded-2xl border border-neutral-200 font-bold text-neutral-700 hover:bg-[#F5F5F5] inline-flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-2xl border border-neutral-200 font-bold text-neutral-700 hover:bg-[#0E0E0E] inline-flex items-center gap-1.5"
             >
               <UserRound className="w-3.5 h-3.5" />
               Open client profile
@@ -180,7 +180,7 @@ export const NotificationDetailModal: React.FC<NotificationDetailModalProps> = (
             <button
               type="button"
               onClick={() => onGoToTab(notification.linkTab!)}
-              className="px-4 py-2.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white font-bold inline-flex items-center gap-1.5"
+              className="px-4 py-2.5 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] text-white font-bold inline-flex items-center gap-1.5"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               Go to section
@@ -218,14 +218,14 @@ export const NotificationHistoryModal: React.FC<NotificationHistoryModalProps> =
     <Modal isOpen={isOpen} onClose={onClose} title="Notification History" description="Your latest 200 notifications" maxWidth="xl">
       <div className="space-y-3 text-xs">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="inline-flex bg-[#F5F5F5] rounded-xl p-1">
+          <div className="inline-flex bg-[#0E0E0E] rounded-xl p-1">
             {(['all', 'unread'] as const).map((f) => (
               <button
                 key={f}
                 type="button"
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-lg font-semibold capitalize ${
-                  filter === f ? 'bg-white shadow-xs text-[#171717]' : 'text-neutral-500'
+                  filter === f ? 'bg-white shadow-xs text-[#F5F5F5]' : 'text-neutral-500'
                 }`}
               >
                 {f === 'unread' ? `Unread (${unread})` : 'All'}
@@ -233,7 +233,7 @@ export const NotificationHistoryModal: React.FC<NotificationHistoryModalProps> =
             ))}
           </div>
           {unread > 0 && (
-            <button type="button" onClick={onMarkAllRead} className="font-semibold text-[#7155E8] hover:underline">
+            <button type="button" onClick={onMarkAllRead} className="font-semibold text-[#D4AF37] hover:underline">
               Mark all as read
             </button>
           )}
@@ -247,14 +247,14 @@ export const NotificationHistoryModal: React.FC<NotificationHistoryModalProps> =
               type="button"
               onClick={() => onOpenNotification(n)}
               className={`w-full text-left p-3 rounded-2xl flex items-start gap-2.5 transition-colors ${
-                n.isRead ? 'hover:bg-[#F5F5F5]' : 'bg-[#F0EEFC]/60 hover:bg-[#F0EEFC]'
+                n.isRead ? 'hover:bg-[#0E0E0E]' : 'bg-[#221C0D]/60 hover:bg-[#221C0D]'
               }`}
             >
               {n.actorName && <Avatar src={n.actorAvatarUrl} name={n.actorName} size="sm" />}
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="font-bold text-[#171717]">{n.title}</span>
-                  <span className={`text-[10px] font-bold shrink-0 ${n.isRead ? 'text-neutral-400' : 'text-[#7155E8]'}`}>
+                  <span className="font-bold text-[#F5F5F5]">{n.title}</span>
+                  <span className={`text-[10px] font-bold shrink-0 ${n.isRead ? 'text-neutral-400' : 'text-[#D4AF37]'}`}>
                     {n.isRead ? 'Read' : 'Unread'}
                   </span>
                 </div>
@@ -404,15 +404,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Settings" maxWidth="xl">
       <div className="space-y-5 text-xs">
-        <section className="p-4 bg-[#F5F5F5] rounded-2xl flex items-center justify-between gap-3">
+        <section className="p-4 bg-[#0E0E0E] rounded-2xl flex items-center justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             {pushState === 'enabled' ? (
-              <Bell className="w-5 h-5 text-[#7155E8] shrink-0" />
+              <Bell className="w-5 h-5 text-[#D4AF37] shrink-0" />
             ) : (
               <BellOff className="w-5 h-5 text-neutral-400 shrink-0" />
             )}
             <div className="min-w-0">
-              <span className="font-bold text-[#171717] block">Push notifications</span>
+              <span className="font-bold text-[#F5F5F5] block">Push notifications</span>
               <span className="text-neutral-500">{pushCopy[pushState]}</span>
             </div>
           </div>
@@ -422,7 +422,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
               onClick={togglePush}
               disabled={pushBusy}
               className={`px-4 py-2 rounded-xl font-bold shrink-0 disabled:opacity-60 ${
-                pushState === 'enabled' ? 'bg-white border border-neutral-200 text-neutral-700' : 'bg-[#7155E8] text-white'
+                pushState === 'enabled' ? 'bg-white border border-neutral-200 text-neutral-700' : 'bg-[#D4AF37] text-white'
               }`}
             >
               {pushBusy ? '…' : pushState === 'enabled' ? 'Turn off' : 'Turn on'}
@@ -447,7 +447,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
               type="button"
               onClick={sendTest}
               disabled={testBusy}
-              className="px-3 py-1.5 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold hover:border-[#7155E8]/40 hover:text-[#7155E8] transition-colors disabled:opacity-60"
+              className="px-3 py-1.5 rounded-xl bg-white border border-neutral-200 text-neutral-700 font-semibold hover:border-[#D4AF37]/40 hover:text-[#D4AF37] transition-colors disabled:opacity-60"
             >
               {testBusy ? 'Sending…' : 'Send test notification'}
             </button>
@@ -456,15 +456,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
 
         {isStaff && coach && (
           <form onSubmit={saveCoach} className="space-y-3">
-            <span className="font-bold text-sm text-[#171717] block">Coach profile</span>
+            <span className="font-bold text-sm text-[#F5F5F5] block">Coach profile</span>
             <div className="flex items-center gap-3">
               <Avatar src={coach.avatarUrl} name={coach.fullName} size="lg" className="rounded-3xl" />
-              <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-neutral-200 font-semibold text-neutral-700 cursor-pointer hover:bg-neutral-50 focus-within:ring-2 focus-within:ring-[#7155E8]">
+              <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-neutral-200 font-semibold text-neutral-700 cursor-pointer hover:bg-neutral-50 focus-within:ring-2 focus-within:ring-[#D4AF37]">
                 <Camera className="w-3.5 h-3.5" />
                 Change photo
                 <input type="file" accept="image/*" className="sr-only" onChange={uploadCoachPhoto} />
               </label>
-              {coach.isMainCoach && <span className="text-[11px] font-bold text-[#7155E8]">Main coach · shown to every client</span>}
+              {coach.isMainCoach && <span className="text-[11px] font-bold text-[#D4AF37]">Main coach · shown to every client</span>}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label className="block">
@@ -493,7 +493,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
               </label>
             </div>
             <div className="flex justify-end">
-              <button type="submit" disabled={coachBusy} className="px-5 py-2.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold">
+              <button type="submit" disabled={coachBusy} className="px-5 py-2.5 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] disabled:opacity-60 text-white font-bold">
                 {coachBusy ? 'Saving…' : 'Save profile'}
               </button>
             </div>
@@ -501,7 +501,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, i
         )}
 
         <form onSubmit={changePassword} className="space-y-2 pt-4 border-t border-neutral-100">
-          <span className="font-bold text-sm text-[#171717] flex items-center gap-2">
+          <span className="font-bold text-sm text-[#F5F5F5] flex items-center gap-2">
             <KeyRound className="w-4 h-4 text-neutral-400" />
             {isStaff ? 'Change password' : 'Set or change password'}
           </span>
@@ -586,7 +586,7 @@ export const StaffManagerModal: React.FC<StaffManagerModalProps> = ({ isOpen, on
               <div className="flex items-center gap-2.5 min-w-0">
                 <Avatar src={a.avatarUrl} name={a.fullName} size="sm" />
                 <div className="min-w-0">
-                  <span className="font-bold text-[#171717] block truncate">
+                  <span className="font-bold text-[#F5F5F5] block truncate">
                     {a.fullName}
                     {a.id === currentUserId && <span className="text-neutral-400 font-medium"> (you)</span>}
                   </span>
@@ -594,7 +594,7 @@ export const StaffManagerModal: React.FC<StaffManagerModalProps> = ({ isOpen, on
                 </div>
               </div>
               {a.id === currentUserId || a.role === 'super_admin' ? (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#F0EEFC] text-[#7155E8] font-bold self-start sm:self-auto">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#221C0D] text-[#D4AF37] font-bold self-start sm:self-auto">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   {roleLabels[a.role]}
                 </span>
@@ -604,7 +604,7 @@ export const StaffManagerModal: React.FC<StaffManagerModalProps> = ({ isOpen, on
                   disabled={busyId === a.id}
                   onChange={(e) => changeRole(a.id, e.target.value as AccountRole)}
                   aria-label={`Role for ${a.fullName}`}
-                  className="p-2 bg-[#F5F5F5] border border-neutral-200 rounded-xl font-semibold self-start sm:self-auto disabled:opacity-60"
+                  className="p-2 bg-[#0E0E0E] border border-neutral-200 rounded-xl font-semibold self-start sm:self-auto disabled:opacity-60"
                 >
                   <option value="member">Client</option>
                   <option value="trainer">Coach</option>

@@ -145,9 +145,9 @@ export const Header: React.FC<HeaderProps> = ({
                 alt="Fitness With Oliul Azim logo"
                 width={36}
                 height={36}
-                className="w-9 h-9 rounded-xl object-cover shadow-[0_4px_12px_rgba(37,84,226,0.32)] group-hover:scale-110 group-hover:-rotate-12 group-hover:shadow-[0_8px_20px_rgba(37,84,226,0.45)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0"
+                className="w-9 h-9 rounded-xl object-cover shadow-[0_4px_12px_rgba(212,175,55,0.32)] group-hover:scale-110 group-hover:-rotate-12 group-hover:shadow-[0_8px_20px_rgba(212,175,55,0.45)] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shrink-0"
               />
-              <span className="hidden min-[400px]:inline text-base sm:text-lg font-extrabold tracking-tight text-[#171717] whitespace-nowrap truncate">
+              <span className="hidden min-[400px]:inline text-base sm:text-lg font-extrabold tracking-tight text-[#F5F5F5] whitespace-nowrap truncate">
                 Fitness With Oliul Azim
               </span>
             </button>
@@ -166,21 +166,21 @@ export const Header: React.FC<HeaderProps> = ({
                   type="button"
                   onClick={() => onSelectTab(link.id)}
                   className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors duration-150 whitespace-nowrap shrink-0 cursor-pointer ${
-                    isActive ? 'text-white' : 'text-neutral-600 hover:text-[#171717] hover:bg-neutral-900/[0.05]'
+                    isActive ? 'text-white' : 'text-neutral-600 hover:text-[#F5F5F5] hover:bg-neutral-900/[0.05]'
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="headerActiveNavPill"
                       transition={{ type: 'spring', stiffness: 450, damping: 34 }}
-                      className="absolute inset-0 rounded-full bg-[#171717] shadow-[0_6px_16px_-6px_rgba(23,23,23,0.5)] -z-10"
+                      className="absolute inset-0 rounded-full bg-[#D4AF37] shadow-[0_6px_16px_-6px_rgba(0, 0, 0,0.5)] -z-10"
                     />
                   )}
                   <span className="relative z-10">{link.label}</span>
                   {!!link.badge && (
                     <span
                       aria-label={`${link.badge} pending`}
-                      className="relative z-10 ml-1.5 inline-flex min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-neutral-900 text-[10px] font-extrabold items-center justify-center tabular-nums align-middle"
+                      className="relative z-10 ml-1.5 inline-flex min-w-[18px] h-[18px] px-1 rounded-full bg-amber-400 text-black text-[10px] font-extrabold items-center justify-center tabular-nums align-middle"
                     >
                       {link.badge}
                     </span>
@@ -201,7 +201,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors relative active:scale-95 cursor-pointer ${
                   showNotifications
-                    ? 'bg-[#F0EEFC] text-[#7155E8]'
+                    ? 'bg-[#221C0D] text-[#D4AF37]'
                     : 'bg-neutral-900/[0.04] hover:bg-neutral-900/[0.08] text-neutral-700'
                 } group`}
                 aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ''}`}
@@ -242,12 +242,12 @@ export const Header: React.FC<HeaderProps> = ({
                       onPointerDown={startDrag(notifDrag)}
                       className="flex items-center justify-between pb-3 border-b border-neutral-900/[0.06] gap-2 touch-none sm:touch-auto"
                     >
-                      <span className="font-bold text-sm text-[#171717]">Notifications</span>
+                      <span className="font-bold text-sm text-[#F5F5F5]">Notifications</span>
                       {unreadCount > 0 ? (
                         <button
                           type="button"
                           onClick={onMarkAllNotificationsRead}
-                          className="text-[11px] font-semibold text-[#7155E8] hover:underline cursor-pointer"
+                          className="text-[11px] font-semibold text-[#D4AF37] hover:underline cursor-pointer"
                         >
                           Mark all read ({unreadCount})
                         </button>
@@ -272,14 +272,14 @@ export const Header: React.FC<HeaderProps> = ({
                               onOpenNotification(n);
                             }}
                             className={`w-full text-left p-3 rounded-2xl cursor-pointer transition-colors flex items-start gap-2.5 ${
-                              n.isRead ? 'opacity-75 hover:bg-neutral-900/[0.04]' : 'bg-[#F0EEFC]/70 hover:bg-[#F0EEFC]'
+                              n.isRead ? 'opacity-75 hover:bg-neutral-900/[0.04]' : 'bg-[#221C0D]/70 hover:bg-[#221C0D]'
                             }`}
                           >
                             {n.actorName && <Avatar src={n.actorAvatarUrl} name={n.actorName} size="sm" />}
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start justify-between gap-2">
-                                <span className="font-bold text-[#171717] leading-snug">{n.title}</span>
-                                {!n.isRead && <span className="w-2 h-2 rounded-full bg-[#7155E8] shrink-0 mt-1" />}
+                                <span className="font-bold text-[#F5F5F5] leading-snug">{n.title}</span>
+                                {!n.isRead && <span className="w-2 h-2 rounded-full bg-[#D4AF37] shrink-0 mt-1" />}
                               </div>
                               <p className="text-neutral-500 mt-1 leading-snug line-clamp-2">{n.description}</p>
                               <div className="flex items-center gap-2 text-[10px] text-neutral-400 mt-1.5 font-mono">
@@ -305,7 +305,7 @@ export const Header: React.FC<HeaderProps> = ({
                         setShowNotifications(false);
                         onViewAllNotifications();
                       }}
-                      className="w-full mt-2 pt-2.5 border-t border-neutral-900/[0.06] text-center text-[11px] font-bold text-[#7155E8] hover:underline cursor-pointer"
+                      className="w-full mt-2 pt-2.5 border-t border-neutral-900/[0.06] text-center text-[11px] font-bold text-[#D4AF37] hover:underline cursor-pointer"
                     >
                       View notification history
                     </button>
@@ -330,10 +330,10 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 aria-expanded={showAccountMenu}
                 aria-label="Account menu"
-                className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-neutral-900/[0.04] hover:bg-white/80 rounded-2xl transition-all active:scale-95 border border-transparent hover:border-white hover:shadow-[0_6px_18px_-8px_rgba(40,28,110,0.25)] cursor-pointer"
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 bg-neutral-900/[0.04] hover:bg-white/80 rounded-2xl transition-all active:scale-95 border border-transparent hover:border-white hover:shadow-[0_6px_18px_-8px_rgba(0,0,0,0.25)] cursor-pointer"
               >
                 <Avatar src={account.avatarUrl} name={account.name} size="xs" />
-                <span className="hidden sm:inline text-xs font-bold text-[#171717] max-w-[116px] truncate whitespace-nowrap">
+                <span className="hidden sm:inline text-xs font-bold text-[#F5F5F5] max-w-[116px] truncate whitespace-nowrap">
                   {account.name.split(' ').slice(0, 2).join(' ')}
                 </span>
                 <ChevronDown
@@ -355,7 +355,7 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                       <Avatar src={account.avatarUrl} name={account.name} size="sm" />
                       <div className="min-w-0">
-                        <span className="block font-bold text-xs text-[#171717] truncate">{account.name}</span>
+                        <span className="block font-bold text-xs text-[#F5F5F5] truncate">{account.name}</span>
                         <span className="text-[10px] text-neutral-400 block truncate">{account.subtitle}</span>
                       </div>
                     </div>
@@ -370,7 +370,7 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className={menuItem}
                         >
-                          <ShieldCheck className="w-3.5 h-3.5 text-[#7155E8] shrink-0" />
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
                           <span className="whitespace-nowrap">Manage Coaches & Roles</span>
                         </button>
                       )}

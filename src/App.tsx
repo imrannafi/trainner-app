@@ -70,7 +70,7 @@ const run = (promise: Promise<unknown>, success?: string) =>
     .catch((err: Error) => showToast(err.message, 'error'));
 
 const FullScreenMessage: React.FC<{ title: string; children?: React.ReactNode }> = ({ title, children }) => (
-  <div className="min-h-screen flex items-center justify-center p-6 bg-[#F5F5F5] text-[#171717]">
+  <div className="min-h-screen flex items-center justify-center p-6 bg-[#0E0E0E] text-[#F5F5F5]">
     <AmbientBackdrop />
     <motion.div
       initial={{ opacity: 0, y: 16, scale: 0.97 }}
@@ -83,7 +83,7 @@ const FullScreenMessage: React.FC<{ title: string; children?: React.ReactNode }>
         alt="Fitness With Oliul Azim logo"
         width={64}
         height={64}
-        className="inline-block w-16 h-16 rounded-2xl object-cover shadow-[0_8px_20px_rgba(37,84,226,0.35)]"
+        className="inline-block w-16 h-16 rounded-2xl object-cover shadow-[0_8px_20px_rgba(212,175,55,0.35)]"
       />
       <h1 className="text-lg font-extrabold">{title}</h1>
       {children}
@@ -356,7 +356,7 @@ export default function App() {
               const { data } = await supabase.auth.getSession();
               applySession(data.session, true);
             }}
-            className="px-4 py-2.5 rounded-xl bg-[#7155E8] text-white text-xs font-bold"
+            className="px-4 py-2.5 rounded-xl bg-[#D4AF37] text-white text-xs font-bold"
           >
             Try again
           </button>
@@ -399,9 +399,9 @@ export default function App() {
           value={recoveryPassword}
           onChange={(e) => setRecoveryPassword(e.target.value)}
           placeholder="New password (8+ characters)"
-          className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+          className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
         />
-        <button type="submit" className="w-full py-2.5 rounded-xl bg-[#7155E8] text-white font-bold">
+        <button type="submit" className="w-full py-2.5 rounded-xl bg-[#D4AF37] text-white font-bold">
           Save password
         </button>
       </form>
@@ -411,7 +411,7 @@ export default function App() {
   if (access.kind === 'loading') {
     return (
       <FullScreenMessage title="Loading your portal…">
-        <div className="mx-auto w-8 h-8 border-2 border-[#7155E8]/30 border-t-[#7155E8] rounded-full animate-spin" />
+        <div className="mx-auto w-8 h-8 border-2 border-[#D4AF37]/30 border-t-[#D4AF37] rounded-full animate-spin" />
       </FullScreenMessage>
     );
   }
@@ -498,7 +498,7 @@ export default function App() {
   const footerCoach = mainCoach;
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] text-[#171717] flex flex-col font-sans selection:bg-[#7155E8] selection:text-white overflow-x-clip">
+    <div className="min-h-screen bg-[#0E0E0E] text-[#F5F5F5] flex flex-col font-sans selection:bg-[#D4AF37] selection:text-white overflow-x-clip">
       <AmbientBackdrop />
       <ToastViewport />
       <PullToRefresh onRefresh={() => storage.reload()} />

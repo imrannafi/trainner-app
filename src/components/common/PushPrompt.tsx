@@ -84,11 +84,11 @@ export const PushPrompt: React.FC = () => {
             <X className="w-4 h-4" />
           </button>
           <div className="flex items-start gap-3 pr-6">
-            <div className="w-10 h-10 rounded-2xl bg-[#F0EEFC] text-[#7155E8] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-[#221C0D] text-[#D4AF37] flex items-center justify-center shrink-0">
               {state === 'needs-install' ? <Share className="w-5 h-5" /> : <BellRing className="w-5 h-5" />}
             </div>
             <div className="min-w-0">
-              <span className="block font-bold text-sm text-[#171717]">Get notified on your phone</span>
+              <span className="block font-bold text-sm text-[#F5F5F5]">Get notified on your phone</span>
               {state === 'needs-install' ? (
                 <p className="text-neutral-500 mt-1 leading-relaxed">
                   Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Open Fitness With Oliul Azim from your Home
@@ -110,7 +110,7 @@ export const PushPrompt: React.FC = () => {
                 type="button"
                 onClick={turnOn}
                 disabled={busy}
-                className="px-4 py-2 rounded-xl bg-[#7155E8] text-white font-bold disabled:opacity-60"
+                className="px-4 py-2 rounded-xl bg-[#D4AF37] text-white font-bold disabled:opacity-60"
               >
                 {busy ? 'Turning on…' : 'Turn on'}
               </button>

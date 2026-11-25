@@ -56,7 +56,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Training Calendar & Attendance
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -67,7 +67,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
         >
           <Plus className="w-4 h-4 shrink-0" />
           Schedule 1-on-1 Session
@@ -119,7 +119,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
               className="p-4 sm:p-5 hover:bg-neutral-50/70 transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-3"
             >
               <div className="flex items-start gap-3 min-w-0">
-                <div className="w-11 h-11 rounded-2xl bg-[#F5F5F5] border border-neutral-200/70 flex flex-col items-center justify-center font-mono tabular-nums text-[11px] shrink-0">
+                <div className="w-11 h-11 rounded-2xl bg-[#0E0E0E] border border-neutral-200/70 flex flex-col items-center justify-center font-mono tabular-nums text-[11px] shrink-0">
                   <span className="font-bold text-neutral-900">{s.sessionDate.split('-')[2]}</span>
                   <span className="text-[9px] text-neutral-500 uppercase">{s.sessionDate.split('-')[1]}</span>
                 </div>
@@ -129,7 +129,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectMember(s.memberId)}
-                      className="font-bold text-neutral-900 hover:text-[#7155E8] transition-colors"
+                      className="font-bold text-neutral-900 hover:text-[#D4AF37] transition-colors"
                     >
                       {s.memberName}
                     </button>
@@ -212,7 +212,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
             <select
               value={selectedMemberId}
               onChange={(e) => setSelectedMemberId(e.target.value)}
-              className="w-full p-2.5 border border-neutral-200 rounded-xl bg-[#F5F5F5] focus:bg-white font-medium focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 border border-neutral-200 rounded-xl bg-[#0E0E0E] focus:bg-white font-medium focus:outline-none focus:border-[#D4AF37]"
             >
               {members.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -230,7 +230,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
                 required
                 value={sessionDate}
                 onChange={(e) => setSessionDate(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div>
@@ -240,7 +240,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
                 required
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div>
@@ -250,7 +250,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
                 required
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
           </div>
@@ -262,7 +262,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
               required
               value={sessionTitle}
               onChange={(e) => setSessionTitle(e.target.value)}
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-medium"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-medium"
             />
           </div>
 
@@ -272,7 +272,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
               type="text"
               value={focusArea}
               onChange={(e) => setFocusArea(e.target.value)}
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
             />
           </div>
 
@@ -283,7 +283,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
               value={trainerNotes}
               onChange={(e) => setTrainerNotes(e.target.value)}
               placeholder="e.g. Check knee wrap tightness, spot on 95kg squat"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
             />
           </div>
 
@@ -297,7 +297,7 @@ export const TrainingCalendar: React.FC<TrainingCalendarProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
+              className="px-5 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
             >
               Confirm & Sync to Calendar
             </button>

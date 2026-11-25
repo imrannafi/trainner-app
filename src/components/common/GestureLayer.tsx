@@ -33,7 +33,7 @@ export const PullToRefresh: React.FC<{ onRefresh: () => Promise<unknown>; enable
         >
           <div
             className={`glass-strong w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-              progress >= 1 || refreshing ? 'text-[#7155E8]' : 'text-neutral-400'
+              progress >= 1 || refreshing ? 'text-[#D4AF37]' : 'text-neutral-400'
             }`}
           >
             <RefreshCw

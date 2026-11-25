@@ -91,7 +91,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Workout & Nutrition Plan Builder
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -107,8 +107,8 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               onClick={() => setSubTab('workouts')}
               className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full transition-all whitespace-nowrap ${
                 subTab === 'workouts'
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'text-neutral-500 hover:text-[#171717]'
+                  ? 'bg-[#D4AF37] text-white shadow-xs'
+                  : 'text-neutral-500 hover:text-[#F5F5F5]'
               }`}
             >
               <Dumbbell className="w-3.5 h-3.5 shrink-0" />
@@ -119,8 +119,8 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               onClick={() => setSubTab('diets')}
               className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full transition-all whitespace-nowrap ${
                 subTab === 'diets'
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'text-neutral-500 hover:text-[#171717]'
+                  ? 'bg-[#D4AF37] text-white shadow-xs'
+                  : 'text-neutral-500 hover:text-[#F5F5F5]'
               }`}
             >
               <Utensils className="w-3.5 h-3.5 shrink-0" />
@@ -134,7 +134,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               if (subTab === 'workouts') setIsEditingWorkout(true);
               else setIsEditingDiet(true);
             }}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all active:scale-95 whitespace-nowrap"
           >
             <Plus className="w-4 h-4 shrink-0" />
             Create {subTab === 'workouts' ? 'Workout' : 'Diet'}
@@ -169,13 +169,13 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                       onClick={() => setSelectedWorkoutId(plan.id)}
                       className={`p-5 rounded-3xl border transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#7155E8] bg-white shadow-[0_8px_25px_rgba(113,85,232,0.12)]'
+                          ? 'border-[#D4AF37] bg-white shadow-[0_8px_25px_rgba(212,175,55,0.12)]'
                           : 'border-neutral-200/70 bg-white hover:border-neutral-300'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-extrabold text-[#171717] text-sm min-w-0">{plan.name}</h3>
-                        <span className="text-[10px] font-bold text-[#7155E8] bg-[#F0EEFC] px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap">
+                        <h3 className="font-extrabold text-[#F5F5F5] text-sm min-w-0">{plan.name}</h3>
+                        <span className="text-[10px] font-bold text-[#D4AF37] bg-[#221C0D] px-2.5 py-1 rounded-full shrink-0 whitespace-nowrap">
                           {plan.difficulty}
                         </span>
                       </div>
@@ -226,7 +226,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                   </div>
 
                   {/* Assign to Athlete quick control */}
-                  <div className="p-4 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="p-4 bg-[#0E0E0E] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div>
                       <span className="font-bold text-neutral-900 block">Assign this routine to a client:</span>
                       <span className="text-neutral-500 text-[11px]">
@@ -236,7 +236,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <select
                         id="assign-member-select"
-                        className="w-full sm:w-auto text-xs border border-neutral-200 rounded-xl px-3 py-2 bg-white font-medium focus:outline-none focus:border-[#7155E8]"
+                        className="w-full sm:w-auto text-xs border border-neutral-200 rounded-xl px-3 py-2 bg-white font-medium focus:outline-none focus:border-[#D4AF37]"
                         defaultValue=""
                         onChange={(e) => {
                           if (e.target.value) {
@@ -350,7 +350,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                       onClick={() => setSelectedDietId(dp.id)}
                       className={`p-5 rounded-3xl border transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#7155E8] bg-white shadow-[0_8px_25px_rgba(113,85,232,0.12)]'
+                          ? 'border-[#D4AF37] bg-white shadow-[0_8px_25px_rgba(212,175,55,0.12)]'
                           : 'border-neutral-200/70 bg-white hover:border-neutral-300'
                       }`}
                     >
@@ -399,30 +399,30 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
 
                   {/* Macro Bar Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 font-mono tabular-nums text-xs">
-                    <div className="p-3 bg-[#F5F5F5] rounded-2xl text-center">
+                    <div className="p-3 bg-[#0E0E0E] rounded-2xl text-center">
                       <span className="text-[10px] text-neutral-400 font-sans uppercase block">Calories</span>
                       <div className="text-base font-bold text-neutral-900 mt-0.5">{selectedDiet.dailyCalorieTarget} kcal</div>
                     </div>
-                    <div className="p-3 bg-[#F5F5F5] rounded-2xl text-center">
+                    <div className="p-3 bg-[#0E0E0E] rounded-2xl text-center">
                       <span className="text-[10px] text-neutral-400 font-sans uppercase block">Protein</span>
                       <div className="text-base font-bold text-emerald-700 mt-0.5">{selectedDiet.proteinTargetG}g</div>
                     </div>
-                    <div className="p-3 bg-[#F5F5F5] rounded-2xl text-center">
+                    <div className="p-3 bg-[#0E0E0E] rounded-2xl text-center">
                       <span className="text-[10px] text-neutral-400 font-sans uppercase block">Carbs</span>
                       <div className="text-base font-bold text-sky-700 mt-0.5">{selectedDiet.carbsTargetG}g</div>
                     </div>
-                    <div className="p-3 bg-[#F5F5F5] rounded-2xl text-center">
+                    <div className="p-3 bg-[#0E0E0E] rounded-2xl text-center">
                       <span className="text-[10px] text-neutral-400 font-sans uppercase block">Fats</span>
                       <div className="text-base font-bold text-amber-700 mt-0.5">{selectedDiet.fatTargetG}g</div>
                     </div>
-                    <div className="p-3 bg-[#F5F5F5] rounded-2xl text-center col-span-2 sm:col-span-1">
+                    <div className="p-3 bg-[#0E0E0E] rounded-2xl text-center col-span-2 sm:col-span-1">
                       <span className="text-[10px] text-neutral-400 font-sans uppercase block">Daily Water</span>
                       <div className="text-base font-bold text-blue-700 mt-0.5">{selectedDiet.waterIntakeLiters} L</div>
                     </div>
                   </div>
 
                   {/* Assign to Athlete quick control */}
-                  <div className="p-4 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="p-4 bg-[#0E0E0E] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div>
                       <span className="font-bold text-neutral-900 block">Assign diet plan to a client:</span>
                       <span className="text-neutral-500 text-[11px]">
@@ -431,7 +431,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <select
-                        className="w-full sm:w-auto text-xs border border-neutral-200 rounded-xl px-3 py-2 bg-white font-medium focus:outline-none focus:border-[#7155E8]"
+                        className="w-full sm:w-auto text-xs border border-neutral-200 rounded-xl px-3 py-2 bg-white font-medium focus:outline-none focus:border-[#D4AF37]"
                         defaultValue=""
                         onChange={(e) => {
                           if (e.target.value) {
@@ -528,7 +528,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               value={planName}
               onChange={(e) => setPlanName(e.target.value)}
               placeholder="e.g. 5-Day Powerbuilding & Lat Focus"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -537,7 +537,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               <select
                 value={planDifficulty}
                 onChange={(e: any) => setPlanDifficulty(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
@@ -550,7 +550,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 type="text"
                 value={planGoal}
                 onChange={(e) => setPlanGoal(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
               />
             </div>
           </div>
@@ -561,7 +561,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               value={planInstructions}
               onChange={(e) => setPlanInstructions(e.target.value)}
               placeholder="Warm-up sets, tempo, rest interval directions..."
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
 
@@ -640,7 +640,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 setPlanName('');
                 showToast('New workout routine created!');
               }}
-              className="px-5 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
+              className="px-5 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
             >
               Save Routine
             </button>
@@ -664,7 +664,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               value={dietName}
               onChange={(e) => setDietName(e.target.value)}
               placeholder="e.g. 2,200 kcal Clean Lean Shred"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -674,7 +674,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 type="number"
                 value={dietCalories}
                 onChange={(e) => setDietCalories(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div>
@@ -683,7 +683,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 type="number"
                 value={dietProtein}
                 onChange={(e) => setDietProtein(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div>
@@ -692,7 +692,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 type="number"
                 value={dietCarbs}
                 onChange={(e) => setDietCarbs(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div>
@@ -701,7 +701,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 type="number"
                 value={dietFat}
                 onChange={(e) => setDietFat(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
           </div>
@@ -712,7 +712,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
               value={dietInstructions}
               onChange={(e) => setDietInstructions(e.target.value)}
               placeholder="Meal timing, water intake, supplements..."
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
 
@@ -768,7 +768,7 @@ export const FitnessPlanHub: React.FC<FitnessPlanHubProps> = ({
                 setDietName('');
                 showToast('New nutrition blueprint created!');
               }}
-              className="px-5 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
+              className="px-5 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
             >
               Save Blueprint
             </button>

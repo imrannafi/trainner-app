@@ -1,11 +1,94 @@
 @import "tailwindcss";
 
+/* ============================================================================
+ * BRAND THEME: black, metallic gold and white, matching the Oliul Azim logo.
+ * Components keep their Tailwind classes; the palette underneath is re-pointed:
+ *  - white surfaces become charcoal, the neutral scale is inverted for dark UI
+ *  - status tints (emerald, amber, rose, red, sky...) become dark tints with light text
+ * ========================================================================== */
+@theme {
+  --color-white: #141414;
+
+  --color-neutral-50: #121212;
+  --color-neutral-100: #1a1a1a;
+  --color-neutral-200: #262626;
+  --color-neutral-300: #4a4a4a;
+  --color-neutral-400: #8f8f8f;
+  --color-neutral-500: #a3a3a3;
+  --color-neutral-600: #bdbdbd;
+  --color-neutral-700: #d4d4d4;
+  --color-neutral-800: #e5e5e5;
+  --color-neutral-900: #f5f5f5;
+  --color-neutral-950: #fafafa;
+
+  --color-emerald-50: #0d231b;
+  --color-emerald-100: #11301f;
+  --color-emerald-200: #1a4a33;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-emerald-900: #d1fae5;
+
+  --color-amber-50: #261c08;
+  --color-amber-100: #36280b;
+  --color-amber-200: #574015;
+  --color-amber-600: #fbbf24;
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-amber-900: #fef3c7;
+
+  --color-rose-50: #2a0f16;
+  --color-rose-100: #3a1420;
+  --color-rose-200: #5c1f31;
+  --color-rose-600: #fb7185;
+  --color-rose-700: #fda4af;
+  --color-rose-800: #fecdd3;
+  --color-rose-900: #ffe4e6;
+
+  --color-red-50: #2a0f0f;
+  --color-red-100: #3b1414;
+  --color-red-200: #5e1f1f;
+  --color-red-600: #f87171;
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-red-900: #fee2e2;
+
+  --color-sky-50: #0a1f2a;
+  --color-sky-100: #0e2a3a;
+  --color-sky-200: #164058;
+  --color-sky-600: #38bdf8;
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #bae6fd;
+
+  --color-blue-50: #0b1a33;
+  --color-blue-100: #0f2342;
+  --color-blue-600: #60a5fa;
+  --color-blue-700: #93c5fd;
+
+  --color-indigo-50: #14143a;
+  --color-indigo-100: #1c1c4a;
+  --color-indigo-600: #818cf8;
+  --color-indigo-700: #a5b4fc;
+
+  /* The few purple accents follow the brand gold */
+  --color-purple-50: #221c0d;
+  --color-purple-100: #2e2611;
+  --color-purple-500: #d4af37;
+  --color-purple-600: #d4af37;
+  --color-purple-700: #e6c766;
+
+  --color-yellow-50: #261f08;
+  --color-yellow-100: #362c0b;
+  --color-yellow-700: #fde047;
+}
+
 @layer base {
   html,
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #F5F5F5;
-    color: #171717;
+    background-color: #0a0a0a;
+    color: #f5f5f5;
+    color-scheme: dark;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -106,8 +189,8 @@
 
 /* Surface & elevation utilities */
 .food-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #141414;
+  border: 1px solid rgba(212, 175, 55, 0.14);
   border-radius: 1.5rem;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -119,15 +202,15 @@
 }
 
 .floating-nav-surface {
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(16, 16, 16, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.12), 0 4px 14px -2px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 4px 14px -2px rgba(0, 0, 0, 0.4);
 }
 
 .purple-glow {
-  box-shadow: 0 8px 24px -2px rgba(113, 85, 232, 0.4);
+  box-shadow: 0 8px 24px -2px rgba(212, 175, 55, 0.4);
 }
 
 .safe-area-bottom {
@@ -143,31 +226,32 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(163, 163, 163, 0.4);
+  background: rgba(212, 175, 55, 0.28);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(115, 115, 115, 0.65);
+  background: rgba(212, 175, 55, 0.5);
 }
 
 /* ============================================================================
- * PREMIUM GLASS LAYER
- * Keeps the original palette (brand purple #7155E8, neutral #F5F5F5 canvas,
- * ink #171717) and layers translucency, depth and motion on top of it.
+ * PREMIUM GLASS LAYER (dark)
+ * Deep black canvas, charcoal glass, gold hairlines and soft gold light.
  * ========================================================================== */
 :root {
-  --brand: #7155e8;
-  --brand-deep: #6245de;
-  --brand-soft: #f0eefc;
-  --ink: #171717;
-  --canvas: #f5f5f5;
+  --brand: #d4af37;
+  --brand-light: #f2d67e;
+  --brand-deep: #a67c1b;
+  --brand-soft: #221c0d;
+  --gold-gradient: linear-gradient(135deg, #f7e08f 0%, #d4af37 42%, #b8912b 72%, #8a6914 100%);
+  --ink: #f5f5f5;
+  --canvas: #0a0a0a;
 
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-bg-strong: rgba(255, 255, 255, 0.86);
-  --glass-edge: rgba(23, 23, 23, 0.06);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
-  --glass-shadow: 0 10px 30px -12px rgba(40, 28, 110, 0.14), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
-  --glass-shadow-lg: 0 30px 80px -20px rgba(40, 28, 110, 0.32), 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+  --glass-bg: rgba(20, 20, 20, 0.72);
+  --glass-bg-strong: rgba(18, 18, 18, 0.9);
+  --glass-edge: rgba(212, 175, 55, 0.16);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  --glass-shadow-lg: 0 30px 80px -20px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(212, 175, 55, 0.08);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -185,8 +269,8 @@ html {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(1200px 600px at 110% -10%, rgba(113, 85, 232, 0.1), transparent 60%),
-    radial-gradient(900px 520px at -15% 105%, rgba(16, 185, 129, 0.06), transparent 60%),
+    radial-gradient(1200px 600px at 110% -10%, rgba(212, 175, 55, 0.1), transparent 60%),
+    radial-gradient(900px 520px at -15% 105%, rgba(212, 175, 55, 0.05), transparent 60%),
     var(--canvas);
 }
 .app-ambient::before,
@@ -202,7 +286,7 @@ html {
   height: 46vmax;
   top: -18vmax;
   left: -12vmax;
-  background: radial-gradient(circle, rgba(113, 85, 232, 0.16), transparent 68%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12), transparent 68%);
   animation: ambient-drift-a 26s ease-in-out infinite alternate;
 }
 .app-ambient::after {
@@ -210,7 +294,7 @@ html {
   height: 40vmax;
   bottom: -16vmax;
   right: -10vmax;
-  background: radial-gradient(circle, rgba(139, 115, 240, 0.14), transparent 68%);
+  background: radial-gradient(circle, rgba(242, 214, 126, 0.08), transparent 68%);
   animation: ambient-drift-b 32s ease-in-out infinite alternate;
 }
 @keyframes ambient-drift-a {
@@ -239,24 +323,24 @@ html {
 }
 .glass-strong {
   background: var(--glass-bg-strong);
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   box-shadow: var(--glass-highlight), var(--glass-shadow-lg);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   backdrop-filter: blur(28px) saturate(180%);
 }
 .glass-bar {
-  background: rgba(255, 255, 255, 0.68);
+  background: rgba(10, 10, 10, 0.7);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
   backdrop-filter: blur(22px) saturate(180%);
-  border-bottom: 1px solid rgba(23, 23, 23, 0.06);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
   transition: background-color 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo);
 }
 .glass-bar.is-scrolled {
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 30px -12px rgba(40, 28, 110, 0.18);
+  background: rgba(10, 10, 10, 0.86);
+  box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.8);
 }
 .glass-backdrop {
-  background: rgba(23, 18, 48, 0.38);
+  background: rgba(0, 0, 0, 0.6);
   -webkit-backdrop-filter: blur(6px) saturate(120%);
   backdrop-filter: blur(6px) saturate(120%);
 }
@@ -266,18 +350,18 @@ html {
   .glass,
   .glass-strong,
   .glass-bar {
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(18, 18, 18, 0.98);
   }
   .glass-backdrop {
-    background: rgba(23, 18, 48, 0.55);
+    background: rgba(0, 0, 0, 0.75);
   }
 }
 
 /* ---------- Content cards inside the app become frosted panels ---------- */
 .app-main .bg-white.rounded-3xl {
-  background-color: rgba(255, 255, 255, 0.82);
-  border-color: rgba(255, 255, 255, 0.9);
-  box-shadow: var(--glass-highlight), 0 1px 0 rgba(23, 23, 23, 0.04), 0 10px 30px -14px rgba(40, 28, 110, 0.14);
+  background-color: rgba(20, 20, 20, 0.84);
+  border-color: rgba(212, 175, 55, 0.16);
+  box-shadow: var(--glass-highlight), 0 10px 30px -14px rgba(0, 0, 0, 0.8);
   transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo), border-color 0.3s;
 }
 /* No backdrop-filter on cards on purpose: it would turn every card into the containing
@@ -285,11 +369,11 @@ html {
    light gives the frosted look; real blur lives on the header, dock, popovers and modals. */
 @media (min-width: 1024px) and (hover: hover) {
   .app-main .bg-white.rounded-3xl {
-    background-color: rgba(255, 255, 255, 0.76);
+    background-color: rgba(20, 20, 20, 0.8);
   }
   .app-main .bg-white.rounded-3xl:hover {
-    border-color: rgba(113, 85, 232, 0.18);
-    box-shadow: var(--glass-highlight), 0 18px 40px -16px rgba(40, 28, 110, 0.22);
+    border-color: rgba(212, 175, 55, 0.38);
+    box-shadow: var(--glass-highlight), 0 18px 40px -16px rgba(0, 0, 0, 0.9), 0 0 24px -10px rgba(212, 175, 55, 0.25);
   }
 }
 
@@ -321,34 +405,39 @@ html {
 }
 
 /* ---------- Micro-interactions ---------- */
-/* Brand buttons get a subtle sheen and a glow on hover */
-.bg-\[\#7155E8\] {
-  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 55%);
+/* Gold: every brand-gold fill gets the metallic gradient; buttons add a sheen and a glow */
+.bg-\[\#D4AF37\] {
+  background-image: var(--gold-gradient);
 }
-button.bg-\[\#7155E8\] {
+.text-\[\#D4AF37\] {
+  text-shadow: 0 0 18px rgba(212, 175, 55, 0.18);
+}
+button.bg-\[\#D4AF37\],
+a.bg-\[\#D4AF37\] {
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo), background-color 0.2s;
+  box-shadow: 0 6px 20px -8px rgba(212, 175, 55, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s var(--ease-out-expo), box-shadow 0.25s var(--ease-out-expo), filter 0.2s;
 }
-button.bg-\[\#7155E8\]::after {
+button.bg-\[\#D4AF37\]::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
   transform: translateX(-120%);
   pointer-events: none;
 }
 @media (hover: hover) {
-  button.bg-\[\#7155E8\]:not(:disabled):hover {
-    box-shadow: 0 10px 26px -8px rgba(113, 85, 232, 0.6);
+  button.bg-\[\#D4AF37\]:not(:disabled):hover {
+    filter: brightness(1.06);
+    box-shadow: 0 12px 30px -8px rgba(212, 175, 55, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
-  button.bg-\[\#7155E8\]:not(:disabled):hover::after {
+  button.bg-\[\#D4AF37\]:not(:disabled):hover::after {
     transform: translateX(120%);
     transition: transform 0.75s var(--ease-out-expo);
   }
-  button.bg-neutral-900:not(:disabled):hover,
-  button.bg-\[\#171717\]:not(:disabled):hover {
-    box-shadow: 0 10px 24px -10px rgba(23, 23, 23, 0.55);
+  button.bg-neutral-900:not(:disabled):hover {
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.7);
   }
 }
 
@@ -356,13 +445,13 @@ button.bg-\[\#7155E8\]::after {
 input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
 textarea:focus,
 select:focus {
-  box-shadow: 0 0 0 4px rgba(113, 85, 232, 0.12);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.16);
   transition: box-shadow 0.2s var(--ease-out-expo), border-color 0.2s, background-color 0.2s;
 }
 
 /* Keyboard users always get a visible focus ring */
 :where(button, a, [role='button'], [tabindex]):focus-visible {
-  outline: 2px solid rgba(113, 85, 232, 0.6);
+  outline: 2px solid rgba(212, 175, 55, 0.7);
   outline-offset: 2px;
 }
 
@@ -371,12 +460,12 @@ select:focus {
   width: 44px;
   height: 5px;
   border-radius: 9999px;
-  background: rgba(23, 23, 23, 0.16);
+  background: rgba(255, 255, 255, 0.18);
   transition: background-color 0.2s, width 0.25s var(--ease-out-expo);
 }
 .sheet-grab:active .sheet-handle,
 .sheet-grab:hover .sheet-handle {
-  background: rgba(113, 85, 232, 0.45);
+  background: rgba(212, 175, 55, 0.6);
   width: 56px;
 }
 .sheet-grab {

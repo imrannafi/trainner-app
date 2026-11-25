@@ -80,7 +80,7 @@ export const ReportsSection: React.FC<ReportsSectionProps> = ({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Financial & Performance Reports
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -92,7 +92,7 @@ export const ReportsSection: React.FC<ReportsSectionProps> = ({
           <button
             type="button"
             onClick={reportType === 'payments' ? handleExportPayments : handleExportMembers}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#7155E8] text-white font-bold text-xs rounded-2xl hover:bg-[#6245DE] transition-all shadow-[0_4px_16px_rgba(113,85,232,0.35)] active:scale-95 whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] text-white font-bold text-xs rounded-2xl hover:bg-[#B8912B] transition-all shadow-[0_4px_16px_rgba(212,175,55,0.35)] active:scale-95 whitespace-nowrap"
           >
             <Download className="w-4 h-4 shrink-0" />
             Export CSV
@@ -115,8 +115,8 @@ export const ReportsSection: React.FC<ReportsSectionProps> = ({
             onClick={() => setReportType(tab.id as any)}
             className={`px-4 py-2 text-xs font-semibold rounded-full transition-all whitespace-nowrap active:scale-95 ${
               reportType === tab.id
-                ? 'bg-[#171717] text-white shadow-xs'
-                : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#171717] hover:bg-neutral-50'
+                ? 'bg-[#D4AF37] text-white shadow-xs'
+                : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#F5F5F5] hover:bg-neutral-50'
             }`}
           >
             {tab.label}
@@ -295,13 +295,13 @@ export const ReportsSection: React.FC<ReportsSectionProps> = ({
                   Diet & Workout Compliance Overview
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-[#F5F5F5] rounded-2xl">
+                  <div className="p-4 bg-[#0E0E0E] rounded-2xl">
                     <span className="font-bold text-neutral-900 block mb-2">Workout Verification Rate</span>
                     <p className="text-xs text-neutral-600 leading-relaxed">
                       {workoutSessions.filter((s) => s.trainerReviewStatus === 'Verified').length} out of {workoutSessions.length} total logged sessions have been verified by Coach Oliul Azim with form confirmation.
                     </p>
                   </div>
-                  <div className="p-4 bg-[#F5F5F5] rounded-2xl">
+                  <div className="p-4 bg-[#0E0E0E] rounded-2xl">
                     <span className="font-bold text-neutral-900 block mb-2">Meal Evidence Compliance</span>
                     <p className="text-xs text-neutral-600 leading-relaxed">
                       {mealLogs.filter((m) => m.adherence === 'Followed Plan').length} out of {mealLogs.length} logged meals followed exact portion sizes and calorie blueprints.

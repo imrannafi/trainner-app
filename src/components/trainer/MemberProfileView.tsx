@@ -348,7 +348,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
             />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#171717] truncate">
+                <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#F5F5F5] truncate">
                   {member.fullName}
                 </h1>
                 <span
@@ -385,7 +385,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <button
             type="button"
             onClick={() => onOpenRecordPayment(member.id)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all active:scale-95 whitespace-nowrap cursor-pointer"
           >
             <CreditCard className="w-4 h-4 shrink-0" />
             <span>Record Payment</span>
@@ -394,7 +394,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab(12)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#F5F5F5] hover:bg-neutral-200/70 text-neutral-700 text-xs font-bold rounded-2xl transition-all whitespace-nowrap cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#0E0E0E] hover:bg-neutral-200/70 text-neutral-700 text-xs font-bold rounded-2xl transition-all whitespace-nowrap cursor-pointer"
           >
             <FileText className="w-4 h-4 shrink-0" />
             <span>Trainer Notes</span>
@@ -417,7 +417,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Membership Expiry
           </span>
-          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#171717] mt-1 truncate">
+          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#F5F5F5] mt-1 truncate">
             {member.membershipEndDate}
           </div>
           <span
@@ -433,7 +433,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Financial Balance
           </span>
-          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#171717] mt-1 truncate">
+          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#F5F5F5] mt-1 truncate">
             ৳{balance.toLocaleString()}
           </div>
           <span
@@ -449,7 +449,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Coaching PT Sessions
           </span>
-          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#171717] mt-1 truncate">
+          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#F5F5F5] mt-1 truncate">
             {member.remainingSessions}{' '}
             <span className="text-xs font-normal text-neutral-400 font-sans">
               / {member.totalPackageSessions} left
@@ -464,7 +464,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Gym Check-ins (Nov)
           </span>
-          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#7155E8] mt-1">
+          <div className="text-base sm:text-lg font-extrabold font-mono tabular-nums text-[#D4AF37] mt-1">
             {thisMonthCheckIns} Days
           </div>
           <span className="text-xs text-neutral-400 mt-1 block truncate">
@@ -483,8 +483,8 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 active:scale-95 cursor-pointer ${
                 activeTab === tab.id
-                  ? 'bg-[#171717] text-white shadow-xs'
-                  : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#171717] hover:bg-neutral-50'
+                  ? 'bg-[#D4AF37] text-white shadow-xs'
+                  : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#F5F5F5] hover:bg-neutral-50'
               }`}
             >
               {tab.label}
@@ -561,7 +561,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
                     <button
                       type="button"
                       onClick={() => setActiveTab(7)}
-                      className="text-xs text-[#7155E8] hover:underline font-bold cursor-pointer"
+                      className="text-xs text-[#D4AF37] hover:underline font-bold cursor-pointer"
                     >
                       View All ({memberMeals.length})
                     </button>
@@ -1454,7 +1454,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
                 value={trainerNotesInput}
                 onChange={(e) => setTrainerNotesInput(e.target.value)}
                 placeholder="Record private training notes, cues, strengths, and rehabilitation requirements..."
-                className="w-full p-3.5 border border-neutral-200 rounded-2xl text-xs focus:ring-2 focus:ring-[#7155E8]/20 focus:border-[#7155E8] focus:outline-none"
+                className="w-full p-3.5 border border-neutral-200 rounded-2xl text-xs focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] focus:outline-none"
               />
 
               <div className="flex items-center justify-between">
@@ -1612,7 +1612,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white font-semibold rounded-xl shadow-xs"
+              className="px-4 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white font-semibold rounded-xl shadow-xs"
             >
               Assign Custom Routine to {member.fullName.split(' ')[0]}
             </button>
@@ -1745,7 +1745,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white font-semibold rounded-xl shadow-xs"
+              className="px-4 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white font-semibold rounded-xl shadow-xs"
             >
               Assign Custom Diet to {member.fullName.split(' ')[0]}
             </button>
@@ -1828,7 +1828,7 @@ export const MemberProfileView: React.FC<MemberProfileViewProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-semibold"
+              className="px-4 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-semibold"
             >
               Save Assessment
             </button>

@@ -105,7 +105,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Membership & Payment Management
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -116,7 +116,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
         <button
           type="button"
           onClick={() => setShowAddPaymentModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all self-start md:self-auto active:scale-95 whitespace-nowrap"
         >
           <Plus className="w-4 h-4 shrink-0" />
           Record New Payment
@@ -132,7 +132,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                 ৳
               </div>
               <div className="min-w-0">
-                <h3 className="text-base font-extrabold text-[#171717]">
+                <h3 className="text-base font-extrabold text-[#F5F5F5]">
                   Pending Payment Verifications ({pendingVerifications.length})
                 </h3>
                 <p className="text-xs text-neutral-400">
@@ -154,12 +154,12 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                     <Avatar src={pr.memberAvatar} name={pr.memberName} size="md" className="rounded-2xl shrink-0" />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-extrabold text-sm text-[#171717]">{pr.memberName}</span>
+                        <span className="font-extrabold text-sm text-[#F5F5F5]">{pr.memberName}</span>
                         <span
                           className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold whitespace-nowrap ${
                             pr.method === 'bKash'
                               ? 'bg-[#E2136E] text-white'
-                              : 'bg-[#7155E8] text-white'
+                              : 'bg-[#D4AF37] text-white'
                           }`}
                         >
                           {pr.method}
@@ -293,7 +293,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
           <span className="text-xs font-semibold text-neutral-400 block truncate">
             Partially Paid
           </span>
-          <div className="text-xl sm:text-2xl font-extrabold font-mono tabular-nums text-[#7155E8] mt-1">
+          <div className="text-xl sm:text-2xl font-extrabold font-mono tabular-nums text-[#D4AF37] mt-1">
             {partialMembers.length}
           </div>
           <span className="text-[11px] text-neutral-400 mt-1 block truncate">Partial installment accounts</span>
@@ -361,7 +361,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
               placeholder="Search by athlete or transaction ref..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 border border-neutral-200 rounded-2xl bg-[#F5F5F5] focus:bg-white focus:outline-none focus:border-[#7155E8]"
+              className="w-full pl-9 pr-3 py-2 border border-neutral-200 rounded-2xl bg-[#0E0E0E] focus:bg-white focus:outline-none focus:border-[#D4AF37]"
             />
           </div>
 
@@ -370,7 +370,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
             <select
               value={methodFilter}
               onChange={(e) => setMethodFilter(e.target.value)}
-              className="w-full sm:w-auto border border-neutral-200 rounded-2xl px-3 py-2 text-xs bg-[#F5F5F5] font-medium focus:outline-none focus:border-[#7155E8]"
+              className="w-full sm:w-auto border border-neutral-200 rounded-2xl px-3 py-2 text-xs bg-[#0E0E0E] font-medium focus:outline-none focus:border-[#D4AF37]"
             >
               <option value="all">All Methods</option>
               <option value="bKash">bKash</option>
@@ -404,7 +404,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                     <button
                       type="button"
                       onClick={() => onSelectMember(p.memberId)}
-                      className="font-bold text-neutral-900 hover:text-[#7155E8] transition-colors"
+                      className="font-bold text-neutral-900 hover:text-[#D4AF37] transition-colors"
                     >
                       {p.memberName}
                     </button>
@@ -448,7 +448,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
             <select
               value={selectedMemberId}
               onChange={(e) => setSelectedMemberId(e.target.value)}
-              className="w-full p-2.5 border border-neutral-200 rounded-xl bg-[#F5F5F5] focus:bg-white font-medium focus:outline-none focus:border-[#7155E8]"
+              className="w-full p-2.5 border border-neutral-200 rounded-xl bg-[#0E0E0E] focus:bg-white font-medium focus:outline-none focus:border-[#D4AF37]"
             >
               {members.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -471,7 +471,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                 required
                 value={paymentAmount}
                 onChange={(e) => setPaymentAmount(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
               />
             </div>
             <div>
@@ -481,7 +481,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                 required
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
           </div>
@@ -492,7 +492,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
               <select
                 value={paymentMethod}
                 onChange={(e: any) => setPaymentMethod(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="bKash">bKash</option>
                 <option value="Nagad">Nagad</option>
@@ -509,7 +509,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
                 placeholder="e.g. BK892019TX"
                 value={transactionRef}
                 onChange={(e) => setTransactionRef(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
           </div>
@@ -521,7 +521,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
               value={billingPeriod}
               onChange={(e) => setBillingPeriod(e.target.value)}
               placeholder="e.g. Nov 2026 - Jan 2027 (Quarterly)"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
             />
           </div>
 
@@ -532,7 +532,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
               value={paymentNotes}
               onChange={(e) => setPaymentNotes(e.target.value)}
               placeholder="Verified in bKash merchant statement"
-              className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+              className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
             />
           </div>
 
@@ -546,7 +546,7 @@ export const PaymentManagement: React.FC<PaymentManagementProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
+              className="px-5 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl font-bold shadow-xs transition-all active:scale-95"
             >
               Verify & Record Payment
             </button>

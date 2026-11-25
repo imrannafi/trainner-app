@@ -155,7 +155,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 placeholder="e.g. Mahinul Islam"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
               />
             </div>
             <div>
@@ -166,7 +166,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 placeholder="mahin@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#7155E8]"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl focus:outline-none focus:border-[#D4AF37]"
               />
             </div>
             <div>
@@ -175,7 +175,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -185,7 +185,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   type="number"
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
-                  className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                  className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
                 />
               </div>
               <div>
@@ -193,7 +193,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 <select
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
-                  className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                  className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -206,7 +206,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   type="number"
                   value={heightCm}
                   onChange={(e) => setHeightCm(e.target.value)}
-                  className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                  className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
                 />
               </div>
             </div>
@@ -214,7 +214,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
         </div>
 
         {/* Profile Photo selector */}
-        <div className="p-3.5 bg-[#F5F5F5] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-3.5 bg-[#0E0E0E] rounded-2xl border border-neutral-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {avatarPreview ? (
               <img
@@ -233,7 +233,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
             </div>
           </div>
 
-          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-xl bg-[#7155E8] text-white cursor-pointer hover:bg-[#6245DE] focus-within:ring-2 focus-within:ring-[#7155E8] focus-within:ring-offset-2 self-start sm:self-auto">
+          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-xl bg-[#D4AF37] text-white cursor-pointer hover:bg-[#B8912B] focus-within:ring-2 focus-within:ring-[#D4AF37] focus-within:ring-offset-2 self-start sm:self-auto">
             <Upload className="w-3 h-3" />
             {avatarFile ? 'Change Photo' : 'Upload Photo'}
             <input type="file" accept="image/*" className="sr-only" onChange={handlePhotoChange} />
@@ -252,7 +252,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 type="text"
                 value={fitnessGoal}
                 onChange={(e) => setFitnessGoal(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               />
             </div>
             <div>
@@ -260,7 +260,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
               <select
                 value={fitnessLevel}
                 onChange={(e: any) => setFitnessLevel(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
@@ -275,7 +275,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 step="0.1"
                 value={currentWeightKg}
                 onChange={(e) => setCurrentWeightKg(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
               />
             </div>
             <div>
@@ -285,7 +285,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 value={injuries}
                 onChange={(e) => setInjuries(e.target.value)}
                 placeholder="e.g. Mild lower back sensitivity"
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               />
             </div>
           </div>
@@ -302,7 +302,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
               <select
                 value={membershipDuration}
                 onChange={(e: any) => setMembershipDuration(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
               >
                 <option value="1 month">1 month</option>
                 <option value="3 months">3 months</option>
@@ -316,7 +316,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 type="number"
                 value={packagePrice}
                 onChange={(e) => setPackagePrice(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono font-bold"
               />
             </div>
             <div>
@@ -325,7 +325,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 type="number"
                 value={totalSessions}
                 onChange={(e) => setTotalSessions(e.target.value)}
-                className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl font-mono"
+                className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl font-mono"
               />
             </div>
           </div>
@@ -337,7 +337,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
             type="text"
             value={trainerNotes}
             onChange={(e) => setTrainerNotes(e.target.value)}
-            className="w-full p-2.5 bg-[#F5F5F5] focus:bg-white border border-neutral-200 rounded-xl"
+            className="w-full p-2.5 bg-[#0E0E0E] focus:bg-white border border-neutral-200 rounded-xl"
           />
         </div>
 
@@ -345,14 +345,14 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 border border-neutral-200 rounded-2xl font-bold text-xs text-neutral-600 hover:bg-[#F5F5F5] transition-all"
+            className="px-5 py-2.5 border border-neutral-200 rounded-2xl font-bold text-xs text-neutral-600 hover:bg-[#0E0E0E] transition-all"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95"
+            className="px-6 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] disabled:opacity-60 text-white font-bold text-xs rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all active:scale-95"
           >
             {isSaving ? 'Saving…' : 'Enroll Client'}
           </button>

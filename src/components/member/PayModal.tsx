@@ -151,14 +151,14 @@ export const PayModal: React.FC<PayModalProps> = ({
             <div className="p-5 sm:p-6 pb-4 border-b border-neutral-100 flex items-start justify-between gap-4 shrink-0">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-bold text-[#7155E8] uppercase tracking-wider bg-[#F0EEFC] px-2.5 py-0.5 rounded-full whitespace-nowrap">
+                  <span className="text-[11px] font-bold text-[#D4AF37] uppercase tracking-wider bg-[#221C0D] px-2.5 py-0.5 rounded-full whitespace-nowrap">
                     Monthly Fee Payment
                   </span>
                   <span className="text-[11px] text-amber-600 font-semibold flex items-center gap-1 whitespace-nowrap">
                     <Clock className="w-3 h-3" /> Pay by 10th
                   </span>
                 </div>
-                <h2 className="text-lg sm:text-xl font-extrabold text-[#171717] mt-1 font-mono tabular-nums">
+                <h2 className="text-lg sm:text-xl font-extrabold text-[#F5F5F5] mt-1 font-mono tabular-nums">
                   <span className="font-sans">Pay Coaching Fee · </span>৳{Number(amount || 3500).toLocaleString()}
                 </h2>
               </div>
@@ -177,7 +177,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                 <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 mx-auto flex items-center justify-center">
                   <Check className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-extrabold text-[#171717]">Payment Request Dispatched!</h3>
+                <h3 className="text-lg font-extrabold text-[#F5F5F5]">Payment Request Dispatched!</h3>
                 <p className="text-xs text-neutral-500 max-w-sm mx-auto leading-relaxed">
                   Coach Oliul Azim has received your {method} payment notification. Once the coach verifies and accepts it, your workout routine and diet plan will be immediately activated!
                 </p>
@@ -204,7 +204,7 @@ export const PayModal: React.FC<PayModalProps> = ({
 
                 {/* Payment Method Selector */}
                 <div>
-                  <label className="block text-xs font-bold text-[#171717] mb-2">
+                  <label className="block text-xs font-bold text-[#F5F5F5] mb-2">
                     Select Payment Method
                   </label>
                   <div className="grid grid-cols-2 gap-3">
@@ -241,13 +241,13 @@ export const PayModal: React.FC<PayModalProps> = ({
                       }}
                       className={`p-3.5 rounded-2xl border text-left transition-all relative flex flex-col justify-between ${
                         method === 'Cash'
-                          ? 'border-[#7155E8] bg-[#7155E8]/5 ring-2 ring-[#7155E8]/20'
+                          ? 'border-[#D4AF37] bg-[#D4AF37]/5 ring-2 ring-[#D4AF37]/20'
                           : 'border-neutral-200 bg-white hover:bg-neutral-50'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="font-extrabold text-sm text-[#171717]">Cash</span>
-                        <DollarSign className="w-4 h-4 text-[#7155E8]" />
+                        <span className="font-extrabold text-sm text-[#F5F5F5]">Cash</span>
+                        <DollarSign className="w-4 h-4 text-[#D4AF37]" />
                       </div>
                       <span className="text-[11px] text-neutral-500">
                         In-Person at Gym
@@ -313,7 +313,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                     {/* Input Fields */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-bold text-[#171717] mb-1">
+                        <label className="block text-xs font-bold text-[#F5F5F5] mb-1">
                           Payment Amount (৳ BDT)
                         </label>
                         <input
@@ -321,12 +321,12 @@ export const PayModal: React.FC<PayModalProps> = ({
                           required
                           value={amount}
                           onChange={(e) => setAmount(e.target.value)}
-                          className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl font-mono font-bold text-sm focus:bg-white focus:outline-none focus:border-[#E2136E]"
+                          className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-2xl font-mono font-bold text-sm focus:bg-white focus:outline-none focus:border-[#E2136E]"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-[#171717] mb-1">
+                        <label className="block text-xs font-bold text-[#F5F5F5] mb-1">
                           Your bKash Phone Number
                         </label>
                         <input
@@ -335,13 +335,13 @@ export const PayModal: React.FC<PayModalProps> = ({
                           value={senderPhone}
                           onChange={(e) => setSenderPhone(e.target.value)}
                           placeholder="01XXXXXXXXX"
-                          className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl font-mono text-sm focus:bg-white focus:outline-none focus:border-[#E2136E]"
+                          className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-2xl font-mono text-sm focus:bg-white focus:outline-none focus:border-[#E2136E]"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-[#171717] mb-1">
+                      <label className="block text-xs font-bold text-[#F5F5F5] mb-1">
                         bKash Transaction ID (TrxID) <span className="text-[#E2136E]">*</span>
                       </label>
                       <input
@@ -352,7 +352,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                           if (validationError) setValidationError(null);
                         }}
                         placeholder="e.g. BL93K09X8A"
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl font-mono font-bold text-sm uppercase tracking-wider focus:bg-white focus:outline-none focus:border-[#E2136E] placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-2xl font-mono font-bold text-sm uppercase tracking-wider focus:bg-white focus:outline-none focus:border-[#E2136E] placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
                       />
                       <span className="text-[10px] text-neutral-400 mt-1 block">
                         Found in your bKash confirmation SMS or app transfer receipt.
@@ -362,8 +362,8 @@ export const PayModal: React.FC<PayModalProps> = ({
                 ) : (
                   /* Cash Specific Panel */
                   <div className="space-y-4">
-                    <div className="p-4 rounded-2xl bg-[#7155E8]/5 border border-[#7155E8]/20 space-y-2">
-                      <div className="flex items-center gap-2 text-[#7155E8] font-bold text-sm">
+                    <div className="p-4 rounded-2xl bg-[#D4AF37]/5 border border-[#D4AF37]/20 space-y-2">
+                      <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-sm">
                         <ShieldCheck className="w-5 h-5 shrink-0" />
                         <span>In-Person Gym Cash Handover</span>
                       </div>
@@ -373,7 +373,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-[#171717] mb-1">
+                      <label className="block text-xs font-bold text-[#F5F5F5] mb-1">
                         Cash Amount (৳ BDT)
                       </label>
                       <input
@@ -381,7 +381,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                         required
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl font-mono font-bold text-sm focus:bg-white focus:outline-none focus:border-[#7155E8]"
+                        className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-2xl font-mono font-bold text-sm focus:bg-white focus:outline-none focus:border-[#D4AF37]"
                       />
                     </div>
                   </div>
@@ -389,7 +389,7 @@ export const PayModal: React.FC<PayModalProps> = ({
 
                 {/* Note / Billing Month */}
                 <div>
-                  <label className="block text-xs font-bold text-[#171717] mb-1">
+                  <label className="block text-xs font-bold text-[#F5F5F5] mb-1">
                     Note / Billing Period
                   </label>
                   <input
@@ -397,7 +397,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder={`e.g. ${currentBillingMonth()} Monthly Coaching Fee`}
-                    className="w-full p-2.5 bg-[#F5F5F5] border border-neutral-200 rounded-2xl text-xs focus:bg-white focus:outline-none focus:border-[#7155E8]"
+                    className="w-full p-2.5 bg-[#0E0E0E] border border-neutral-200 rounded-2xl text-xs focus:bg-white focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>
 
@@ -406,7 +406,7 @@ export const PayModal: React.FC<PayModalProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                    className="w-full py-3.5 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <span>Submitting...</span>

@@ -75,7 +75,7 @@ export const ToastViewport: React.FC = () => {
             <span
               aria-hidden="true"
               className={`toast-progress absolute left-0 bottom-0 h-[2px] w-full ${
-                t.type === 'error' ? 'bg-rose-400' : t.type === 'info' ? 'bg-[#7155E8]/70' : 'bg-emerald-400'
+                t.type === 'error' ? 'bg-rose-400' : t.type === 'info' ? 'bg-[#D4AF37]/70' : 'bg-emerald-400'
               }`}
               style={{ animationDuration: `${TOAST_DURATION_MS}ms` }}
             />
@@ -88,7 +88,7 @@ export const ToastViewport: React.FC = () => {
               {t.type === 'error' ? (
                 <AlertCircle className="w-4 h-4 text-rose-600" />
               ) : t.type === 'info' ? (
-                <Info className="w-4 h-4 text-[#7155E8]" />
+                <Info className="w-4 h-4 text-[#D4AF37]" />
               ) : (
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               )}
@@ -171,8 +171,8 @@ export const StatCard: React.FC<StatCardProps> = ({
           <div
             className="w-9 h-9 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-110 group-hover:-rotate-6"
             style={{
-              backgroundColor: accentColor ? `${accentColor}15` : '#F5F5F5',
-              color: accentColor || '#7155E8'
+              backgroundColor: accentColor ? `${accentColor}15` : '#0E0E0E',
+              color: accentColor || '#D4AF37'
             }}
           >
             {icon}
@@ -181,7 +181,7 @@ export const StatCard: React.FC<StatCardProps> = ({
       </div>
 
       <div className="flex items-baseline gap-2 min-w-0">
-        <span className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-[#171717] tracking-tight truncate">
+        <span className="text-xl sm:text-2xl font-bold font-mono tabular-nums text-[#F5F5F5] tracking-tight truncate">
           {value}
         </span>
         {badgeText && (
@@ -200,7 +200,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                   ? 'text-[#10B981]'
                   : trendPositive === false
                   ? 'text-[#EF4444]'
-                  : 'text-[#7155E8]'
+                  : 'text-[#D4AF37]'
               }`}
             >
               {trendText}
@@ -305,7 +305,7 @@ export const Modal: React.FC<ModalProps> = ({
             >
               <span aria-hidden="true" className="sheet-handle absolute top-2 left-1/2 -translate-x-1/2 sm:hidden" />
               <div className="min-w-0">
-                <h3 className="text-base sm:text-lg font-bold text-[#171717] truncate">{title}</h3>
+                <h3 className="text-base sm:text-lg font-bold text-[#F5F5F5] truncate">{title}</h3>
                 {description && (
                   <p className="text-xs text-neutral-500 mt-0.5 leading-relaxed">{description}</p>
                 )}
@@ -366,7 +366,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center rounded-2xl overflow-hidden shrink-0 bg-[#F5F5F5] border border-neutral-200/60 text-[#7155E8] font-bold ${sizeMap[size]} ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-2xl overflow-hidden shrink-0 bg-[#0E0E0E] border border-neutral-200/60 text-[#D4AF37] font-bold ${sizeMap[size]} ${className}`}
     >
       {src && !hasError ? (
         <img
@@ -396,13 +396,13 @@ export const EmptyState: React.FC<{
   return (
     <div className="p-10 border border-dashed border-neutral-300/70 rounded-3xl text-center bg-white/60 shadow-xs">
       {icon && <div className="mx-auto mb-3 text-neutral-400 flex justify-center">{icon}</div>}
-      <h4 className="text-sm font-bold text-[#171717]">{title}</h4>
+      <h4 className="text-sm font-bold text-[#F5F5F5]">{title}</h4>
       <p className="text-xs text-neutral-500 mt-1 max-w-sm mx-auto">{description}</p>
       {actionText && onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-[#7155E8] hover:bg-[#6245DE] rounded-xl transition-all shadow-xs active:scale-95"
+          className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-[#D4AF37] hover:bg-[#B8912B] rounded-xl transition-all shadow-xs active:scale-95"
         >
           {actionText}
         </button>

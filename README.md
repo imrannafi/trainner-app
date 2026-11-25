@@ -83,14 +83,14 @@ Then tap **Send test notification** in Settings. Settings also shows whether ser
 - **Android (Chrome):** menu **⋮ > Install app** (or **Add to Home screen**).
 - **iPhone (Safari):** **Share > Add to Home Screen**.
 
-The app opens full-screen with the Fitness With Oliul Azim icon. All icons come from `assets/brand/azim-trainer-logo.jpg`. If the logo changes, replace that file and run:
+The app opens full-screen with the Fitness With Oliul Azim icon. All icons come from `assets/brand/oliul-azim-logo.jpg`. If the logo changes, replace that file and run:
 
 ```
 npm install --no-save sharp
 node scripts/generate-icons.mjs
 ```
 
-This regenerates the favicon, PWA and Android icons (including maskable versions that keep the text clear of Android's crop), the iOS Apple Touch Icon and the notification badge in `public/icons/`. The app name and colours are in `public/manifest.webmanifest`.
+This regenerates the favicon, PWA and Android icons (the small favicon uses the logo's gold "A" emblem; maskable versions keep the logo clear of Android's crop), the iOS Apple Touch Icon and the notification badge in `public/icons/`. The app name and colours are in `public/manifest.webmanifest`.
 
 ## Project layout
 

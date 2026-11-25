@@ -151,7 +151,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
               <span className="absolute bottom-0 right-0 w-4 h-4 bg-[#10B981] border-2 border-white rounded-full" />
               <label
                 title="Change Coach Photo"
-                className="absolute inset-0 bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-white text-[10px] font-bold"
+                className="absolute inset-0 bg-black/40 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer text-[#fff] text-[10px] font-bold"
               >
                 <span>Edit</span>
                 <input
@@ -178,13 +178,13 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <span className="text-xs font-bold text-[#7155E8] uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
                   {trainerProfile.gymName || "Azim's Workout Arena & Performance Club"}
                 </span>
                 <span className="text-neutral-300 hidden sm:inline">·</span>
                 <span className="text-xs text-neutral-400 font-medium">Head Coach Oliul Azim</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#171717] mt-0.5 truncate">
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#F5F5F5] mt-0.5 truncate">
                 {getGreeting()}
               </h1>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -199,12 +199,12 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             <button
               type="button"
               onClick={onOpenMemberRequests}
-              className="px-4 py-2.5 rounded-2xl bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap cursor-pointer"
+              className="px-4 py-2.5 rounded-2xl bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all flex items-center gap-2 active:scale-95 whitespace-nowrap cursor-pointer"
             >
               <Users className="w-4 h-4 shrink-0" />
               <span>Registration Requests</span>
               {pendingRegistrations.length > 0 && (
-                <span className="min-w-5 h-5 px-1 rounded-full bg-amber-400 text-neutral-900 text-[10px] font-black flex items-center justify-center tabular-nums">
+                <span className="min-w-5 h-5 px-1 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center tabular-nums">
                   {pendingRegistrations.length}
                 </span>
               )}
@@ -214,7 +214,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             <button
               type="button"
               onClick={onOpenAddMember}
-              className="px-4 py-2.5 rounded-2xl bg-[#F0EEFC] hover:bg-[#E4DFFA] text-[#7155E8] text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap cursor-pointer"
+              className="px-4 py-2.5 rounded-2xl bg-[#221C0D] hover:bg-[#2E2611] text-[#D4AF37] text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap cursor-pointer"
             >
               <UserPlus className="w-4 h-4 shrink-0" />
               <span>Enroll Client</span>
@@ -244,7 +244,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             placeholder="Search members by name, fitness goal, or phone number..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 text-xs bg-[#F5F5F5] hover:bg-[#EFEFEF] focus:bg-white border border-neutral-200/60 focus:border-[#7155E8] rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#7155E8]/20"
+            className="w-full pl-11 pr-4 py-3 text-xs bg-[#0E0E0E] hover:bg-[#1B1B1B] focus:bg-white border border-neutral-200/60 focus:border-[#D4AF37] rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
           />
         </div>
       </div>
@@ -258,7 +258,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
           trendText={`${activeMembers.length} active`}
           trendPositive={true}
           icon={<Users className="w-5 h-5" />}
-          accentColor="#7155E8"
+          accentColor="#D4AF37"
           onClick={() => onSelectTab('members')}
         />
 
@@ -296,7 +296,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
       </div>
 
       {/* 3. COACH ACTION CENTER HERO BANNER */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#7155E8] via-[#7B60EC] to-[#9176F7] text-white p-6 sm:p-8 shadow-[0_12px_32px_rgba(113,85,232,0.32)]">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#F2D67E] via-[#D4AF37] to-[#A67C1B] text-white p-6 sm:p-8 shadow-[0_12px_32px_rgba(212,175,55,0.32)]">
         <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <div className="absolute -bottom-12 right-24 w-36 h-36 rounded-full bg-black/10 blur-xl pointer-events-none" />
 
@@ -322,7 +322,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             <button
               type="button"
               onClick={() => onSelectTab('meal-hub')}
-              className="px-5 py-2.5 rounded-2xl bg-white text-[#7155E8] hover:bg-neutral-100 text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-2 whitespace-nowrap cursor-pointer"
+              className="px-5 py-2.5 rounded-2xl bg-white text-[#D4AF37] hover:bg-neutral-100 text-xs font-bold transition-all shadow-md active:scale-95 flex items-center gap-2 whitespace-nowrap cursor-pointer"
             >
               <Camera className="w-4 h-4 shrink-0" />
               <span>Review Meal Photos ({pendingMealReviews.length})</span>
@@ -348,7 +348,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                 ৳
               </div>
               <div className="min-w-0">
-                <h3 className="text-base font-extrabold text-[#171717]">
+                <h3 className="text-base font-extrabold text-[#F5F5F5]">
                   Payment Verification Requests ({pendingPayments.length})
                 </h3>
                 <p className="text-xs text-neutral-400">
@@ -370,12 +370,12 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                     <Avatar src={pr.memberAvatar} name={pr.memberName} size="md" className="rounded-2xl shrink-0" />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-extrabold text-sm text-[#171717]">{pr.memberName}</span>
+                        <span className="font-extrabold text-sm text-[#F5F5F5]">{pr.memberName}</span>
                         <span
                           className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold ${
                             pr.method === 'bKash'
                               ? 'bg-[#E2136E] text-white'
-                              : 'bg-[#7155E8] text-white'
+                              : 'bg-[#D4AF37] text-white'
                           }`}
                         >
                           {pr.method}
@@ -383,7 +383,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                       </div>
 
                       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500 mt-1 font-mono text-[11px]">
-                        <span className="font-bold text-[#171717]">৳{pr.amount.toLocaleString()}</span>
+                        <span className="font-bold text-[#F5F5F5]">৳{pr.amount.toLocaleString()}</span>
                         <span>·</span>
                         <span>{pr.billingMonth}</span>
                         {pr.trxId && (
@@ -473,14 +473,14 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
 
       {/* 3.2 PENDING MEMBER REGISTRATION APPLICATIONS */}
       {pendingRegistrations.length > 0 && (
-        <div className="bg-white rounded-3xl p-5 sm:p-7 border border-[#7155E8]/30 shadow-[0_4px_24px_rgba(113,85,232,0.06)] space-y-4">
+        <div className="bg-white rounded-3xl p-5 sm:p-7 border border-[#D4AF37]/30 shadow-[0_4px_24px_rgba(212,175,55,0.06)] space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-100 pb-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-2xl bg-[#7155E8]/10 text-[#7155E8] flex items-center justify-center font-bold shrink-0">
+              <div className="w-9 h-9 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center font-bold shrink-0">
                 <Users className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <h3 className="text-base font-extrabold text-[#171717]">
+                <h3 className="text-base font-extrabold text-[#F5F5F5]">
                   New Prospective Member Applications ({pendingRegistrations.length})
                 </h3>
                 <p className="text-xs text-neutral-400">
@@ -492,7 +492,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             <button
               type="button"
               onClick={onOpenMemberRequests || onOpenAddMember}
-              className="px-4 py-2 bg-[#7155E8] hover:bg-[#6245DE] text-white rounded-xl text-xs font-bold transition-all shadow-xs whitespace-nowrap self-start sm:self-auto shrink-0 cursor-pointer"
+              className="px-4 py-2 bg-[#D4AF37] hover:bg-[#B8912B] text-white rounded-xl text-xs font-bold transition-all shadow-xs whitespace-nowrap self-start sm:self-auto shrink-0 cursor-pointer"
             >
               Review All Applications →
             </button>
@@ -503,11 +503,11 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
               <div
                 key={req.id}
                 onClick={onOpenMemberRequests || onOpenAddMember}
-                className="p-4 bg-[#F5F5F5] hover:bg-[#EFEFEF] transition-colors cursor-pointer rounded-2xl border border-neutral-200/80 flex items-start gap-3"
+                className="p-4 bg-[#0E0E0E] hover:bg-[#1B1B1B] transition-colors cursor-pointer rounded-2xl border border-neutral-200/80 flex items-start gap-3"
               >
                 <Avatar src={req.avatarUrl} name={req.fullName} size="md" className="rounded-2xl shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <span className="font-extrabold text-sm text-[#171717] block truncate">
+                  <span className="font-extrabold text-sm text-[#F5F5F5] block truncate">
                     {req.fullName}
                   </span>
                   <span className="text-xs text-neutral-500 font-mono block truncate">
@@ -528,7 +528,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="text-base sm:text-lg font-bold text-[#171717] tracking-tight">
+            <h3 className="text-base sm:text-lg font-bold text-[#F5F5F5] tracking-tight">
               Member Directory
             </h3>
             <p className="text-xs text-neutral-400 truncate">
@@ -539,7 +539,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
           <button
             type="button"
             onClick={() => onSelectTab('members')}
-            className="text-xs font-bold text-[#7155E8] hover:text-[#5d41d1] flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            className="text-xs font-bold text-[#D4AF37] hover:text-[#A67C1B] flex items-center gap-1 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             <span>See All ({members.length})</span> <ChevronRight className="w-4 h-4" />
           </button>
@@ -562,8 +562,8 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                 onClick={() => setSelectedCategory(cat.id as any)}
                 className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 active:scale-95 cursor-pointer ${
                   isSelected
-                    ? 'bg-[#171717] text-white shadow-sm'
-                    : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#171717] hover:bg-neutral-50'
+                    ? 'bg-[#D4AF37] text-white shadow-sm'
+                    : 'bg-white border border-neutral-200/80 text-neutral-600 hover:text-[#F5F5F5] hover:bg-neutral-50'
                 }`}
               >
                 {cat.label}
@@ -620,7 +620,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#F0EEFC] text-[#7155E8] text-4xl font-extrabold">
+                      <div className="w-full h-full flex items-center justify-center bg-[#221C0D] text-[#D4AF37] text-4xl font-extrabold">
                         {member.fullName.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
                       </div>
                     )}
@@ -649,7 +649,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   {/* Member Identity & Goal */}
                   <div className="flex items-start justify-between gap-2 min-w-0">
                     <div className="min-w-0">
-                      <h4 className="font-extrabold text-base text-[#171717] group-hover:text-[#7155E8] transition-colors truncate">
+                      <h4 className="font-extrabold text-base text-[#F5F5F5] group-hover:text-[#D4AF37] transition-colors truncate">
                         {member.fullName}
                       </h4>
                       <p className="text-xs text-neutral-400 font-medium truncate mt-0.5">
@@ -660,7 +660,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                     <a
                       href={`tel:${member.phone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="w-8 h-8 rounded-full bg-[#F5F5F5] hover:bg-[#7155E8]/10 text-neutral-600 hover:text-[#7155E8] flex items-center justify-center shrink-0 transition-colors"
+                      className="w-8 h-8 rounded-full bg-[#0E0E0E] hover:bg-[#D4AF37]/10 text-neutral-600 hover:text-[#D4AF37] flex items-center justify-center shrink-0 transition-colors"
                       title={`Call ${member.fullName}`}
                     >
                       <Phone className="w-3.5 h-3.5" />
@@ -668,7 +668,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   </div>
 
                   {/* Workout & Diet Progress Gauges */}
-                  <div className="grid grid-cols-2 gap-2.5 mt-4 p-3 bg-[#F5F5F5] rounded-2xl">
+                  <div className="grid grid-cols-2 gap-2.5 mt-4 p-3 bg-[#0E0E0E] rounded-2xl">
                     <div>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="font-semibold text-neutral-500">Workout</span>
@@ -687,13 +687,13 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                     <div>
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="font-semibold text-neutral-500">Diet</span>
-                        <span className="font-bold text-[#7155E8] font-mono tabular-nums">
+                        <span className="font-bold text-[#D4AF37] font-mono tabular-nums">
                           {dietRate}%
                         </span>
                       </div>
                       <div className="w-full h-2 bg-neutral-200 rounded-full mt-1.5 overflow-hidden">
                         <div
-                          className="h-full bg-[#7155E8] rounded-full transition-all"
+                          className="h-full bg-[#D4AF37] rounded-full transition-all"
                           style={{ width: `${dietRate}%` }}
                         />
                       </div>
@@ -708,7 +708,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                     <span className="truncate">Next: {member.nextPaymentDeadline}</span>
                   </div>
 
-                  <span className="font-bold text-[#7155E8] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 whitespace-nowrap shrink-0">
+                  <span className="font-bold text-[#D4AF37] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 whitespace-nowrap shrink-0">
                     View Profile <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
@@ -727,7 +727,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                 <ShieldAlert className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-[#171717]">
+                <h3 className="font-bold text-sm text-[#F5F5F5]">
                   Needs Trainer Attention ({activeAlerts.length} Action Items)
                 </h3>
                 <p className="text-xs text-neutral-400">
@@ -741,20 +741,20 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
             {activeAlerts.map((alert) => (
               <div
                 key={alert.id}
-                className="p-4 rounded-2xl bg-[#F5F5F5] border border-neutral-200/60 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
+                className="p-4 rounded-2xl bg-[#0E0E0E] border border-neutral-200/60 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
               >
                 <div className="flex items-start gap-3 min-w-0">
                   <Avatar src={alert.memberAvatar} name={alert.memberName} size="sm" />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-xs text-[#171717]">{alert.memberName}</span>
+                      <span className="font-bold text-xs text-[#F5F5F5]">{alert.memberName}</span>
                       <span className="text-[10px] font-bold text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">
                         {alert.category}
                       </span>
                     </div>
                     <p className="text-xs font-semibold text-neutral-800 mt-1">{alert.title}</p>
                     <p className="text-xs text-neutral-500 mt-0.5">{alert.description}</p>
-                    <div className="mt-2 text-[11px] font-medium text-[#7155E8]">
+                    <div className="mt-2 text-[11px] font-medium text-[#D4AF37]">
                       Suggested: {alert.recommendedAction}
                     </div>
                   </div>
@@ -771,7 +771,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   <button
                     type="button"
                     onClick={() => onSelectTab('members', { memberId: alert.memberId })}
-                    className="px-3 py-1.5 text-xs font-semibold text-white bg-[#171717] hover:bg-neutral-800 rounded-xl whitespace-nowrap cursor-pointer"
+                    className="px-3 py-1.5 text-xs font-semibold text-white bg-[#D4AF37] hover:bg-neutral-800 rounded-xl whitespace-nowrap cursor-pointer"
                   >
                     Open Client
                   </button>
@@ -787,7 +787,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
         <div className="lg:col-span-2 bg-white rounded-3xl p-5 sm:p-6 border border-neutral-100 shadow-[0_4px_24px_rgba(0,0,0,0.03)] min-w-0">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
             <div>
-              <h3 className="text-sm font-bold text-[#171717]">
+              <h3 className="text-sm font-bold text-[#F5F5F5]">
                 Monthly Fee Collections (৳ BDT)
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
@@ -805,7 +805,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
           <AreaTrendChart
             data={revenueTrendData}
             height={200}
-            color="#7155E8"
+            color="#D4AF37"
             valuePrefix="৳"
             valueSuffix=""
           />
@@ -815,13 +815,13 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
         <div className="bg-white rounded-3xl p-5 sm:p-6 border border-neutral-100 shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-neutral-100">
-              <h3 className="text-xs font-bold text-[#171717] uppercase tracking-wider">
+              <h3 className="text-xs font-bold text-[#F5F5F5] uppercase tracking-wider">
                 Recent Meal Evidence
               </h3>
               <button
                 type="button"
                 onClick={() => onSelectTab('meal-hub')}
-                className="text-xs font-bold text-[#7155E8] hover:underline cursor-pointer"
+                className="text-xs font-bold text-[#D4AF37] hover:underline cursor-pointer"
               >
                 View Hub
               </button>
@@ -832,7 +832,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                 <div
                   key={log.id}
                   onClick={() => onSelectTab('meal-hub')}
-                  className="p-2.5 rounded-2xl bg-[#F5F5F5] hover:bg-[#EFEFEF] cursor-pointer transition-colors flex items-center gap-3 min-w-0"
+                  className="p-2.5 rounded-2xl bg-[#0E0E0E] hover:bg-[#1B1B1B] cursor-pointer transition-colors flex items-center gap-3 min-w-0"
                 >
                   {log.photoUrl ? (
                     <img
@@ -845,7 +845,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-[#171717] truncate">
+                      <span className="text-xs font-bold text-[#F5F5F5] truncate">
                         {log.memberName}
                       </span>
                       <span className="text-[10px] font-mono text-neutral-400 shrink-0">
@@ -856,7 +856,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
                       {log.prescribedFoodsSummary}
                     </p>
                     <div className="flex items-center justify-between text-[10px] mt-0.5">
-                      <span className="font-mono text-[#7155E8] font-semibold tabular-nums">
+                      <span className="font-mono text-[#D4AF37] font-semibold tabular-nums">
                         {log.totalCalories} kcal
                       </span>
                       <span
@@ -877,7 +877,7 @@ export const TrainerDashboard: React.FC<TrainerDashboardProps> = ({
 
           <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-xs">
             <span className="text-neutral-400">Total verified submissions</span>
-            <span className="font-bold text-[#171717] font-mono tabular-nums">{mealLogs.length}</span>
+            <span className="font-bold text-[#F5F5F5] font-mono tabular-nums">{mealLogs.length}</span>
           </div>
         </div>
       </div>

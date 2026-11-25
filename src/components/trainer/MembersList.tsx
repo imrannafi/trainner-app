@@ -104,7 +104,7 @@ export const MembersList: React.FC<MembersListProps> = ({
       {/* Top Banner and Action */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#171717]">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#F5F5F5]">
             Member Directory
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
@@ -117,7 +117,7 @@ export const MembersList: React.FC<MembersListProps> = ({
             <button
               type="button"
               onClick={onOpenDirectEnroll}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#F0EEFC] hover:bg-[#E4DFFA] text-[#7155E8] text-xs font-bold rounded-2xl transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#221C0D] hover:bg-[#2E2611] text-[#D4AF37] text-xs font-bold rounded-2xl transition-all active:scale-95 whitespace-nowrap cursor-pointer"
             >
               <UserPlus className="w-4 h-4 shrink-0" />
               <span>Enroll Member</span>
@@ -126,7 +126,7 @@ export const MembersList: React.FC<MembersListProps> = ({
           <button
             type="button"
             onClick={onOpenAddMember}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#7155E8] hover:bg-[#6245DE] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(113,85,232,0.35)] transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#D4AF37] hover:bg-[#B8912B] text-white text-xs font-bold rounded-2xl shadow-[0_4px_16px_rgba(212,175,55,0.35)] transition-all active:scale-95 whitespace-nowrap cursor-pointer"
           >
             <Users className="w-4 h-4 shrink-0" />
             <span>Review Applications</span>
@@ -144,19 +144,19 @@ export const MembersList: React.FC<MembersListProps> = ({
               placeholder="Search members by name, goal, phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 text-xs bg-[#F5F5F5] hover:bg-[#EFEFEF] focus:bg-white border border-neutral-200/60 focus:border-[#7155E8] rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#7155E8]/20"
+              className="w-full pl-11 pr-4 py-2.5 text-xs bg-[#0E0E0E] hover:bg-[#1B1B1B] focus:bg-white border border-neutral-200/60 focus:border-[#D4AF37] rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20"
             />
           </div>
 
           <div className="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
-            <div className="flex items-center gap-1.5 bg-[#F5F5F5] px-3 py-1.5 rounded-2xl border border-neutral-200/60 text-xs">
+            <div className="flex items-center gap-1.5 bg-[#0E0E0E] px-3 py-1.5 rounded-2xl border border-neutral-200/60 text-xs">
               <ArrowUpDown className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
               <span className="text-neutral-500 font-medium">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
                 aria-label="Sort members"
-                className="bg-transparent font-bold text-[#171717] focus:outline-none cursor-pointer"
+                className="bg-transparent font-bold text-[#F5F5F5] focus:outline-none cursor-pointer"
               >
                 <option value="name">Name (A-Z)</option>
                 <option value="due">Highest Dues</option>
@@ -164,13 +164,13 @@ export const MembersList: React.FC<MembersListProps> = ({
               </select>
             </div>
 
-            <div className="flex items-center bg-[#F5F5F5] p-1 rounded-2xl border border-neutral-200/60 shrink-0">
+            <div className="flex items-center bg-[#0E0E0E] p-1 rounded-2xl border border-neutral-200/60 shrink-0">
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-xl transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white shadow-xs text-[#7155E8]'
+                    ? 'bg-white shadow-xs text-[#D4AF37]'
                     : 'text-neutral-400 hover:text-neutral-700'
                 }`}
                 title="Grid Cards View"
@@ -182,7 +182,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                 onClick={() => setViewMode('table')}
                 className={`p-1.5 rounded-xl transition-all cursor-pointer ${
                   viewMode === 'table'
-                    ? 'bg-white shadow-xs text-[#7155E8]'
+                    ? 'bg-white shadow-xs text-[#D4AF37]'
                     : 'text-neutral-400 hover:text-neutral-700'
                 }`}
                 title="List Table View"
@@ -211,8 +211,8 @@ export const MembersList: React.FC<MembersListProps> = ({
                 onClick={() => setStatusFilter(cat.id)}
                 className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 active:scale-95 cursor-pointer ${
                   isSelected
-                    ? 'bg-[#171717] text-white shadow-xs'
-                    : 'bg-[#F5F5F5] text-neutral-600 hover:bg-neutral-200/70 hover:text-[#171717]'
+                    ? 'bg-[#D4AF37] text-white shadow-xs'
+                    : 'bg-[#0E0E0E] text-neutral-600 hover:bg-neutral-200/70 hover:text-[#F5F5F5]'
                 }`}
               >
                 {cat.label}
@@ -264,7 +264,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#F0EEFC] text-[#7155E8] text-4xl font-extrabold">
+                      <div className="w-full h-full flex items-center justify-center bg-[#221C0D] text-[#D4AF37] text-4xl font-extrabold">
                         {member.fullName.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase()}
                       </div>
                     )}
@@ -289,7 +289,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                         className={`pointer-events-auto w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all active:scale-90 shrink-0 cursor-pointer ${
                           isFavorite
                             ? 'bg-white text-[#F59E0B] shadow-md scale-105'
-                            : 'bg-black/30 text-white hover:bg-white hover:text-[#F59E0B]'
+                            : 'bg-black/30 text-[#fff] hover:bg-white hover:text-[#F59E0B]'
                         }`}
                         title={isFavorite ? 'Remove Star' : 'Star Athlete'}
                       >
@@ -301,7 +301,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   {/* Name, Goal, and Remaining Days */}
                   <div className="flex items-start justify-between gap-2 min-w-0">
                     <div className="min-w-0">
-                      <h3 className="font-extrabold text-lg text-[#171717] group-hover:text-[#7155E8] transition-colors truncate">
+                      <h3 className="font-extrabold text-lg text-[#F5F5F5] group-hover:text-[#D4AF37] transition-colors truncate">
                         {member.fullName}
                       </h3>
                       <p className="text-xs text-neutral-400 font-medium truncate mt-0.5">
@@ -318,7 +318,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                   </div>
 
                   {/* Adherence and Payment Status Strip */}
-                  <div className="mt-4 p-3.5 bg-[#F5F5F5] rounded-2xl space-y-2.5">
+                  <div className="mt-4 p-3.5 bg-[#0E0E0E] rounded-2xl space-y-2.5">
                     <div className="flex items-center justify-between gap-2 text-xs pb-2 border-b border-neutral-200/60">
                       <span className="text-neutral-500 font-medium">Payment Ledger:</span>
                       <span
@@ -349,13 +349,13 @@ export const MembersList: React.FC<MembersListProps> = ({
                       <div>
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="font-semibold text-neutral-500">Diet</span>
-                          <span className="font-bold text-[#7155E8] font-mono tabular-nums">
+                          <span className="font-bold text-[#D4AF37] font-mono tabular-nums">
                             {dietScore}%
                           </span>
                         </div>
                         <div className="w-full h-1.5 bg-neutral-200 rounded-full mt-1 overflow-hidden">
                           <div
-                            className="h-full bg-[#7155E8] rounded-full"
+                            className="h-full bg-[#D4AF37] rounded-full"
                             style={{ width: `${dietScore}%` }}
                           />
                         </div>
@@ -384,14 +384,14 @@ export const MembersList: React.FC<MembersListProps> = ({
                     <a
                       href={`tel:${member.phone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="p-1.5 text-neutral-400 hover:text-[#7155E8] hover:bg-neutral-100 rounded-xl transition-colors"
+                      className="p-1.5 text-neutral-400 hover:text-[#D4AF37] hover:bg-neutral-100 rounded-xl transition-colors"
                       title={`Call ${member.fullName}`}
                     >
                       <Phone className="w-3.5 h-3.5" />
                     </a>
                   </div>
 
-                  <span className="font-bold text-[#7155E8] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 whitespace-nowrap">
+                  <span className="font-bold text-[#D4AF37] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5 whitespace-nowrap">
                     View Profile <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
@@ -405,7 +405,7 @@ export const MembersList: React.FC<MembersListProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[640px]">
               <thead>
-                <tr className="bg-[#F5F5F5] border-b border-neutral-200 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                <tr className="bg-[#0E0E0E] border-b border-neutral-200 text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                   <th className="py-3.5 px-5">Member</th>
                   <th className="py-3.5 px-4">Goal & Level</th>
                   <th className="py-3.5 px-4">Membership Period</th>
@@ -420,13 +420,13 @@ export const MembersList: React.FC<MembersListProps> = ({
                     <tr
                       key={m.id}
                       onClick={() => onSelectMember(m.id)}
-                      className="hover:bg-[#F0EEFC]/40 cursor-pointer transition-colors"
+                      className="hover:bg-[#221C0D]/40 cursor-pointer transition-colors"
                     >
                       <td className="py-3.5 px-5">
                         <div className="flex items-center gap-3">
                           <Avatar src={m.avatarUrl} name={m.fullName} size="sm" />
                           <div>
-                            <span className="font-bold text-[#171717] block">{m.fullName}</span>
+                            <span className="font-bold text-[#F5F5F5] block">{m.fullName}</span>
                             <span className="text-[11px] text-neutral-400 font-mono">{m.phone}</span>
                           </div>
                         </div>
@@ -456,7 +456,7 @@ export const MembersList: React.FC<MembersListProps> = ({
                             e.stopPropagation();
                             onSelectMember(m.id);
                           }}
-                          className="px-3 py-1.5 text-xs font-bold text-[#7155E8] bg-[#F0EEFC] hover:bg-[#7155E8] hover:text-white rounded-xl transition-all cursor-pointer"
+                          className="px-3 py-1.5 text-xs font-bold text-[#D4AF37] bg-[#221C0D] hover:bg-[#D4AF37] hover:text-white rounded-xl transition-all cursor-pointer"
                         >
                           Profile
                         </button>
